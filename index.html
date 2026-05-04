@@ -86,14 +86,117 @@
   .view-btn.active { background:#1e1e1e; color:var(--text); }
 
   /* stats btn */
-  #stats-btn, #compare-btn, #pending-btn, #top10-btn, #rater-import-btn {
+  #stats-btn, #compare-btn, #pending-btn, #top10-btn, #rater-import-btn, #load-db-btn {
     background:none; border:1px solid #2a2a2a; color:var(--muted);
     padding:8px 14px; font-family:'DM Mono',monospace; font-size:10px;
     letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all .2s;
     white-space:nowrap;
   }
-  #stats-btn:hover, #compare-btn:hover, #pending-btn:hover, #top10-btn:hover, #rater-import-btn:hover { border-color:#444; color:var(--text); }
+  #stats-btn:hover, #compare-btn:hover, #pending-btn:hover, #top10-btn:hover, #rater-import-btn:hover, #load-db-btn:hover { border-color:#444; color:var(--text); }
   #compare-btn.active { border-color:var(--bp); color:var(--bp); }
+  #load-db-btn { border-color:rgba(58,184,112,0.3); color:#3ab870; }
+  #load-db-btn:hover { border-color:#3ab870; background:rgba(58,184,112,0.08); }
+  #load-db-btn.loading { opacity:0.6; cursor:wait; }
+
+  /* ── DB SYNC MODAL ── */
+  #dbsync-backdrop {
+    position:fixed; inset:0; background:rgba(0,0,0,.92); backdrop-filter:blur(14px);
+    z-index:400; display:none; align-items:center; justify-content:center; padding:30px;
+  }
+  #dbsync-backdrop.open { display:flex; }
+  #dbsync-modal {
+    background:#0e0e0e; border:1px solid #222; width:100%; max-width:680px;
+    max-height:88vh; overflow-y:auto; padding:36px; position:relative;
+    animation:modalIn .3s cubic-bezier(.34,1.4,.64,1);
+  }
+  #dbsync-modal h2 { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:5px; margin-bottom:4px; }
+  #dbsync-subtitle { font-size:9px; letter-spacing:2.5px; color:var(--muted); text-transform:uppercase; margin-bottom:24px; }
+  #dbsync-close { position:absolute; top:14px; right:16px; background:none; border:none; color:var(--muted); font-size:22px; cursor:pointer; padding:4px 8px; line-height:1; }
+  #dbsync-close:hover { color:var(--text); }
+  #dbsync-user-row { display:flex; gap:10px; align-items:center; margin-bottom:20px; }
+  #dbsync-user-input {
+    flex:1; background:#161616; border:1px solid #2a2a2a; color:var(--text);
+    padding:10px 14px; font-family:'DM Mono',monospace; font-size:12px;
+    outline:none; transition:border-color .2s; letter-spacing:1px;
+  }
+  #dbsync-user-input:focus { border-color:#3ab870; }
+  #dbsync-fetch-btn {
+    background:none; border:1px solid #3ab870; color:#3ab870;
+    padding:10px 20px; font-family:'DM Mono',monospace; font-size:10px;
+    letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all .2s;
+    white-space:nowrap;
+  }
+  #dbsync-fetch-btn:hover { background:rgba(58,184,112,0.1); }
+  #dbsync-fetch-btn:disabled { opacity:0.4; cursor:wait; }
+  #dbsync-status { font-size:11px; color:var(--muted); letter-spacing:1px; margin-bottom:16px; min-height:18px; }
+  #dbsync-list { display:flex; flex-direction:column; gap:8px; }
+  .dbsync-item {
+    display:flex; align-items:center; gap:14px; padding:12px 14px;
+    background:#111; border:1px solid #1e1e1e; position:relative; overflow:hidden;
+    transition:border-color .2s;
+  }
+  .dbsync-item.already-in { opacity:0.45; }
+  .dbsync-item-bg {
+    position:absolute; inset:0; background-size:cover; background-position:center;
+    filter:blur(40px) brightness(0.15) saturate(1.6); transform:scale(1.2);
+    pointer-events:none; z-index:0;
+  }
+  .dbsync-item > *:not(.dbsync-item-bg) { position:relative; z-index:1; }
+  .dbsync-thumb {
+    width:52px; height:52px; object-fit:cover; flex-shrink:0;
+    background:#1a1a1a; border-radius:2px;
+  }
+  .dbsync-info { flex:1; min-width:0; }
+  .dbsync-title { font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .dbsync-meta { font-size:10px; color:var(--muted); letter-spacing:1px; margin-top:3px; }
+  .dbsync-tier { font-family:'Bebas Neue',sans-serif; font-size:22px; flex-shrink:0; }
+  .dbsync-score { font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--muted); flex-shrink:0; min-width:40px; text-align:right; }
+  .dbsync-check {
+    width:28px; height:28px; border:1px solid #333; background:transparent;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    cursor:pointer; transition:all .2s; font-size:12px; color:transparent;
+  }
+  .dbsync-check.selected { border-color:#3ab870; background:rgba(58,184,112,0.15); color:#3ab870; }
+  .dbsync-check.already-in-check { border-color:#333; background:#1a1a1a; color:#333; cursor:default; }
+  .dbsync-already-tag { font-size:9px; letter-spacing:1.5px; color:#3ab870; border:1px solid rgba(58,184,112,0.3); padding:2px 7px; flex-shrink:0; }
+  #dbsync-actions { display:flex; gap:10px; margin-top:20px; border-top:1px solid #1e1e1e; padding-top:18px; align-items:center; }
+  #dbsync-select-all { background:none; border:1px solid #333; color:var(--muted); padding:8px 14px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all .2s; }
+  #dbsync-select-all:hover { border-color:#555; color:var(--text); }
+  #dbsync-import-btn {
+    background:#3ab870; color:#000; border:none;
+    padding:10px 24px; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:3px;
+    cursor:pointer; transition:opacity .2s;
+  }
+  #dbsync-import-btn:hover { opacity:0.85; }
+  #dbsync-import-btn:disabled { opacity:0.3; cursor:not-allowed; }
+  #dbsync-count { font-size:11px; color:var(--muted); margin-left:auto; }
+
+  /* ── DB SYNC MODAL — MOBILE ── */
+  @media (max-width:600px) {
+    #dbsync-backdrop { padding:0; align-items:flex-end; }
+    #dbsync-modal {
+      padding:24px 18px 32px; max-height:92vh; border-radius:0;
+      border-left:none; border-right:none; border-bottom:none;
+    }
+    #dbsync-modal h2 { font-size:22px; letter-spacing:3px; }
+    #dbsync-subtitle { font-size:8px; margin-bottom:18px; }
+    #dbsync-user-row { flex-direction:column; gap:8px; }
+    #dbsync-user-input { width:100%; font-size:14px; padding:12px 14px; }
+    #dbsync-fetch-btn { width:100%; padding:12px; font-size:11px; letter-spacing:1.5px; text-align:center; }
+    #dbsync-list { gap:10px; }
+    .dbsync-item { gap:10px; padding:12px 10px; }
+    .dbsync-thumb { width:48px; height:48px; }
+    .dbsync-title { font-size:12px; white-space:normal; line-height:1.3; }
+    .dbsync-meta { font-size:9px; white-space:normal; line-height:1.4; margin-top:4px; }
+    .dbsync-tier { font-size:20px; }
+    .dbsync-score { font-size:15px; min-width:36px; }
+    .dbsync-check { width:32px; height:32px; flex-shrink:0; font-size:14px; }
+    .dbsync-already-tag { font-size:8px; padding:2px 5px; letter-spacing:1px; }
+    #dbsync-actions { flex-wrap:wrap; gap:8px; padding-top:14px; margin-top:14px; }
+    #dbsync-select-all { flex:1; min-width:0; padding:10px 8px; font-size:9px; text-align:center; }
+    #dbsync-import-btn { flex:2; min-width:0; padding:12px 10px; font-size:15px; letter-spacing:2px; text-align:center; }
+    #dbsync-count { width:100%; text-align:center; margin-left:0; margin-top:4px; font-size:10px; }
+  }
 
   #add-btn {
     background:var(--text); color:var(--bg); border:none;
@@ -965,6 +1068,7 @@
     <button id="top10-btn">Top 10</button>
     <button id="pending-btn">Pending</button>
     <button id="compare-btn">Compare</button>
+    <button id="load-db-btn" title="Cargar álbumes desde la base de datos del Album Rater">☁ Load from DB</button>
     <button id="add-btn">+ ADD</button>
   </div>
   </div>
@@ -1232,6 +1336,26 @@
       <textarea id="input-notes" placeholder="Your thoughts on this album..."></textarea>
     </div>
     <button id="save-btn">SAVE ALBUM</button>
+  </div>
+</div>
+
+<!-- DB SYNC MODAL -->
+<div id="dbsync-backdrop">
+  <div id="dbsync-modal">
+    <button id="dbsync-close">×</button>
+    <h2>☁ LOAD FROM DB</h2>
+    <div id="dbsync-subtitle">Importar álbumes guardados desde Album Rater</div>
+    <div id="dbsync-user-row">
+      <input type="text" id="dbsync-user-input" placeholder="Tu nombre de usuario (ej: nico)" />
+      <button id="dbsync-fetch-btn">🔍 Buscar</button>
+    </div>
+    <div id="dbsync-status"></div>
+    <div id="dbsync-list"></div>
+    <div id="dbsync-actions" style="display:none">
+      <button id="dbsync-select-all">Seleccionar todos</button>
+      <button id="dbsync-import-btn" disabled>⬇ Importar seleccionados</button>
+      <span id="dbsync-count"></span>
+    </div>
   </div>
 </div>
 
@@ -3300,7 +3424,259 @@ document.getElementById('btn-score-history').addEventListener('click', () => {
   openScoreHistory(currentDetailAlbum);
 });
 
-// ── HEADER HIDE/SHOW ON SCROLL ──
+// ── LOAD FROM RATER DB ──
+const RATER_BOT_SERVER = 'https://album-rater-bot-production.up.railway.app';
+let dbSyncItems = []; // fetched from server
+let dbSyncSelected = new Set(); // indices selected by user
+
+document.getElementById('load-db-btn').addEventListener('click', () => {
+  // Pre-fill username from localStorage if available
+  const savedUser = localStorage.getItem('discord_user_id') || '';
+  document.getElementById('dbsync-user-input').value = savedUser;
+  document.getElementById('dbsync-status').textContent = savedUser ? 'Presiona Buscar para cargar tus álbumes.' : '';
+  document.getElementById('dbsync-list').innerHTML = '';
+  document.getElementById('dbsync-actions').style.display = 'none';
+  dbSyncItems = [];
+  dbSyncSelected.clear();
+  document.getElementById('dbsync-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+});
+
+document.getElementById('dbsync-close').addEventListener('click', closeDbSync);
+document.getElementById('dbsync-backdrop').addEventListener('click', e => {
+  if (e.target === document.getElementById('dbsync-backdrop')) closeDbSync();
+});
+function closeDbSync() {
+  document.getElementById('dbsync-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('dbsync-fetch-btn').addEventListener('click', fetchFromRaterDb);
+document.getElementById('dbsync-user-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') fetchFromRaterDb();
+});
+
+async function fetchFromRaterDb() {
+  const userId = document.getElementById('dbsync-user-input').value.trim();
+  if (!userId) { document.getElementById('dbsync-status').textContent = '⚠ Ingresa tu nombre de usuario.'; return; }
+
+  localStorage.setItem('discord_user_id', userId);
+
+  const btn = document.getElementById('dbsync-fetch-btn');
+  btn.disabled = true;
+  btn.textContent = '…';
+  document.getElementById('dbsync-status').textContent = 'Buscando en la base de datos…';
+  document.getElementById('dbsync-list').innerHTML = '';
+  document.getElementById('dbsync-actions').style.display = 'none';
+  dbSyncItems = [];
+  dbSyncSelected.clear();
+
+  try {
+    const res = await fetch(`${RATER_BOT_SERVER}/history?user_id=${encodeURIComponent(userId)}`);
+    if (!res.ok) throw new Error(`Error del servidor: ${res.status}`);
+    const rows = await res.json();
+    if (!Array.isArray(rows) || !rows.length) {
+      document.getElementById('dbsync-status').textContent = 'No se encontraron álbumes para ese usuario.';
+      btn.disabled = false; btn.textContent = '🔍 Buscar'; return;
+    }
+
+    // Convert DB rows to vault-compatible objects
+    dbSyncItems = rows.map(row => {
+      const score = parseFloat(row.final_score) || 0;
+      let title = row.album_title || '';
+      if (!title && row.title) {
+        // strip Discord format "- TITLE [ARTIST]"
+        title = row.title.replace(/^-\s*/, '').replace(/\s*\[.*\]$/, '').trim();
+      }
+      const tier = getTier(score);
+      return {
+        _dbId: row.id,
+        title,
+        artist:    row.artist    || '',
+        year:      row.year      || '',
+        genre:     row.genre     || '',
+        coverUrl:  row.cover_url || '',
+        score,
+        tier,
+        finalRank: row.final_rank || tier?.label || '',
+        tracks:    Array.isArray(row.tracks) ? row.tracks.map(t => t.name || '').filter(Boolean) : [],
+        notes:     row.notes || '',
+        listenDate: row.created_at ? new Date(row.created_at).toISOString().slice(0,10) : '',
+        addedAt:   row.created_at ? new Date(row.created_at).getTime() : Date.now(),
+        status:    'listened',
+        genres:    row.genre ? row.genre.split(/[,/]/).map(g => g.trim()).filter(Boolean) : [],
+      };
+    });
+
+    document.getElementById('dbsync-status').textContent = `${dbSyncItems.length} álbum${dbSyncItems.length !== 1 ? 'es' : ''} encontrado${dbSyncItems.length !== 1 ? 's' : ''}.`;
+    renderDbSyncList();
+    btn.disabled = false; btn.textContent = '🔍 Buscar';
+  } catch(e) {
+    document.getElementById('dbsync-status').textContent = '⚠ Error al conectar con el servidor. Revisá tu conexión.';
+    btn.disabled = false; btn.textContent = '🔍 Buscar';
+  }
+}
+
+function isAlreadyInVault(item) {
+  return albums.some(a =>
+    a.title.trim().toLowerCase() === item.title.trim().toLowerCase() &&
+    a.artist.trim().toLowerCase() === item.artist.trim().toLowerCase()
+  );
+}
+
+function renderDbSyncList() {
+  const list = document.getElementById('dbsync-list');
+  list.innerHTML = '';
+
+  if (!dbSyncItems.length) return;
+
+  // Auto-select all not already in vault
+  dbSyncSelected.clear();
+  dbSyncItems.forEach((item, i) => {
+    if (!isAlreadyInVault(item)) dbSyncSelected.add(i);
+  });
+
+  dbSyncItems.forEach((item, i) => {
+    const alreadyIn = isAlreadyInVault(item);
+    const selected  = dbSyncSelected.has(i);
+    const tier      = item.tier;
+
+    const div = document.createElement('div');
+    div.className = 'dbsync-item' + (alreadyIn ? ' already-in' : '');
+
+    if (item.coverUrl) {
+      const bg = document.createElement('div');
+      bg.className = 'dbsync-item-bg';
+      bg.style.backgroundImage = `url('${item.coverUrl}')`;
+      div.appendChild(bg);
+    }
+
+    const checkEl = document.createElement('div');
+    checkEl.className = 'dbsync-check' + (selected ? ' selected' : '') + (alreadyIn ? ' already-in-check' : '');
+    checkEl.textContent = selected || alreadyIn ? '✓' : '';
+
+    if (!alreadyIn) {
+      checkEl.addEventListener('click', () => {
+        if (dbSyncSelected.has(i)) { dbSyncSelected.delete(i); checkEl.classList.remove('selected'); checkEl.textContent = ''; }
+        else { dbSyncSelected.add(i); checkEl.classList.add('selected'); checkEl.textContent = '✓'; }
+        updateDbSyncCount();
+      });
+    }
+
+    const thumb = document.createElement('img');
+    thumb.className = 'dbsync-thumb';
+    thumb.src = item.coverUrl || '';
+    thumb.onerror = function() { this.style.visibility='hidden'; };
+
+    const info = document.createElement('div');
+    info.className = 'dbsync-info';
+    info.innerHTML = `
+      <div class="dbsync-title">${escHtml(item.title)}</div>
+      <div class="dbsync-meta">${escHtml(item.artist)}${item.year ? ' · ' + item.year : ''}${item.genre ? ' · ' + item.genre : ''}</div>`;
+
+    const tierEl = document.createElement('div');
+    tierEl.className = 'dbsync-tier';
+    tierEl.style.color = tier?.color || '#888';
+    tierEl.textContent = tier?.label || '?';
+
+    const scoreEl = document.createElement('div');
+    scoreEl.className = 'dbsync-score';
+    scoreEl.style.color = tier?.color || '#888';
+    scoreEl.textContent = item.score.toFixed(2);
+
+    if (alreadyIn) {
+      const tag = document.createElement('div');
+      tag.className = 'dbsync-already-tag';
+      tag.textContent = '✓ ya en Vault';
+      div.appendChild(checkEl);
+      div.appendChild(thumb);
+      div.appendChild(info);
+      div.appendChild(tierEl);
+      div.appendChild(scoreEl);
+      div.appendChild(tag);
+    } else {
+      div.appendChild(checkEl);
+      div.appendChild(thumb);
+      div.appendChild(info);
+      div.appendChild(tierEl);
+      div.appendChild(scoreEl);
+    }
+
+    // Click row to toggle (if not already in vault)
+    if (!alreadyIn) {
+      div.addEventListener('click', e => {
+        if (e.target === checkEl) return;
+        checkEl.click();
+      });
+    }
+
+    list.appendChild(div);
+  });
+
+  document.getElementById('dbsync-actions').style.display = 'flex';
+  updateDbSyncCount();
+}
+
+function updateDbSyncCount() {
+  const count = dbSyncSelected.size;
+  document.getElementById('dbsync-count').textContent = count > 0 ? `${count} seleccionado${count !== 1 ? 's' : ''}` : '';
+  document.getElementById('dbsync-import-btn').disabled = count === 0;
+}
+
+// Select all / deselect all
+document.getElementById('dbsync-select-all').addEventListener('click', () => {
+  const allUnimported = dbSyncItems.map((item, i) => ({ item, i })).filter(({ item }) => !isAlreadyInVault(item));
+  const allSelected = allUnimported.every(({ i }) => dbSyncSelected.has(i));
+  if (allSelected) {
+    allUnimported.forEach(({ i }) => dbSyncSelected.delete(i));
+  } else {
+    allUnimported.forEach(({ i }) => dbSyncSelected.add(i));
+  }
+  renderDbSyncList();
+});
+
+// Import selected
+document.getElementById('dbsync-import-btn').addEventListener('click', () => {
+  if (!dbSyncSelected.size) return;
+
+  let added = 0;
+  dbSyncSelected.forEach(i => {
+    const item = dbSyncItems[i];
+    if (!item || isAlreadyInVault(item)) return;
+
+    albums.push({
+      id:          Date.now() + Math.random(),
+      title:       item.title,
+      artist:      item.artist,
+      year:        item.year,
+      score:       item.score,
+      coverUrl:    item.coverUrl,
+      genres:      item.genres,
+      status:      'listened',
+      listenDate:  item.listenDate,
+      addedAt:     item.addedAt,
+      tracks:      item.tracks,
+      notes:       item.notes,
+      replays:     [],
+      scoreHistory:[{ score: item.score, date: item.listenDate, label: 'Importado desde Rater DB' }],
+      _dbId:       item._dbId,
+    });
+    added++;
+  });
+
+  saveAlbums();
+  buildTiersWithReveal();
+  refreshGenreFilter();
+  closeDbSync();
+
+  // Toast
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#3ab870;color:#000;font-family:"DM Mono",monospace;font-size:12px;font-weight:600;padding:10px 24px;letter-spacing:1px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s';
+  toast.textContent = `☁ ${added} álbum${added !== 1 ? 'es' : ''} importado${added !== 1 ? 's' : ''} desde la base de datos`;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => { toast.style.opacity = '1'; });
+  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3500);
+});
 (function() {
   let lastY = 0;
   let ticking = false;
