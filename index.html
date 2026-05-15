@@ -137,6 +137,9 @@
     transition:border-color .2s;
   }
   .dbsync-item.already-in { opacity:0.45; }
+  .dbsync-item.update-available { opacity:1; }
+  .dbsync-check.update-check { border-color:#e8a020; background:rgba(232,160,32,0.12); color:#e8a020; cursor:pointer; }
+  .dbsync-update-tag { font-size:9px; letter-spacing:1.5px; color:#e8a020; border:1px solid rgba(232,160,32,0.35); padding:2px 7px; flex-shrink:0; }
   .dbsync-item-bg {
     position:absolute; inset:0; background-size:cover; background-position:center;
     filter:blur(40px) brightness(0.15) saturate(1.6); transform:scale(1.2);
@@ -193,6 +196,7 @@
     .dbsync-score { font-size:15px; min-width:36px; }
     .dbsync-check { width:32px; height:32px; flex-shrink:0; font-size:14px; }
     .dbsync-already-tag { font-size:8px; padding:2px 5px; letter-spacing:1px; }
+    .dbsync-update-tag { font-size:8px; padding:2px 5px; letter-spacing:1px; }
     #dbsync-actions { flex-wrap:wrap; gap:8px; padding-top:14px; margin-top:14px; }
     #dbsync-select-all { flex:1; min-width:0; padding:10px 8px; font-size:9px; text-align:center; }
     #dbsync-import-btn { flex:2; min-width:0; padding:12px 10px; font-size:15px; letter-spacing:2px; text-align:center; }
@@ -1034,6 +1038,7 @@
 <header id="header">
   <div id="header-inner">
   <h1>ALBUM VAULT</h1>
+  <a href="https://rater-page.vercel.app/" style="display:inline-block;padding:5px 12px;border-radius:6px;border:1px solid rgba(200,240,96,0.3);background:rgba(200,240,96,0.07);color:#c8f060;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;text-decoration:none;letter-spacing:0.05em;">🎵 Ir al Rater</a>
   <div class="header-controls">
     <div id="header-search-wrap">
       <span id="header-search-icon">⌕</span>
@@ -3518,11 +3523,21 @@ async function fetchFromRaterDb() {
   }
 }
 
-function isAlreadyInVault(item) {
-  return albums.some(a =>
+function getVaultDuplicate(item) {
+  return albums.find(a =>
     a.title.trim().toLowerCase() === item.title.trim().toLowerCase() &&
     a.artist.trim().toLowerCase() === item.artist.trim().toLowerCase()
-  );
+  ) || null;
+}
+function isAlreadyInVault(item) {
+  const dup = getVaultDuplicate(item);
+  if (!dup) return false;
+  // Same score → truly already in, block it
+  return Math.abs(dup.score - item.score) < 0.001;
+}
+function isUpdateAvailable(item) {
+  const dup = getVaultDuplicate(item);
+  return dup && Math.abs(dup.score - item.score) >= 0.001;
 }
 
 function renderDbSyncList() {
@@ -3531,19 +3546,20 @@ function renderDbSyncList() {
 
   if (!dbSyncItems.length) return;
 
-  // Auto-select all not already in vault
+  // Auto-select all not already in vault (including updates)
   dbSyncSelected.clear();
   dbSyncItems.forEach((item, i) => {
     if (!isAlreadyInVault(item)) dbSyncSelected.add(i);
   });
 
   dbSyncItems.forEach((item, i) => {
-    const alreadyIn = isAlreadyInVault(item);
-    const selected  = dbSyncSelected.has(i);
-    const tier      = item.tier;
+    const alreadyIn    = isAlreadyInVault(item);
+    const updateAvail  = isUpdateAvailable(item);
+    const selected     = dbSyncSelected.has(i);
+    const tier         = item.tier;
 
     const div = document.createElement('div');
-    div.className = 'dbsync-item' + (alreadyIn ? ' already-in' : '');
+    div.className = 'dbsync-item' + (alreadyIn ? ' already-in' : updateAvail ? ' update-available' : '');
 
     if (item.coverUrl) {
       const bg = document.createElement('div');
@@ -3553,13 +3569,23 @@ function renderDbSyncList() {
     }
 
     const checkEl = document.createElement('div');
-    checkEl.className = 'dbsync-check' + (selected ? ' selected' : '') + (alreadyIn ? ' already-in-check' : '');
-    checkEl.textContent = selected || alreadyIn ? '✓' : '';
+    checkEl.className = 'dbsync-check' +
+      (alreadyIn  ? ' already-in-check' :
+       updateAvail ? ' update-check' + (selected ? ' selected' : '') :
+       (selected ? ' selected' : ''));
+    checkEl.textContent = (selected || alreadyIn) ? '✓' : (updateAvail ? '↑' : '');
 
     if (!alreadyIn) {
       checkEl.addEventListener('click', () => {
-        if (dbSyncSelected.has(i)) { dbSyncSelected.delete(i); checkEl.classList.remove('selected'); checkEl.textContent = ''; }
-        else { dbSyncSelected.add(i); checkEl.classList.add('selected'); checkEl.textContent = '✓'; }
+        if (dbSyncSelected.has(i)) {
+          dbSyncSelected.delete(i);
+          checkEl.classList.remove('selected');
+          checkEl.textContent = updateAvail ? '↑' : '';
+        } else {
+          dbSyncSelected.add(i);
+          checkEl.classList.add('selected');
+          checkEl.textContent = '✓';
+        }
         updateDbSyncCount();
       });
     }
@@ -3589,6 +3615,17 @@ function renderDbSyncList() {
       const tag = document.createElement('div');
       tag.className = 'dbsync-already-tag';
       tag.textContent = '✓ ya en Vault';
+      div.appendChild(checkEl);
+      div.appendChild(thumb);
+      div.appendChild(info);
+      div.appendChild(tierEl);
+      div.appendChild(scoreEl);
+      div.appendChild(tag);
+    } else if (updateAvail) {
+      const existing = getVaultDuplicate(item);
+      const tag = document.createElement('div');
+      tag.className = 'dbsync-update-tag';
+      tag.textContent = `↑ ${existing.score.toFixed(2)} → ${item.score.toFixed(2)}`;
       div.appendChild(checkEl);
       div.appendChild(thumb);
       div.appendChild(info);
@@ -3626,12 +3663,12 @@ function updateDbSyncCount() {
 
 // Select all / deselect all
 document.getElementById('dbsync-select-all').addEventListener('click', () => {
-  const allUnimported = dbSyncItems.map((item, i) => ({ item, i })).filter(({ item }) => !isAlreadyInVault(item));
-  const allSelected = allUnimported.every(({ i }) => dbSyncSelected.has(i));
+  const allSelectable = dbSyncItems.map((item, i) => ({ item, i })).filter(({ item }) => !isAlreadyInVault(item) || isUpdateAvailable(item));
+  const allSelected = allSelectable.every(({ i }) => dbSyncSelected.has(i));
   if (allSelected) {
-    allUnimported.forEach(({ i }) => dbSyncSelected.delete(i));
+    allSelectable.forEach(({ i }) => dbSyncSelected.delete(i));
   } else {
-    allUnimported.forEach(({ i }) => dbSyncSelected.add(i));
+    allSelectable.forEach(({ i }) => dbSyncSelected.add(i));
   }
   renderDbSyncList();
 });
@@ -3640,29 +3677,47 @@ document.getElementById('dbsync-select-all').addEventListener('click', () => {
 document.getElementById('dbsync-import-btn').addEventListener('click', () => {
   if (!dbSyncSelected.size) return;
 
-  let added = 0;
+  let added = 0, updated = 0;
   dbSyncSelected.forEach(i => {
     const item = dbSyncItems[i];
-    if (!item || isAlreadyInVault(item)) return;
+    if (!item) return;
 
-    albums.push({
-      id:          Date.now() + Math.random(),
-      title:       item.title,
-      artist:      item.artist,
-      year:        item.year,
-      score:       item.score,
-      coverUrl:    item.coverUrl,
-      genres:      item.genres,
-      status:      'listened',
-      listenDate:  item.listenDate,
-      addedAt:     item.addedAt,
-      tracks:      item.tracks,
-      notes:       item.notes,
-      replays:     [],
-      scoreHistory:[{ score: item.score, date: item.listenDate, label: 'Importado desde Rater DB' }],
-      _dbId:       item._dbId,
-    });
-    added++;
+    const existing = getVaultDuplicate(item);
+
+    if (existing && Math.abs(existing.score - item.score) < 0.001) return; // truly same, skip
+
+    if (existing) {
+      // Update in place — overwrite score, tier, tracks, listenDate; preserve id, notes, replays
+      existing.score       = item.score;
+      existing.year        = item.year;
+      existing.coverUrl    = item.coverUrl;
+      existing.genres      = item.genres;
+      existing.listenDate  = item.listenDate;
+      existing.tracks      = item.tracks;
+      if (item.notes) existing.notes = item.notes;
+      existing.scoreHistory = existing.scoreHistory || [];
+      existing.scoreHistory.push({ score: item.score, date: item.listenDate, label: 'Re-score desde Rater DB' });
+      updated++;
+    } else {
+      albums.push({
+        id:          Date.now() + Math.random(),
+        title:       item.title,
+        artist:      item.artist,
+        year:        item.year,
+        score:       item.score,
+        coverUrl:    item.coverUrl,
+        genres:      item.genres,
+        status:      'listened',
+        listenDate:  item.listenDate,
+        addedAt:     item.addedAt,
+        tracks:      item.tracks,
+        notes:       item.notes,
+        replays:     [],
+        scoreHistory:[{ score: item.score, date: item.listenDate, label: 'Importado desde Rater DB' }],
+        _dbId:       item._dbId,
+      });
+      added++;
+    }
   });
 
   saveAlbums();
@@ -3670,10 +3725,12 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
   refreshGenreFilter();
   closeDbSync();
 
-  // Toast
+  const parts = [];
+  if (added)   parts.push(`${added} importado${added !== 1 ? 's' : ''}`);
+  if (updated) parts.push(`${updated} actualizado${updated !== 1 ? 's' : ''}`);
   const toast = document.createElement('div');
   toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#3ab870;color:#000;font-family:"DM Mono",monospace;font-size:12px;font-weight:600;padding:10px 24px;letter-spacing:1px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s';
-  toast.textContent = `☁ ${added} álbum${added !== 1 ? 'es' : ''} importado${added !== 1 ? 's' : ''} desde la base de datos`;
+  toast.textContent = `☁ ${parts.join(' · ')} desde la base de datos`;
   document.body.appendChild(toast);
   requestAnimationFrame(() => { toast.style.opacity = '1'; });
   setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3500);
