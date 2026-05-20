@@ -34,7 +34,17 @@
     transform: translateY(0);
     transition: transform .3s cubic-bezier(.4,0,.2,1);
   }
-  #header.hidden { transform: translateY(-100%); }
+  #header-scroll-left, #header-scroll-right {
+    position:fixed; top:0; z-index:101; height:var(--header-h, 54px);
+    width:32px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:14px; color:rgba(255,255,255,0.5);
+    transition:color .2s, opacity .2s; border:none; background:none; padding:0;
+  }
+  #header-scroll-left  { left:0;  background:linear-gradient(90deg,rgba(10,10,10,.95),transparent); }
+  #header-scroll-right { right:0; background:linear-gradient(270deg,rgba(10,10,10,.95),transparent); }
+  #header-scroll-left:hover, #header-scroll-right:hover { color:#fff; }
+  #header-scroll-left.hidden, #header-scroll-right.hidden { opacity:0; pointer-events:none; }
+  @media (max-width:768px) { #header-scroll-left, #header-scroll-right { display:none; } }
   #header::-webkit-scrollbar { display:none; }
   #header-inner {
     display:flex; align-items:center; gap:14px;
@@ -173,6 +183,13 @@
   }
   #dbsync-import-btn:hover { opacity:0.85; }
   #dbsync-import-btn:disabled { opacity:0.3; cursor:not-allowed; }
+  #dbsync-update-scores-btn {
+    background:none; border:1px solid rgba(232,160,32,0.4); color:#e8a020;
+    padding:8px 14px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1.5px;
+    text-transform:uppercase; cursor:pointer; transition:all .2s;
+  }
+  #dbsync-update-scores-btn:hover { border-color:#e8a020; background:rgba(232,160,32,0.08); }
+  #dbsync-update-scores-btn:disabled { opacity:0.4; cursor:not-allowed; }
   #dbsync-count { font-size:11px; color:var(--muted); margin-left:auto; }
 
   /* ── DB SYNC MODAL — MOBILE ── */
@@ -200,6 +217,7 @@
     #dbsync-actions { flex-wrap:wrap; gap:8px; padding-top:14px; margin-top:14px; }
     #dbsync-select-all { flex:1; min-width:0; padding:10px 8px; font-size:9px; text-align:center; }
     #dbsync-import-btn { flex:2; min-width:0; padding:12px 10px; font-size:15px; letter-spacing:2px; text-align:center; }
+    #dbsync-update-scores-btn { flex:1; min-width:0; padding:10px 8px; font-size:9px; text-align:center; }
     #dbsync-count { width:100%; text-align:center; margin-left:0; margin-top:4px; font-size:10px; }
   }
 
@@ -1045,7 +1063,7 @@
       <input type="text" id="header-search" placeholder="Search vault…">
     </div>
     <select id="genre-filter"><option value="">All genres</option></select>
-    <select id="status-filter">
+    <select id="status-filter" style="display:none;">
       <option value="">All status</option>
       <option value="listened">Escuchado</option>
       <option value="in-progress">A medias</option>
@@ -1067,13 +1085,13 @@
     <button id="export-btn" title="Export data as JSON">↓ Export</button>
     <button id="img-export-btn" title="Export as high-res image">⬡ Image</button>
     <button id="import-btn" title="Import JSON backup">↑ Import</button>
-    <button id="rater-import-btn" title="Import from Album Rater">🎵 From Rater</button>
+    <button id="rater-import-btn" title="Import from Album Rater" style="display:none;">🎵 From Rater</button>
     <input type="file" id="import-file" accept=".json" style="display:none">
     <input type="file" id="rater-import-file" accept=".json" style="display:none">
     <button id="stats-btn">Stats</button>
     <button id="top10-btn">Top 10</button>
-    <button id="pending-btn">Pending</button>
-    <button id="compare-btn">Compare</button>
+    <button id="pending-btn" style="display:none;">Pending</button>
+    <button id="compare-btn" style="display:none;">Compare</button>
     <button id="load-db-btn" title="Cargar álbumes desde la base de datos del Album Rater">☁ Load from DB</button>
     <button id="add-btn">+ ADD</button>
   </div>
@@ -1360,6 +1378,7 @@
     <div id="dbsync-actions" style="display:none">
       <button id="dbsync-select-all">Seleccionar todos</button>
       <button id="dbsync-import-btn" disabled>⬇ Importar seleccionados</button>
+      <button id="dbsync-update-scores-btn" onclick="updateAllTrackScores()" title="Actualiza solo los scores de tracks de los álbumes ya importados">🔄 Actualizar scores de tracks</button>
       <span id="dbsync-count"></span>
     </div>
   </div>
@@ -1991,9 +2010,14 @@ function openDetail(album, originEl) {
       const item = document.createElement('div');
       item.className = 'track-item';
       if (isLegendary) item.style.cssText = 'background:rgba(255,140,0,0.05);border-left:2px solid #ff8c00;padding-left:6px;';
+      const trackScore = album.trackScores ? album.trackScores[name] : null;
+      const scoreHtml = (!isNaN(trackScore) && trackScore !== null)
+        ? `<span style="font-family:'DM Mono',monospace;font-size:11px;color:${trackScore >= 9.5 ? '#c8f060' : trackScore >= 8.5 ? '#60d0f0' : trackScore >= 7 ? '#f0a030' : 'var(--muted)'};margin-left:auto;padding-right:4px;flex-shrink:0;">${parseFloat(trackScore).toFixed(1)}</span>`
+        : '';
       item.innerHTML = `
         <span class="track-num">${String(i+1).padStart(2,'0')}</span>
         <span class="track-name" style="${isLegendary ? 'color:#ffd700;font-weight:600' : ''}">${isLegendary ? '⚡ ' : ''}${escHtml(name)}</span>
+        ${scoreHtml}
         <button class="track-legendary-btn" title="${isLegendary ? 'Quitar 11' : 'Marcar como 11 legendario'}" style="background:none;border:none;cursor:pointer;font-size:12px;padding:2px 6px;opacity:${isLegendary ? '1' : '0.2'};transition:opacity .2s">⚡</button>
         <button class="track-fav-btn${isFav ? ' is-fav' : ''}" title="${isFav ? 'Remove fav' : 'Mark as fav'}">★</button>`;
       item.querySelector('.track-legendary-btn').addEventListener('click', e => {
@@ -3452,6 +3476,69 @@ document.getElementById('dbsync-close').addEventListener('click', closeDbSync);
 document.getElementById('dbsync-backdrop').addEventListener('click', e => {
   if (e.target === document.getElementById('dbsync-backdrop')) closeDbSync();
 });
+
+function updateAllTrackScores() {
+  const btn = document.getElementById('dbsync-update-scores-btn');
+  btn.disabled = true;
+  btn.textContent = '⌛ Actualizando…';
+
+  // Safety timeout — reset after 5s if stuck
+  const timeout = setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = '🔄 Actualizar scores de tracks';
+  }, 5000);
+
+  let updated = 0;
+  try {
+    dbSyncItems.forEach(item => {
+      if (!item.trackScores || !Object.keys(item.trackScores).length) return;
+      const existing = albums.find(a =>
+        a.title.trim().toLowerCase()  === item.title.trim().toLowerCase() &&
+        a.artist.trim().toLowerCase() === item.artist.trim().toLowerCase()
+      );
+      if (!existing) return;
+      existing.trackScores = item.trackScores;
+      updated++;
+    });
+
+    if (updated) {
+      saveAlbums();
+      showToast(`✓ ${updated} álbum${updated !== 1 ? 'es' : ''} actualizados`);
+    } else {
+      showToast('No se encontraron álbumes para actualizar');
+    }
+  } catch(e) {
+    console.error(e);
+    showToast('Error al actualizar');
+  }
+
+  clearTimeout(timeout);
+  btn.disabled = false;
+  btn.textContent = '🔄 Actualizar scores de tracks';
+}
+
+function scrollHeader(dir) {
+  const h = document.getElementById('header');
+  h.scrollBy({ left: dir * 200, behavior: 'smooth' });
+}
+
+function updateHeaderArrows() {
+  const h  = document.getElementById('header');
+  const bl = document.getElementById('header-scroll-left');
+  const br = document.getElementById('header-scroll-right');
+  if (!h || !bl || !br) return;
+  bl.classList.toggle('hidden', h.scrollLeft <= 4);
+  br.classList.toggle('hidden', h.scrollLeft + h.clientWidth >= h.scrollWidth - 4);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const h = document.getElementById('header');
+  if (h) {
+    h.addEventListener('scroll', updateHeaderArrows);
+    updateHeaderArrows();
+  }
+});
+
 function closeDbSync() {
   document.getElementById('dbsync-backdrop').classList.remove('open');
   document.body.style.overflow = '';
@@ -3506,6 +3593,7 @@ async function fetchFromRaterDb() {
         tier,
         finalRank: row.final_rank || tier?.label || '',
         tracks:    Array.isArray(row.tracks) ? row.tracks.map(t => t.name || '').filter(Boolean) : [],
+        trackScores: Array.isArray(row.tracks) ? Object.fromEntries(row.tracks.filter(t => t.name && t.score !== '').map(t => [t.name.trim(), parseFloat(t.score)])) : {},
         notes:     row.notes || '',
         listenDate: row.created_at ? new Date(row.created_at).toISOString().slice(0,10) : '',
         addedAt:   row.created_at ? new Date(row.created_at).getTime() : Date.now(),
@@ -3694,6 +3782,10 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
       existing.genres      = item.genres;
       existing.listenDate  = item.listenDate;
       existing.tracks      = item.tracks;
+      existing.trackScores = Array.isArray(item.trackScores) ? item.trackScores : 
+        (Array.isArray(item.tracks) ? Object.fromEntries(
+          (typeof item.tracks[0] === 'object' ? item.tracks : []).filter(t => t.name && t.score !== '').map(t => [t.name.trim(), parseFloat(t.score)])
+        ) : {});
       if (item.notes) existing.notes = item.notes;
       existing.scoreHistory = existing.scoreHistory || [];
       existing.scoreHistory.push({ score: item.score, date: item.listenDate, label: 'Re-score desde Rater DB' });
@@ -3711,6 +3803,7 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
         listenDate:  item.listenDate,
         addedAt:     item.addedAt,
         tracks:      item.tracks,
+        trackScores: item.trackScores || {},
         notes:       item.notes,
         replays:     [],
         scoreHistory:[{ score: item.score, date: item.listenDate, label: 'Importado desde Rater DB' }],
