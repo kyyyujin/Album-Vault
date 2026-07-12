@@ -3455,7 +3455,7 @@ document.getElementById('btn-score-history').addEventListener('click', () => {
 });
 
 // ── LOAD FROM RATER DB ──
-const RATER_BOT_SERVER = 'https://album-rater-bot-production.up.railway.app';
+const RATER_BOT_SERVER = 'https://album-rater-bot.onrender.com';
 let dbSyncItems = []; // fetched from server
 let dbSyncSelected = new Set(); // indices selected by user
 
@@ -3565,8 +3565,28 @@ async function fetchFromRaterDb() {
   dbSyncSelected.clear();
 
   try {
-    const res = await fetch(`${RATER_BOT_SERVER}/history?user_id=${encodeURIComponent(userId)}`);
-    if (!res.ok) throw new Error(`Error del servidor: ${res.status}`);
+    let res;
+    const statusEl = document.getElementById('dbsync-status');
+
+    // Try fetching — if it fails (Render sleeping), wait and retry
+    const attemptFetch = async (attempt) => {
+      if (attempt > 1) {
+        statusEl.textContent = `⏳ El servidor está despertando… intentando de nuevo (${attempt}/3)`;
+        await new Promise(r => setTimeout(r, attempt === 2 ? 8000 : 12000));
+      }
+      return fetch(`${RATER_BOT_SERVER}/history?user_id=${encodeURIComponent(userId)}`, { signal: AbortSignal.timeout(25000) });
+    };
+
+    for (let i = 1; i <= 3; i++) {
+      try {
+        res = await attemptFetch(i);
+        if (res.ok) break;
+      } catch(e) {
+        if (i === 3) throw e;
+      }
+    }
+
+    if (!res || !res.ok) throw new Error(`Error del servidor: ${res?.status}`);
     const rows = await res.json();
     if (!Array.isArray(rows) || !rows.length) {
       document.getElementById('dbsync-status').textContent = 'No se encontraron álbumes para ese usuario.';
@@ -3606,7 +3626,7 @@ async function fetchFromRaterDb() {
     renderDbSyncList();
     btn.disabled = false; btn.textContent = '🔍 Buscar';
   } catch(e) {
-    document.getElementById('dbsync-status').textContent = '⚠ Error al conectar con el servidor. Revisá tu conexión.';
+    document.getElementById('dbsync-status').textContent = '⚠ No se pudo conectar con el servidor. Intentá de nuevo en unos segundos.';
     btn.disabled = false; btn.textContent = '🔍 Buscar';
   }
 }
