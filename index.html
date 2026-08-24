@@ -1,3 +1,4 @@
+<!-- Album Vault v2.2.0 -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -1053,9 +1054,50 @@
 </head>
 <body>
 
+<!-- ── AUTH OVERLAY (Discord) ── -->
+<div id="auth-overlay" style="position:fixed;inset:0;background:#000000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+  <div style="position:relative;z-index:1;width:min(340px,90vw);padding:32px 28px;background:#111116;border:1px solid #26262e;border-radius:16px;">
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:0.05em;text-align:center;color:#c8f060;margin:0 0 4px;line-height:1;">ALBUM<br>VAULT</h2>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:24px;">
+      <div id="auth-error" style="font-size:11px;color:#e05050;font-family:'DM Mono',monospace;display:none;text-align:center;"></div>
+      <button id="discord-auth-btn" onclick="startDiscordAuth()" type="button"
+        style="display:flex;align-items:center;justify-content:center;gap:10px;background:#5865F2;color:#fff;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;letter-spacing:0.05em;padding:13px;border-radius:8px;border:none;cursor:pointer;transition:opacity .2s;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.07.07 0 0 0-.032.027C.533 9.045-.32 13.579.099 18.057a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.927 1.793 8.18 1.793 12.061 0a.073.073 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.128 12.3 12.3 0 0 1-1.873.891.076.076 0 0 0-.04.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.001-3.03.077.077 0 0 0 .032-.055c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.331c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.211 0 2.176 1.096 2.157 2.42 0 1.332-.955 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.332-.946 2.418-2.157 2.418z"/></svg>
+        Continuar con Discord
+      </button>
+      <p style="font-size:10px;color:#666;text-align:center;font-family:'DM Mono',monospace;line-height:1.5;margin:0;">
+        Iniciá sesión con tu cuenta de Discord.<br>Se usará tu nombre y foto de perfil.
+      </p>
+    </div>
+
+    <!-- Formulario de vinculación: se muestra solo cuando el nombre de Discord no coincide con ninguna cuenta vieja -->
+    <div id="discord-link-form" style="display:none;flex-direction:column;gap:12px;margin-top:20px;padding-top:20px;border-top:1px solid #2a2a2a;">
+      <p style="font-size:12px;color:#ccc;text-align:center;font-family:'DM Mono',monospace;line-height:1.5;margin:0;">
+        No encontramos una cuenta con tu nombre de Discord (<span id="discord-link-username" style="color:#c8f060;"></span>).<br>
+        Si ya tenías cuenta con otro nombre, escribila para conservar tus datos:
+      </p>
+      <input id="discord-link-legacy-username" type="text" placeholder="Tu username anterior (opcional)" autocomplete="off"
+        style="background:#1a1a2a;border:1px solid #2a2a3a;color:#fff;font-family:'DM Mono',monospace;font-size:13px;padding:12px 14px;border-radius:8px;outline:none;width:100%;box-sizing:border-box;" />
+      <button id="discord-link-submit" onclick="submitDiscordLink()" type="button"
+        style="background:#c8f060;color:#0d0d0f;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.1em;padding:13px;border-radius:8px;border:none;cursor:pointer;">
+        VINCULAR CUENTA
+      </button>
+      <button onclick="submitDiscordLink(true)" type="button"
+        style="background:none;color:#888;font-family:'DM Mono',monospace;font-size:11px;padding:8px;border-radius:8px;border:1px solid #2a2a3a;cursor:pointer;">
+        No tenía cuenta antes — crear una nueva
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="main-app" style="display:none;">
 <header id="header">
   <div id="header-inner">
   <h1>ALBUM VAULT</h1>
+  <div id="user-session-chip" style="display:none;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:20px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.3);cursor:pointer;" onclick="logoutVaultAuth()" title="Cerrar sesión">
+    <img id="user-session-avatar" src="" alt="" style="width:22px;height:22px;border-radius:50%;object-fit:cover;display:block;" />
+    <span id="user-session-name" style="font-family:'DM Mono',monospace;font-size:11px;color:#c8c8e0;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+  </div>
   <a href="https://rater-page.vercel.app/" style="display:inline-block;padding:5px 12px;border-radius:6px;border:1px solid rgba(200,240,96,0.3);background:rgba(200,240,96,0.07);color:#c8f060;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;text-decoration:none;letter-spacing:0.05em;">🎵 Ir al Rater</a>
   <div class="header-controls">
     <div id="header-search-wrap">
@@ -1385,6 +1427,235 @@
 </div>
 
 <script>
+// ── AUTH (Discord OAuth) — mismo backend y flujo que Album Rater ──
+const BOT_SERVER = 'https://album-rater-bot.onrender.com';
+const DISCORD_AVATAR_KEY = 'discord_avatar_url';
+let pendingDiscordToken = null;
+
+async function startDiscordAuth() {
+  const errEl = document.getElementById('auth-error');
+  const btn   = document.getElementById('discord-auth-btn');
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  try {
+    const res  = await fetch(`${BOT_SERVER}/auth/discord/start?return_to=${encodeURIComponent(location.origin + location.pathname)}`);
+    const data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'No se pudo iniciar Discord');
+    location.href = data.url;
+  } catch (e) {
+    errEl.textContent = 'No se pudo conectar con Discord. Intentá de nuevo.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+  }
+}
+
+function handleDiscordAuthCallback() {
+  const params    = new URLSearchParams(location.search);
+  const token     = params.get('auth_token');
+  const username  = params.get('discord_username');
+  const discordId = params.get('discord_user_id');
+  const avatar    = params.get('discord_avatar');
+  const authError = params.get('auth_error');
+  const pending   = params.get('discord_pending');
+
+  if (authError) {
+    showAuthOverlay();
+    const errEl = document.getElementById('auth-error');
+    errEl.textContent = decodeURIComponent(authError);
+    errEl.style.display = 'block';
+    cleanAuthQueryParams();
+    return true;
+  }
+
+  if (pending) {
+    showAuthOverlay();
+    pendingDiscordToken = pending;
+    document.getElementById('discord-link-username').textContent = username || '';
+    document.getElementById('discord-link-form').style.display = 'flex';
+    document.getElementById('discord-auth-btn').style.display = 'none';
+    cleanAuthQueryParams();
+    return true;
+  }
+
+  if (token && username) {
+    localStorage.setItem('auth_token', token);
+    localStorage.setItem('discord_user_id', discordId || username);
+    if (avatar) localStorage.setItem(DISCORD_AVATAR_KEY, avatar);
+    cleanAuthQueryParams();
+    return true;
+  }
+  return false;
+}
+
+function cleanAuthQueryParams() {
+  const url = new URL(location.href);
+  ['auth_token', 'discord_username', 'discord_user_id', 'discord_avatar', 'auth_error'].forEach(k => url.searchParams.delete(k));
+  history.replaceState({}, '', url.pathname + (url.search ? url.search : '') + url.hash);
+}
+
+async function submitDiscordLink(skipLegacy) {
+  const errEl       = document.getElementById('auth-error');
+  const submitBtn   = document.getElementById('discord-link-submit');
+  const legacyInput = document.getElementById('discord-link-legacy-username');
+  const legacyUsername = skipLegacy ? '' : legacyInput.value.trim();
+
+  errEl.style.display = 'none';
+  submitBtn.disabled = true;
+
+  try {
+    const res  = await fetch(`${BOT_SERVER}/auth/discord/finish`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pending_token: pendingDiscordToken, legacy_username: legacyUsername })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errEl.textContent = data.error || 'Error desconocido';
+      errEl.style.display = 'block';
+      submitBtn.disabled = false;
+      return;
+    }
+    localStorage.setItem('auth_token', data.token);
+    localStorage.setItem('discord_user_id', data.username);
+    if (data.discord_avatar) localStorage.setItem(DISCORD_AVATAR_KEY, data.discord_avatar);
+    initVaultApp();
+  } catch (e) {
+    errEl.textContent = 'Error de conexión';
+    errEl.style.display = 'block';
+    submitBtn.disabled = false;
+  }
+}
+
+function showAuthOverlay() {
+  document.getElementById('auth-overlay').style.display = 'flex';
+  document.getElementById('main-app').style.display = 'none';
+}
+
+async function checkAuth() {
+  handleDiscordAuthCallback();
+  const token    = localStorage.getItem('auth_token');
+  const username = localStorage.getItem('discord_user_id');
+
+  if (token && username) {
+    document.getElementById('auth-overlay').style.display = 'none';
+    document.getElementById('main-app').style.display = 'block';
+    initVaultApp();
+    fetch(`${BOT_SERVER}/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token })
+    }).then(res => res.json()).then(data => {
+      if (!data.ok) { localStorage.removeItem('auth_token'); localStorage.removeItem('discord_user_id'); localStorage.removeItem(DISCORD_AVATAR_KEY); location.reload(); }
+    }).catch(() => { /* bot dormido — se mantiene la sesión */ });
+    return;
+  }
+  showAuthOverlay();
+}
+
+async function logoutVaultAuth() {
+  if (!confirm('¿Cerrar sesión?')) return;
+  const token = localStorage.getItem('auth_token');
+  await flushVaultCollectionSync();
+  if (token) {
+    try {
+      await fetch(`${BOT_SERVER}/auth/logout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      });
+    } catch (e) {}
+  }
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('discord_user_id');
+  localStorage.removeItem(DISCORD_AVATAR_KEY);
+  location.reload();
+}
+
+function renderUserSessionChip() {
+  const username = localStorage.getItem('discord_user_id');
+  const avatar   = localStorage.getItem(DISCORD_AVATAR_KEY);
+  const chipEl = document.getElementById('user-session-chip');
+  const imgEl  = document.getElementById('user-session-avatar');
+  const nameEl = document.getElementById('user-session-name');
+  if (!username || !chipEl) return;
+  nameEl.textContent = username;
+  if (avatar) { imgEl.src = avatar; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
+  chipEl.style.display = 'flex';
+}
+
+// ── Colección del Vault: sincronización con el backend (además de localStorage) ──
+let vaultSyncTimer = null;
+function queueVaultCollectionSync() {
+  const token = localStorage.getItem('auth_token');
+  if (!token) return;
+  clearTimeout(vaultSyncTimer);
+  vaultSyncTimer = setTimeout(() => { flushVaultCollectionSync(); }, 1500);
+}
+
+async function flushVaultCollectionSync(collectionOverride) {
+  clearTimeout(vaultSyncTimer);
+  const token = localStorage.getItem('auth_token');
+  if (!token) return;
+  const collection = collectionOverride || { albums, nowPlayingId };
+  try {
+    await fetch(`${BOT_SERVER}/vault-collection`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, collection })
+    });
+  } catch (e) { /* backend dormido o sin conexión — localStorage ya lo tiene igual */ }
+}
+
+async function fetchRemoteVaultCollection() {
+  const token = localStorage.getItem('auth_token');
+  if (!token) return null;
+  try {
+    const res  = await fetch(`${BOT_SERVER}/vault-collection/get`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token })
+    });
+    const data = await res.json();
+    return (res.ok && data.collection) ? data.collection : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+// El servidor manda siempre al iniciar sesión (mismo criterio que en Rater), así la
+// colección es consistente entre dispositivos y no se queda pegada a una copia vieja
+// de localStorage de una sesión anterior en este mismo navegador.
+async function syncVaultCollectionFromServer() {
+  const remote = await fetchRemoteVaultCollection();
+  if (!remote) return;
+  albums       = remote.albums       || [];
+  nowPlayingId = remote.nowPlayingId || null;
+  try { localStorage.setItem('album_vault_v3', JSON.stringify(remote)); } catch(e) {}
+  buildTiers();
+  updateNowPlayingBar();
+  refreshGenreFilter();
+}
+
+window.addEventListener('beforeunload', () => {
+  const token = localStorage.getItem('auth_token');
+  if (!token) return;
+  try {
+    const payload = JSON.stringify({ token, collection: { albums, nowPlayingId } });
+    navigator.sendBeacon(`${BOT_SERVER}/vault-collection`, new Blob([payload], { type: 'application/json' }));
+  } catch (e) {}
+});
+
+async function initVaultApp() {
+  renderUserSessionChip();
+  await syncVaultCollectionFromServer();
+  // El padding del header se calcula acá (no en window.load) porque hasta este punto
+  // el header estuvo oculto detrás del overlay de login, y su altura real habría sido 0.
+  const headerH = document.getElementById('header').getBoundingClientRect().height;
+  document.getElementById('tiers-container').style.paddingTop = headerH + 'px';
+  if (nowPlayingId) updateNowPlayingBar();
+  requestAnimationFrame(() => { observeNewElements(); updateActiveTierLabel(); });
+}
+
 // ── TIER CONFIG ──
 const TIERS = [
   { id:'SS', label:'SS', range:'10',           min:10,   max:10,   color:'#f5e642' },
@@ -1432,6 +1703,7 @@ function loadAlbums() {
 function saveAlbums() {
   try { localStorage.setItem('album_vault_v3', JSON.stringify({ albums, nowPlayingId })); }
   catch(e) { console.error('Storage error:', e); }
+  queueVaultCollectionSync();
 }
 
 // ── MUSICBRAINZ ──
@@ -3645,7 +3917,7 @@ function isAlreadyInVault(item) {
 }
 function isUpdateAvailable(item) {
   const dup = getVaultDuplicate(item);
-  return dup && Math.abs(dup.score - item.score) >= 0.001;
+  return dup && (parseFloat(item.score) - parseFloat(dup.score)) >= 0.001;
 }
 
 function renderDbSyncList() {
@@ -3792,23 +4064,36 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
 
     const existing = getVaultDuplicate(item);
 
-    if (existing && Math.abs(existing.score - item.score) < 0.001) return; // truly same, skip
+    if (existing && Math.abs(parseFloat(existing.score) - parseFloat(item.score)) < 0.001) return; // same, skip
 
     if (existing) {
-      // Update in place — overwrite score, tier, tracks, listenDate; preserve id, notes, replays
-      existing.score       = item.score;
+      // Save old score to history before updating
+      if (!existing.scoreHistory) existing.scoreHistory = [];
+      // Add old score entry if not already recorded
+      const lastEntry = existing.scoreHistory[existing.scoreHistory.length - 1];
+      if (!lastEntry || Math.abs(lastEntry.score - parseFloat(existing.score)) >= 0.001) {
+        existing.scoreHistory.push({
+          score: parseFloat(existing.score),
+          date:  existing.listenDate || new Date().toISOString().slice(0,10),
+          label: 'Antes del re-score'
+        });
+      }
+      // Add new score entry
+      existing.scoreHistory.push({
+        score: parseFloat(item.score),
+        date:  item.listenDate || new Date().toISOString().slice(0,10),
+        label: 'Re-score desde Rater DB'
+      });
+
+      // Update in place — preserve id, notes, replays, scoreHistory
+      existing.score       = parseFloat(item.score);
       existing.year        = item.year;
       existing.coverUrl    = item.coverUrl;
       existing.genres      = item.genres;
       existing.listenDate  = item.listenDate;
       existing.tracks      = item.tracks;
-      existing.trackScores = Array.isArray(item.trackScores) ? item.trackScores : 
-        (Array.isArray(item.tracks) ? Object.fromEntries(
-          (typeof item.tracks[0] === 'object' ? item.tracks : []).filter(t => t.name && t.score !== '').map(t => [t.name.trim(), parseFloat(t.score)])
-        ) : {});
+      existing.trackScores = item.trackScores || {};
       if (item.notes) existing.notes = item.notes;
-      existing.scoreHistory = existing.scoreHistory || [];
-      existing.scoreHistory.push({ score: item.score, date: item.listenDate, label: 'Re-score desde Rater DB' });
       updated++;
     } else {
       albums.push({
@@ -3816,7 +4101,7 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
         title:       item.title,
         artist:      item.artist,
         year:        item.year,
-        score:       item.score,
+        score:       parseFloat(item.score),
         coverUrl:    item.coverUrl,
         genres:      item.genres,
         status:      'listened',
@@ -3826,7 +4111,7 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
         trackScores: item.trackScores || {},
         notes:       item.notes,
         replays:     [],
-        scoreHistory:[{ score: item.score, date: item.listenDate, label: 'Importado desde Rater DB' }],
+        scoreHistory:[{ score: parseFloat(item.score), date: item.listenDate, label: 'Importado desde Rater DB' }],
         _dbId:       item._dbId,
       });
       added++;
@@ -3877,15 +4162,12 @@ window.addEventListener('scroll', () => {
 
 // ── INIT ──
 loadAlbums();
-// Set initial padding based on real header height, then trigger reveal
+checkAuth();
+// Wire up the reveal version globally after everything is loaded
 window.addEventListener('load', () => {
-  const headerH = document.getElementById('header').getBoundingClientRect().height;
-  document.getElementById('tiers-container').style.paddingTop = headerH + 'px';
-  if (nowPlayingId) updateNowPlayingBar();
-  // Wire up the reveal version globally after everything is loaded
   window.buildTiers = buildTiersWithReveal;
-  requestAnimationFrame(() => { observeNewElements(); updateActiveTierLabel(); });
 });
 </script>
+</div>
 </body>
 </html>
