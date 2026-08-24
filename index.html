@@ -3735,13 +3735,22 @@ document.getElementById('load-db-btn').addEventListener('click', () => {
   // Pre-fill username from localStorage if available
   const savedUser = localStorage.getItem('discord_user_id') || '';
   document.getElementById('dbsync-user-input').value = savedUser;
-  document.getElementById('dbsync-status').textContent = savedUser ? 'Presiona Buscar para cargar tus álbumes.' : '';
   document.getElementById('dbsync-list').innerHTML = '';
   document.getElementById('dbsync-actions').style.display = 'none';
   dbSyncItems = [];
   dbSyncSelected.clear();
   document.getElementById('dbsync-backdrop').classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  // Si ya hay sesión con Discord, no hace falta escribir el usuario ni tocar "Buscar":
+  // se sabe quién sos, así que se busca de una.
+  const loggedIn = !!localStorage.getItem('auth_token');
+  if (loggedIn && savedUser) {
+    document.getElementById('dbsync-status').textContent = 'Buscando tus álbumes…';
+    fetchFromRaterDb();
+  } else {
+    document.getElementById('dbsync-status').textContent = savedUser ? 'Presiona Buscar para cargar tus álbumes.' : '';
+  }
 });
 
 document.getElementById('dbsync-close').addEventListener('click', closeDbSync);
