@@ -1094,7 +1094,7 @@
 <header id="header">
   <div id="header-inner">
   <h1>ALBUM VAULT</h1>
-  <div id="user-session-chip" style="display:none;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:20px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.3);cursor:pointer;" onclick="logoutVaultAuth()" title="Cerrar sesión">
+  <div id="user-session-chip" style="display:none;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:20px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.3);cursor:pointer;" onclick="openProfileView()" title="Ver perfil">
     <img id="user-session-avatar" src="" alt="" style="width:22px;height:22px;border-radius:50%;object-fit:cover;display:block;" />
     <span id="user-session-name" style="font-family:'DM Mono',monospace;font-size:11px;color:#c8c8e0;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
   </div>
@@ -1152,6 +1152,93 @@
 </div>
 
 <div id="tiers-container"></div>
+
+<!-- ── VISTA DE PERFIL ── -->
+<div id="profile-view" style="display:none;">
+  <div id="profile-banner" style="position:relative;width:100%;height:220px;background:#15151b;background-size:cover;background-position:center;overflow:hidden;">
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.65) 100%);"></div>
+    <button id="profile-back-btn" title="Volver" style="position:absolute;top:14px;left:14px;z-index:2;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-size:16px;cursor:pointer;">←</button>
+    <button id="profile-banner-edit-btn" title="Cambiar banner" style="position:absolute;top:14px;right:14px;z-index:2;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">🖼 Banner</button>
+    <input type="file" id="profile-banner-file" accept="image/*" style="display:none;" />
+  </div>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 20px 60px;">
+    <div style="display:flex;align-items:flex-end;gap:16px;margin-top:-48px;position:relative;z-index:2;">
+      <img id="profile-avatar-img" src="" alt="" style="width:96px;height:96px;border-radius:50%;object-fit:cover;border:4px solid var(--bg,#0d0d0f);background:#1a1a2a;" />
+      <div style="flex:1;padding-bottom:6px;">
+        <div id="profile-username" style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:0.03em;color:#fff;"></div>
+      </div>
+      <button id="profile-bio-edit-btn" style="margin-bottom:6px;padding:6px 14px;border-radius:6px;border:1px solid rgba(200,240,96,0.3);background:rgba(200,240,96,0.07);color:#c8f060;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">✎ Editar perfil</button>
+    </div>
+
+    <p id="profile-bio-display" style="margin:18px 0 0;color:#aaa;font-size:13px;line-height:1.6;font-family:'DM Mono',monospace;white-space:pre-wrap;"></p>
+
+    <!-- Editor de bio (oculto hasta tocar "Editar perfil") -->
+    <div id="profile-bio-editor" style="display:none;margin-top:18px;flex-direction:column;gap:10px;">
+      <textarea id="profile-bio-input" maxlength="280" placeholder="Escribí algo sobre vos y tu gusto musical…" style="width:100%;box-sizing:border-box;min-height:90px;background:#15151b;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;padding:12px;resize:vertical;"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button id="profile-bio-cancel-btn" style="padding:8px 16px;border-radius:6px;border:1px solid #333;background:none;color:#999;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">Cancelar</button>
+        <button id="profile-bio-save-btn" style="padding:8px 16px;border-radius:6px;border:none;background:#c8f060;color:#0d0d0f;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;">Guardar</button>
+      </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px;">
+      <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
+        <div id="profile-stat-total" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:#c8f060;">0</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">ÁLBUMES</div>
+      </div>
+      <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
+        <div id="profile-stat-avg" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:#c8f060;">–</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">PROMEDIO</div>
+      </div>
+      <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
+        <div id="profile-stat-genre" style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#c8f060;line-height:1.2;margin-top:4px;">–</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">GÉNERO FAVORITO</div>
+      </div>
+    </div>
+
+    <!-- Favoritos (elegidos a mano) -->
+    <div style="margin-top:32px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.05em;color:#fff;margin:0;">⭐ Favoritos</h3>
+        <button id="profile-edit-pinned-btn" style="padding:5px 12px;border-radius:6px;border:1px solid #333;background:none;color:#999;font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;">✎ Editar</button>
+      </div>
+      <div id="profile-pinned-row" style="display:flex;gap:10px;overflow-x:auto;margin-top:12px;padding-bottom:4px;"></div>
+      <p id="profile-pinned-empty" style="display:none;color:#666;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no elegiste favoritos. Tocá "Editar" para elegir hasta 10.</p>
+    </div>
+
+    <!-- Top 10 mejor rateados -->
+    <div style="margin-top:32px;">
+      <h3 style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.05em;color:#fff;margin:0 0 12px;">🏆 Top 10 mejor rateados</h3>
+      <div id="profile-top10-row" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;"></div>
+    </div>
+
+    <!-- Últimos rateados -->
+    <div style="margin-top:32px;">
+      <h3 style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.05em;color:#fff;margin:0 0 12px;">🕘 Últimos rateados</h3>
+      <div id="profile-recent-row" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;"></div>
+    </div>
+
+    <div style="margin-top:40px;text-align:center;">
+      <span onclick="logoutVaultAuth()" style="color:#e05050;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">Cerrar sesión</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para elegir favoritos (checklist sobre toda la colección) -->
+<div id="pinned-picker-backdrop" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#15151b;border:1px solid #2a2a3a;border-radius:12px;max-width:480px;width:100%;max-height:80vh;display:flex;flex-direction:column;">
+    <div style="padding:16px 18px;border-bottom:1px solid #22222a;display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="margin:0;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;">Elegir favoritos <span style="color:#666;font-size:12px;font-family:'DM Mono',monospace;">(máx. 10)</span></h3>
+      <button id="pinned-picker-close-btn" style="background:none;border:none;color:#999;font-size:18px;cursor:pointer;">×</button>
+    </div>
+    <div id="pinned-picker-list" style="overflow-y:auto;padding:10px 18px;flex:1;"></div>
+    <div style="padding:14px 18px;border-top:1px solid #22222a;">
+      <button id="pinned-picker-save-btn" style="width:100%;padding:12px;border-radius:8px;border:none;background:#c8f060;color:#0d0d0f;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;">Guardar favoritos</button>
+    </div>
+  </div>
+</div>
 
 <div id="scroll-hint">
   <div class="clock-ring">
@@ -1648,6 +1735,9 @@ window.addEventListener('beforeunload', () => {
 async function initVaultApp() {
   renderUserSessionChip();
   await syncVaultCollectionFromServer();
+  await syncVaultProfileFromServer();
+  document.getElementById('profile-avatar-img').src = localStorage.getItem(DISCORD_AVATAR_KEY) || '';
+  document.getElementById('profile-username').textContent = localStorage.getItem('discord_user_id') || '';
   // El padding del header se calcula acá (no en window.load) porque hasta este punto
   // el header estuvo oculto detrás del overlay de login, y su altura real habría sido 0.
   const headerH = document.getElementById('header').getBoundingClientRect().height;
@@ -1655,6 +1745,185 @@ async function initVaultApp() {
   if (nowPlayingId) updateNowPlayingBar();
   requestAnimationFrame(() => { observeNewElements(); updateActiveTierLabel(); });
 }
+
+// ══════════════════ PERFIL ══════════════════
+
+let vaultProfile = { banner: null, bio: '', pinned: [] };
+
+async function syncVaultProfileFromServer() {
+  const token = localStorage.getItem('auth_token');
+  if (!token) return;
+  try {
+    const res  = await fetch(`${BOT_SERVER}/vault-profile/get`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token })
+    });
+    const data = await res.json();
+    if (res.ok && data.profile) vaultProfile = { banner: null, bio: '', pinned: [], ...data.profile };
+  } catch (e) { /* backend dormido o sin conexión — se usa el default local */ }
+}
+
+async function saveVaultProfile() {
+  const token = localStorage.getItem('auth_token');
+  if (!token) return;
+  try {
+    await fetch(`${BOT_SERVER}/vault-profile`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, profile: vaultProfile })
+    });
+  } catch (e) { /* backend dormido o sin conexión — se reintenta en la próxima edición */ }
+}
+
+function openProfileView() {
+  document.getElementById('tiers-container').style.display = 'none';
+  document.getElementById('profile-view').style.display = 'block';
+  document.getElementById('profile-banner').style.backgroundImage = vaultProfile.banner ? `url(${vaultProfile.banner})` : '';
+  document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripción todavía.';
+  renderProfileStats();
+  renderProfileAlbumRows();
+  window.scrollTo(0, 0);
+}
+
+function closeProfileView() {
+  document.getElementById('profile-view').style.display = 'none';
+  document.getElementById('tiers-container').style.display = '';
+}
+
+document.getElementById('profile-back-btn').addEventListener('click', closeProfileView);
+
+// ── Banner ──
+document.getElementById('profile-banner-edit-btn').addEventListener('click', () => {
+  document.getElementById('profile-banner-file').click();
+});
+document.getElementById('profile-banner-file').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      // Redimensionar antes de guardar, para no mandar imágenes gigantes a la DB.
+      const maxW = 1200;
+      const scale = Math.min(1, maxW / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width  = img.width  * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      vaultProfile.banner = canvas.toDataURL('image/jpeg', 0.82);
+      document.getElementById('profile-banner').style.backgroundImage = `url(${vaultProfile.banner})`;
+      saveVaultProfile();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+
+// ── Bio ──
+document.getElementById('profile-bio-edit-btn').addEventListener('click', () => {
+  document.getElementById('profile-bio-input').value = vaultProfile.bio || '';
+  document.getElementById('profile-bio-editor').style.display = 'flex';
+  document.getElementById('profile-bio-display').style.display = 'none';
+});
+document.getElementById('profile-bio-cancel-btn').addEventListener('click', () => {
+  document.getElementById('profile-bio-editor').style.display = 'none';
+  document.getElementById('profile-bio-display').style.display = 'block';
+});
+document.getElementById('profile-bio-save-btn').addEventListener('click', () => {
+  vaultProfile.bio = document.getElementById('profile-bio-input').value.trim();
+  document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripción todavía.';
+  document.getElementById('profile-bio-editor').style.display = 'none';
+  document.getElementById('profile-bio-display').style.display = 'block';
+  saveVaultProfile();
+});
+
+// ── Estadísticas ──
+function renderProfileStats() {
+  const total = albums.length;
+  document.getElementById('profile-stat-total').textContent = total;
+
+  const avg = total ? (albums.reduce((s, a) => s + (Number(a.score) || 0), 0) / total) : null;
+  document.getElementById('profile-stat-avg').textContent = avg !== null ? avg.toFixed(2) : '–';
+
+  const genreCounts = {};
+  albums.forEach(a => (a.genres || []).forEach(g => { genreCounts[g] = (genreCounts[g] || 0) + 1; }));
+  const topGenre = Object.entries(genreCounts).sort((a, b) => b[1] - a[1])[0];
+  document.getElementById('profile-stat-genre').textContent = topGenre ? topGenre[0] : '–';
+}
+
+// ── Filas de álbumes (favoritos / top10 / recientes) ──
+function albumMiniCard(album) {
+  const tier = getTier(album.score);
+  const div = document.createElement('div');
+  div.style.cssText = 'flex:0 0 108px;cursor:pointer;';
+  div.innerHTML = `
+    <img src="${escHtml(album.coverUrl||'')}" alt="${escHtml(album.title)}"
+      style="width:108px;height:108px;border-radius:8px;object-fit:cover;background:#1a1a2a;display:block;" />
+    <div style="margin-top:6px;font-family:'DM Mono',monospace;font-size:10px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(album.title)}</div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:${tier ? tier.color : '#666'};">${album.score}</div>
+  `;
+  div.addEventListener('click', () => { closeProfileView(); openDetail(album); });
+  return div;
+}
+
+function renderProfileAlbumRows() {
+  // Top 10
+  const top10Row = document.getElementById('profile-top10-row');
+  top10Row.innerHTML = '';
+  [...albums].sort((a, b) => b.score - a.score).slice(0, 10).forEach(a => top10Row.appendChild(albumMiniCard(a)));
+
+  // Últimos rateados (por listenDate si existe, si no por orden de creación/id)
+  const recentRow = document.getElementById('profile-recent-row');
+  recentRow.innerHTML = '';
+  [...albums].sort((a, b) => {
+    const da = a.listenDate ? new Date(a.listenDate).getTime() : 0;
+    const db = b.listenDate ? new Date(b.listenDate).getTime() : 0;
+    return db - da;
+  }).slice(0, 10).forEach(a => recentRow.appendChild(albumMiniCard(a)));
+
+  // Favoritos elegidos a mano
+  const pinnedRow   = document.getElementById('profile-pinned-row');
+  const pinnedEmpty = document.getElementById('profile-pinned-empty');
+  pinnedRow.innerHTML = '';
+  const pinnedAlbums = (vaultProfile.pinned || []).map(id => albums.find(a => a.id === id)).filter(Boolean);
+  if (pinnedAlbums.length) {
+    pinnedEmpty.style.display = 'none';
+    pinnedAlbums.forEach(a => pinnedRow.appendChild(albumMiniCard(a)));
+  } else {
+    pinnedEmpty.style.display = 'block';
+  }
+}
+
+// ── Editor de favoritos ──
+document.getElementById('profile-edit-pinned-btn').addEventListener('click', () => {
+  const list = document.getElementById('pinned-picker-list');
+  list.innerHTML = '';
+  const current = new Set(vaultProfile.pinned || []);
+  [...albums].sort((a, b) => b.score - a.score).forEach(a => {
+    const row = document.createElement('label');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #1e1e24;cursor:pointer;';
+    row.innerHTML = `
+      <input type="checkbox" data-id="${a.id}" ${current.has(a.id) ? 'checked' : ''} style="width:16px;height:16px;flex-shrink:0;" />
+      <img src="${escHtml(a.coverUrl||'')}" style="width:34px;height:34px;border-radius:4px;object-fit:cover;background:#1a1a2a;flex-shrink:0;" />
+      <span style="font-family:'DM Mono',monospace;font-size:12px;color:#ddd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(a.title)} — ${escHtml(a.artist)}</span>
+    `;
+    list.appendChild(row);
+  });
+  document.getElementById('pinned-picker-backdrop').style.display = 'flex';
+});
+document.getElementById('pinned-picker-close-btn').addEventListener('click', () => {
+  document.getElementById('pinned-picker-backdrop').style.display = 'none';
+});
+document.getElementById('pinned-picker-save-btn').addEventListener('click', () => {
+  const checked = [...document.querySelectorAll('#pinned-picker-list input[type="checkbox"]:checked')];
+  if (checked.length > 10) { alert('Máximo 10 favoritos.'); return; }
+  vaultProfile.pinned = checked.map(c => c.dataset.id);
+  document.getElementById('pinned-picker-backdrop').style.display = 'none';
+  renderProfileAlbumRows();
+  saveVaultProfile();
+});
 
 // ── TIER CONFIG ──
 const TIERS = [
