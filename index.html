@@ -561,36 +561,61 @@
   .shelf-order-handle { color: #555; font-size: 14px; flex-shrink: 0; }
 
   .profile-album-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
-    gap: 16px;
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 4px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
-  .profile-album-card { cursor:pointer; min-width:0; }
-  .profile-album-card img {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 8px;
-    object-fit: cover;
+  .profile-album-grid::-webkit-scrollbar { display: none; }
+  .profile-album-card {
+    cursor: pointer;
+    flex: 0 0 auto;
+    width: 31%;
+    min-width: 108px;
+    max-width: 160px;
+    scroll-snap-align: start;
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 2 / 3;
     background: #1a1a2a;
+  }
+  .profile-album-card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
   }
+  .profile-album-card-overlay {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 22px 10px 10px;
+    background: linear-gradient(180deg, transparent 0%, var(--card-tint, rgba(0,0,0,0.85)) 65%);
+  }
   .profile-album-title {
-    margin-top: 8px;
     font-family: 'DM Mono', monospace;
     font-size: 11px;
-    color: #ccc;
+    color: #fff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-width: 0;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
   }
   .profile-album-score {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: 700;
     margin-top: 2px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
   }
   @media (max-width: 480px) {
-    .profile-album-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
+    .profile-album-card { width: 30%; min-width: 96px; }
   }
   .top10-mode-btn {
     background:none; border:none; color:var(--muted); padding:5px 12px;
@@ -2453,15 +2478,62 @@ function renderTierDistribution(albumList) {
 }
 
 // ── Filas de álbumes (favoritos / top10 / recientes) ──
+// Cache simple para no recalcular el color dominante de la misma carátula muchas veces
+// (aparece en Favoritos, Top10, Recientes y estanterías a la vez).
+const _coverColorCache = new Map();
+
+// Extrae un color dominante oscurecido de la esquina inferior de la carátula,
+// que es la zona que el degradado va a cubrir — así el empalme es más natural
+// que promediando toda la imagen.
+// Nota: las carátulas vienen de dominios externos (Last.fm, MusicBrainz, etc.)
+// que no siempre habilitan CORS. No se fuerza crossorigin en el <img> para no
+// arriesgar que deje de cargar — si el navegador bloquea la lectura de píxeles
+// por seguridad, se cae con elegancia al degradado negro por defecto del CSS.
+function extractCoverTint(imgEl, onReady) {
+  const src = imgEl.src;
+  if (!src) return;
+  if (_coverColorCache.has(src)) { onReady(_coverColorCache.get(src)); return; }
+
+  const run = () => {
+    try {
+      const size = 24;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      // Solo el tercio inferior de la imagen, que es lo que el overlay tapa.
+      ctx.drawImage(imgEl, 0, imgEl.naturalHeight * 0.6, imgEl.naturalWidth, imgEl.naturalHeight * 0.4, 0, 0, size, size);
+      const data = ctx.getImageData(0, 0, size, size).data;
+      let r = 0, g = 0, b = 0, n = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        r += data[i]; g += data[i+1]; b += data[i+2]; n++;
+      }
+      r = Math.round(r / n); g = Math.round(g / n); b = Math.round(b / n);
+      // Oscurecer para que el texto blanco siga siendo legible encima.
+      const dr = Math.round(r * 0.35), dg = Math.round(g * 0.35), db = Math.round(b * 0.35);
+      const tint = `rgba(${dr},${dg},${db},0.92)`;
+      _coverColorCache.set(src, tint);
+      onReady(tint);
+    } catch (e) { /* CORS u otro error leyendo píxeles — se deja el degradado negro por defecto */ }
+  };
+
+  if (imgEl.complete && imgEl.naturalWidth) run();
+  else imgEl.addEventListener('load', run, { once: true });
+}
+
 function albumMiniCard(album, readOnly) {
   const tier = getTier(album.score);
   const div = document.createElement('div');
   div.className = 'profile-album-card';
   div.innerHTML = `
     <img src="${escHtml(album.coverUrl||'')}" alt="${escHtml(album.title)}" />
-    <div class="profile-album-title">${escHtml(album.title)}</div>
-    <div class="profile-album-score" style="color:${tier ? tier.color : '#666'};">${album.score}</div>
+    <div class="profile-album-card-overlay">
+      <div class="profile-album-title">${escHtml(album.title)}</div>
+      <div class="profile-album-score" style="color:${tier ? tier.color : '#fff'};">${album.score}</div>
+    </div>
   `;
+  const imgEl = div.querySelector('img');
+  extractCoverTint(imgEl, tint => { div.style.setProperty('--card-tint', tint); });
+
   if (!readOnly) {
     div.addEventListener('click', () => { closeProfileView(); openDetail(album); });
   } else {
