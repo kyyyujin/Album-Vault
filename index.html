@@ -492,6 +492,19 @@
   }
   .accent-swatch.active { border-color: #fff; }
 
+  .shelf-tab {
+    flex: 1; padding: 10px; background: none; border: none; cursor: pointer;
+    font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.05em;
+    color: #777; border-bottom: 2px solid transparent;
+  }
+  .shelf-tab.active { color: var(--accent, #c8f060); border-bottom-color: var(--accent, #c8f060); }
+  .shelf-order-row {
+    display: flex; align-items: center; gap: 10px; padding: 8px 0;
+    border-bottom: 1px solid #1e1e24; cursor: grab;
+  }
+  .shelf-order-row.dragging { opacity: 0.4; }
+  .shelf-order-handle { color: #555; font-size: 14px; flex-shrink: 0; }
+
   .profile-album-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
@@ -1292,6 +1305,16 @@
       <p id="profile-pinned-empty" style="display:none;color:#666;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no elegiste favoritos. Tocá "Editar" para elegir hasta 10.</p>
     </div>
 
+    <!-- Estanterías propias -->
+    <div id="profile-shelves-section" style="margin-top:36px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:0.05em;color:#fff;margin:0;">Estanterías</h3>
+        <button id="profile-new-shelf-btn" style="padding:6px 14px;border-radius:6px;border:1px solid #333;background:none;color:#999;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.03em;cursor:pointer;">+ Nueva</button>
+      </div>
+      <div id="profile-shelves-list" style="margin-top:14px;display:flex;flex-direction:column;gap:28px;"></div>
+      <p id="profile-shelves-empty" style="display:none;color:#666;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no creaste ninguna estantería. Tocá "+ Nueva" para armar la primera.</p>
+    </div>
+
     <!-- Top 10 mejor rateados -->
     <div style="margin-top:36px;">
       <h3 style="font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:0.05em;color:#fff;margin:0 0 14px;">Top 10 mejor rateados</h3>
@@ -1323,6 +1346,41 @@
     <div id="pinned-picker-list" style="overflow-y:auto;padding:10px 18px;flex:1;"></div>
     <div style="padding:14px 18px;border-top:1px solid #22222a;">
       <button id="pinned-picker-save-btn" style="width:100%;padding:12px;border-radius:8px;border:none;background:#c8f060;color:#0d0d0f;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;">Guardar favoritos</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: crear/renombrar estantería -->
+<div id="shelf-name-backdrop" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#15151b;border:1px solid #2a2a3a;border-radius:12px;max-width:400px;width:100%;padding:20px;">
+    <h3 id="shelf-name-heading" style="margin:0 0 14px;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;">Nueva estantería</h3>
+    <input id="shelf-name-input" type="text" maxlength="40" placeholder="ej: Para llorar, Verano 2026…" style="width:100%;box-sizing:border-box;padding:10px 12px;background:#0d0d0f;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;outline:none;" />
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+      <button id="shelf-name-cancel-btn" style="padding:8px 16px;border-radius:6px;border:1px solid #333;background:none;color:#999;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">Cancelar</button>
+      <button id="shelf-name-save-btn" style="padding:8px 16px;border-radius:6px;border:none;background:var(--accent,#c8f060);color:#0d0d0f;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: elegir + reordenar álbumes de una estantería -->
+<div id="shelf-picker-backdrop" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#15151b;border:1px solid #2a2a3a;border-radius:12px;max-width:480px;width:100%;max-height:85vh;display:flex;flex-direction:column;">
+    <div style="padding:16px 18px;border-bottom:1px solid #22222a;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <h3 id="shelf-picker-heading" style="margin:0;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></h3>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        <button id="shelf-rename-btn" title="Renombrar" style="background:none;border:1px solid #333;border-radius:6px;color:#999;font-size:12px;padding:5px 10px;cursor:pointer;font-family:'DM Mono',monospace;">Renombrar</button>
+        <button id="shelf-picker-close-btn" style="background:none;border:none;color:#999;font-size:18px;cursor:pointer;">×</button>
+      </div>
+    </div>
+    <div style="display:flex;border-bottom:1px solid #22222a;">
+      <button id="shelf-tab-albums" class="shelf-tab active" data-tab="albums">Álbumes</button>
+      <button id="shelf-tab-order" class="shelf-tab" data-tab="order">Orden</button>
+    </div>
+    <div id="shelf-picker-list" style="overflow-y:auto;padding:10px 18px;flex:1;"></div>
+    <div id="shelf-picker-order-list" style="display:none;overflow-y:auto;padding:10px 18px;flex:1;"></div>
+    <div style="padding:14px 18px;border-top:1px solid #22222a;display:flex;gap:8px;">
+      <button id="shelf-delete-btn" style="padding:12px 16px;border-radius:8px;border:1px solid rgba(224,80,80,0.3);background:rgba(224,80,80,0.08);color:#e05050;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">Eliminar estantería</button>
+      <button id="shelf-picker-save-btn" style="flex:1;padding:12px;border-radius:8px;border:none;background:var(--accent,#c8f060);color:#0d0d0f;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;">Guardar</button>
     </div>
   </div>
 </div>
@@ -1835,7 +1893,7 @@ async function initVaultApp() {
 
 // ══════════════════ PERFIL ══════════════════
 
-let vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '' };
+let vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', shelves: [] };
 const ACCENT_PRESETS = ['#c8f060', '#e05252', '#4d82e0', '#e87c3e', '#b06de0', '#3ac4b0', '#f5e642'];
 
 // Estado del "perfil ajeno" (solo lectura). Cuando es null, el perfil mostrado es el propio.
@@ -1851,7 +1909,7 @@ async function syncVaultProfileFromServer() {
       body: JSON.stringify({ token })
     });
     const data = await res.json();
-    if (res.ok && data.profile) vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', ...data.profile };
+    if (res.ok && data.profile) vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', shelves: [], ...data.profile };
   } catch (e) { /* backend dormido o sin conexión — se usa el default local */ }
 }
 
@@ -1893,6 +1951,7 @@ function renderOwnProfile() {
   document.getElementById('profile-bio-edit-btn').style.display = 'inline-block';
   document.getElementById('profile-edit-pinned-btn').style.display = 'inline-block';
   document.getElementById('profile-banner-edit-btn').style.display = 'flex';
+  document.getElementById('profile-new-shelf-btn').style.display = (vaultProfile.shelves||[]).length >= 5 ? 'none' : 'inline-block';
   applyAccentColor(vaultProfile.accentColor || '#c8f060');
   document.getElementById('profile-avatar-img').src = localStorage.getItem(DISCORD_AVATAR_KEY) || '';
   document.getElementById('profile-username').textContent = localStorage.getItem('discord_user_id') || '';
@@ -1900,6 +1959,7 @@ function renderOwnProfile() {
   document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripción todavía.';
   renderProfileStats(albums, vaultProfile);
   renderProfileAlbumRows(albums, vaultProfile, false);
+  renderProfileShelves(albums, vaultProfile, false);
   updateNowListening(vaultProfile.lastfmUsername);
 }
 
@@ -1919,8 +1979,9 @@ async function openForeignProfile(discordUsername) {
     document.getElementById('profile-bio-edit-btn').style.display = 'none';
     document.getElementById('profile-edit-pinned-btn').style.display = 'none';
     document.getElementById('profile-banner-edit-btn').style.display = 'none';
+    document.getElementById('profile-new-shelf-btn').style.display = 'none';
 
-    const fProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', ...(data.profile || {}) };
+    const fProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', shelves: [], ...(data.profile || {}) };
     const fAlbums  = (data.collection && data.collection.albums) || [];
 
     applyAccentColor(fProfile.accentColor || '#c8f060');
@@ -1932,6 +1993,7 @@ async function openForeignProfile(discordUsername) {
     document.getElementById('profile-bio-display').style.display = 'block';
     renderProfileStats(fAlbums, fProfile);
     renderProfileAlbumRows(fAlbums, fProfile, true);
+    renderProfileShelves(fAlbums, fProfile, true);
     updateNowListening(fProfile.lastfmUsername);
     window.scrollTo(0, 0);
   } catch (e) {
@@ -2178,6 +2240,197 @@ function renderProfileAlbumRows(albumList, profile, readOnly) {
     pinnedEmpty.style.display = 'block';
   }
 }
+
+// ══════════════════ ESTANTERÍAS PROPIAS ══════════════════
+// vaultProfile.shelves = [{ id, title, albumIds: [id, id, ...] }]  (máx. 5, orden de albumIds = orden manual)
+
+const MAX_SHELVES = 5;
+let editingShelfId = null; // id de la estantería que el modal picker está editando
+let shelfPickerSelection = []; // array de albumIds en orden, mientras el modal está abierto
+
+function renderProfileShelves(albumList, profile, readOnly) {
+  const list  = document.getElementById('profile-shelves-list');
+  const empty = document.getElementById('profile-shelves-empty');
+  const shelves = profile.shelves || [];
+  list.innerHTML = '';
+
+  if (!shelves.length) {
+    empty.style.display = readOnly ? 'none' : 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  shelves.forEach(shelf => {
+    const shelfAlbums = (shelf.albumIds || []).map(id => albumList.find(a => a.id === id)).filter(Boolean);
+    const section = document.createElement('div');
+    const editBtnHtml = readOnly ? '' : `<button class="shelf-edit-btn" data-shelf="${shelf.id}" style="padding:5px 12px;border-radius:6px;border:1px solid #333;background:none;color:#999;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.03em;cursor:pointer;">Editar</button>`;
+    section.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <h4 style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.04em;color:#ddd;margin:0;">${escHtml(shelf.title)}</h4>
+        ${editBtnHtml}
+      </div>
+      <div class="profile-album-grid" style="margin-top:12px;"></div>
+      <p style="display:${shelfAlbums.length ? 'none' : 'block'};color:#666;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Vacía por ahora.</p>
+    `;
+    const grid = section.querySelector('.profile-album-grid');
+    shelfAlbums.forEach(a => grid.appendChild(albumMiniCard(a, readOnly)));
+    if (!readOnly) {
+      section.querySelector('.shelf-edit-btn').addEventListener('click', () => openShelfPicker(shelf.id));
+    }
+    list.appendChild(section);
+  });
+}
+
+document.getElementById('profile-new-shelf-btn').addEventListener('click', () => {
+  if ((vaultProfile.shelves||[]).length >= MAX_SHELVES) { alert(`Máximo ${MAX_SHELVES} estanterías.`); return; }
+  document.getElementById('shelf-name-heading').textContent = 'Nueva estantería';
+  document.getElementById('shelf-name-input').value = '';
+  document.getElementById('shelf-name-input').dataset.mode = 'create';
+  document.getElementById('shelf-name-backdrop').style.display = 'flex';
+});
+
+document.getElementById('shelf-name-cancel-btn').addEventListener('click', () => {
+  document.getElementById('shelf-name-backdrop').style.display = 'none';
+});
+
+document.getElementById('shelf-name-save-btn').addEventListener('click', () => {
+  const input = document.getElementById('shelf-name-input');
+  const title = input.value.trim();
+  if (!title) { alert('Ponele un título a la estantería.'); return; }
+  vaultProfile.shelves = vaultProfile.shelves || [];
+
+  if (input.dataset.mode === 'rename' && editingShelfId) {
+    const shelf = vaultProfile.shelves.find(s => s.id === editingShelfId);
+    if (shelf) shelf.title = title;
+  } else {
+    if (vaultProfile.shelves.length >= MAX_SHELVES) { alert(`Máximo ${MAX_SHELVES} estanterías.`); return; }
+    const newShelf = { id: 'shelf_' + Date.now(), title, albumIds: [] };
+    vaultProfile.shelves.push(newShelf);
+    editingShelfId = newShelf.id;
+  }
+  document.getElementById('shelf-name-backdrop').style.display = 'none';
+  saveVaultProfile();
+  renderProfileShelves(albums, vaultProfile, false);
+  renderOwnProfile();
+  if (input.dataset.mode === 'rename') {
+    document.getElementById('shelf-picker-heading').textContent = title;
+  } else {
+    // Recién creada: abrir directo el picker de álbumes para esa estantería.
+    openShelfPicker(editingShelfId);
+  }
+});
+
+function openShelfPicker(shelfId) {
+  editingShelfId = shelfId;
+  const shelf = (vaultProfile.shelves || []).find(s => s.id === shelfId);
+  if (!shelf) return;
+  shelfPickerSelection = [...(shelf.albumIds || [])];
+  document.getElementById('shelf-picker-heading').textContent = shelf.title;
+  switchShelfTab('albums');
+  renderShelfPickerAlbumsTab();
+  renderShelfPickerOrderTab();
+  document.getElementById('shelf-picker-backdrop').style.display = 'flex';
+}
+
+function renderShelfPickerAlbumsTab() {
+  const list = document.getElementById('shelf-picker-list');
+  list.innerHTML = '';
+  const current = new Set(shelfPickerSelection);
+  [...albums].sort((a, b) => b.score - a.score).forEach(a => {
+    const row = document.createElement('label');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #1e1e24;cursor:pointer;';
+    row.innerHTML = `
+      <input type="checkbox" data-id="${a.id}" ${current.has(a.id) ? 'checked' : ''} style="width:16px;height:16px;flex-shrink:0;" />
+      <img src="${escHtml(a.coverUrl||'')}" style="width:34px;height:34px;border-radius:4px;object-fit:cover;background:#1a1a2a;flex-shrink:0;" />
+      <span style="font-family:'DM Mono',monospace;font-size:12px;color:#ddd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(a.title)} — ${escHtml(a.artist)}</span>
+    `;
+    row.querySelector('input').addEventListener('change', e => {
+      if (e.target.checked) shelfPickerSelection.push(a.id);
+      else shelfPickerSelection = shelfPickerSelection.filter(id => id !== a.id);
+      renderShelfPickerOrderTab();
+    });
+    list.appendChild(row);
+  });
+}
+
+// ── Tab de orden manual (drag & drop nativo, sin librerías) ──
+let _dragFromIndex = null;
+
+function renderShelfPickerOrderTab() {
+  const list = document.getElementById('shelf-picker-order-list');
+  list.innerHTML = '';
+  if (!shelfPickerSelection.length) {
+    list.innerHTML = '<p style="color:#666;font-family:\'DM Mono\',monospace;font-size:11px;">Elegí álbumes en la pestaña "Álbumes" primero.</p>';
+    return;
+  }
+  shelfPickerSelection.forEach((id, idx) => {
+    const a = albums.find(al => al.id === id);
+    if (!a) return;
+    const row = document.createElement('div');
+    row.className = 'shelf-order-row';
+    row.draggable = true;
+    row.dataset.index = idx;
+    row.innerHTML = `
+      <span class="shelf-order-handle">⋮⋮</span>
+      <img src="${escHtml(a.coverUrl||'')}" style="width:34px;height:34px;border-radius:4px;object-fit:cover;background:#1a1a2a;flex-shrink:0;" />
+      <span style="font-family:'DM Mono',monospace;font-size:12px;color:#ddd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${escHtml(a.title)} — ${escHtml(a.artist)}</span>
+    `;
+    row.addEventListener('dragstart', () => { _dragFromIndex = idx; row.classList.add('dragging'); });
+    row.addEventListener('dragend', () => { row.classList.remove('dragging'); });
+    row.addEventListener('dragover', e => e.preventDefault());
+    row.addEventListener('drop', e => {
+      e.preventDefault();
+      if (_dragFromIndex === null || _dragFromIndex === idx) return;
+      const [moved] = shelfPickerSelection.splice(_dragFromIndex, 1);
+      shelfPickerSelection.splice(idx, 0, moved);
+      _dragFromIndex = null;
+      renderShelfPickerOrderTab();
+    });
+    list.appendChild(row);
+  });
+}
+
+function switchShelfTab(tab) {
+  document.getElementById('shelf-tab-albums').classList.toggle('active', tab === 'albums');
+  document.getElementById('shelf-tab-order').classList.toggle('active', tab === 'order');
+  document.getElementById('shelf-picker-list').style.display = tab === 'albums' ? 'block' : 'none';
+  document.getElementById('shelf-picker-order-list').style.display = tab === 'order' ? 'block' : 'none';
+}
+document.getElementById('shelf-tab-albums').addEventListener('click', () => switchShelfTab('albums'));
+document.getElementById('shelf-tab-order').addEventListener('click', () => {
+  renderShelfPickerOrderTab();
+  switchShelfTab('order');
+});
+
+document.getElementById('shelf-picker-close-btn').addEventListener('click', () => {
+  document.getElementById('shelf-picker-backdrop').style.display = 'none';
+});
+
+document.getElementById('shelf-rename-btn').addEventListener('click', () => {
+  const shelf = (vaultProfile.shelves || []).find(s => s.id === editingShelfId);
+  if (!shelf) return;
+  document.getElementById('shelf-name-heading').textContent = 'Renombrar estantería';
+  document.getElementById('shelf-name-input').value = shelf.title;
+  document.getElementById('shelf-name-input').dataset.mode = 'rename';
+  document.getElementById('shelf-name-backdrop').style.display = 'flex';
+});
+
+document.getElementById('shelf-picker-save-btn').addEventListener('click', () => {
+  const shelf = (vaultProfile.shelves || []).find(s => s.id === editingShelfId);
+  if (shelf) shelf.albumIds = [...shelfPickerSelection];
+  document.getElementById('shelf-picker-backdrop').style.display = 'none';
+  saveVaultProfile();
+  renderProfileShelves(albums, vaultProfile, false);
+});
+
+document.getElementById('shelf-delete-btn').addEventListener('click', () => {
+  if (!confirm('¿Eliminar esta estantería? Esta acción no se puede deshacer.')) return;
+  vaultProfile.shelves = (vaultProfile.shelves || []).filter(s => s.id !== editingShelfId);
+  document.getElementById('shelf-picker-backdrop').style.display = 'none';
+  saveVaultProfile();
+  renderProfileShelves(albums, vaultProfile, false);
+  renderOwnProfile();
+});
 
 // ── Editor de favoritos ──
 document.getElementById('profile-edit-pinned-btn').addEventListener('click', () => {
