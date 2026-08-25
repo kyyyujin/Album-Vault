@@ -30,35 +30,78 @@
     padding:0;
     background:rgba(10,10,10,.92); backdrop-filter:blur(14px);
     border-bottom:1px solid var(--border);
-    overflow-x:auto; overflow-y:visible;
-    scrollbar-width:none;
     transform: translateY(0);
     transition: transform .3s cubic-bezier(.4,0,.2,1);
   }
-  #header-scroll-left, #header-scroll-right {
-    position:fixed; top:0; z-index:101; height:var(--header-h, 54px);
-    width:32px; display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-size:14px; color:rgba(255,255,255,0.5);
-    transition:color .2s, opacity .2s; border:none; background:none; padding:0;
-  }
-  #header-scroll-left  { left:0;  background:linear-gradient(90deg,rgba(10,10,10,.95),transparent); }
-  #header-scroll-right { right:0; background:linear-gradient(270deg,rgba(10,10,10,.95),transparent); }
-  #header-scroll-left:hover, #header-scroll-right:hover { color:#fff; }
-  #header-scroll-left.hidden, #header-scroll-right.hidden { opacity:0; pointer-events:none; }
-  @media (max-width:768px) { #header-scroll-left, #header-scroll-right { display:none; } }
-  #header::-webkit-scrollbar { display:none; }
   #header-inner {
     display:flex; align-items:center; gap:14px;
-    padding:12px 24px; min-width:max-content; width:max-content; max-width:none;
-    justify-content:space-between;
+    padding:12px 20px; width:100%; box-sizing:border-box;
   }
   #header h1 {
-    font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:6px;
+    font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:5px;
     background:linear-gradient(90deg,#e8e4dc 60%,#555);
     -webkit-background-clip:text; -webkit-text-fill-color:transparent;
     white-space:nowrap; flex-shrink:0;
   }
-  .header-controls { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  #menu-toggle-btn {
+    display:flex; align-items:center; justify-content:center;
+    width:36px; height:36px; border-radius:8px; flex-shrink:0;
+    background:none; border:1px solid #2a2a2a; color:var(--text); cursor:pointer;
+    transition: background .15s, border-color .15s;
+  }
+  #menu-toggle-btn:hover { background:#1a1a1a; border-color:#3a3a3a; }
+
+  @media (max-width:640px) {
+    #header h1 { display:none; }
+    #header-search { width:140px; }
+    #header-search:focus { width:170px; }
+  }
+
+  /* ── Drawer lateral (reemplaza los controles que antes vivían en el header) ── */
+  #menu-drawer-backdrop {
+    position:fixed; inset:0; z-index:200; display:none;
+    background:rgba(0,0,0,0.6);
+  }
+  #menu-drawer-backdrop.open { display:block; }
+  #menu-drawer {
+    position:fixed; top:0; right:0; height:100%; width:300px; max-width:86vw;
+    background:#121216; border-left:1px solid #26262e;
+    display:flex; flex-direction:column;
+    transform: translateX(100%);
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+  }
+  #menu-drawer-backdrop.open #menu-drawer { transform: translateX(0); }
+  #menu-drawer-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 18px; border-bottom:1px solid #22222a; flex-shrink:0;
+  }
+  #menu-drawer-header span {
+    font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.15em; color:#777;
+  }
+  #menu-drawer-close-btn {
+    background:none; border:none; color:#999; font-size:20px; cursor:pointer; line-height:1;
+  }
+  #menu-drawer-body { flex:1; overflow-y:auto; padding:8px 18px 18px; }
+  .drawer-section { margin-top:20px; }
+  .drawer-section:first-child { margin-top:4px; }
+  .drawer-label {
+    font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.1em; color:#666;
+    text-transform:uppercase; margin-bottom:10px;
+  }
+  .drawer-section select,
+  .drawer-btn,
+  .drawer-link {
+    display:block; width:100%; box-sizing:border-box; text-align:left;
+    background:#1a1a1e; border:1px solid #2a2a2a; color:var(--text);
+    padding:10px 12px; font-family:'DM Mono',monospace; font-size:12px;
+    outline:none; cursor:pointer; border-radius:6px; margin-bottom:8px;
+    text-decoration:none;
+  }
+  .drawer-link { color:#c8f060; border-color:rgba(200,240,96,0.3); background:rgba(200,240,96,0.07); }
+  .drawer-section .view-toggle { border-radius:6px; overflow:hidden; }
+  .drawer-section .view-toggle .view-btn { flex:1; text-align:center; }
+  #menu-drawer-footer { padding:16px 18px; border-top:1px solid #22222a; flex-shrink:0; }
+  #menu-drawer-footer #add-btn { width:100%; }
 
   /* search bar in header */
   #header-search-wrap { position:relative; }
@@ -1150,52 +1193,89 @@
 <div id="main-app" style="display:none;">
 <header id="header">
   <div id="header-inner">
-  <h1>ALBUM VAULT</h1>
-  <div id="user-session-chip" style="display:none;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:20px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.3);cursor:pointer;" onclick="openProfileView()" title="Ver perfil">
-    <img id="user-session-avatar" src="" alt="" style="width:22px;height:22px;border-radius:50%;object-fit:cover;display:block;" />
-    <span id="user-session-name" style="font-family:'DM Mono',monospace;font-size:11px;color:#c8c8e0;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-  </div>
-  <a href="https://rater-page.vercel.app/" style="display:inline-block;padding:5px 12px;border-radius:6px;border:1px solid rgba(200,240,96,0.3);background:rgba(200,240,96,0.07);color:#c8f060;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;text-decoration:none;letter-spacing:0.05em;">🎵 Ir al Rater</a>
-  <div class="header-controls">
+    <button id="menu-toggle-btn" title="Menú" aria-label="Abrir menú">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <h1>ALBUM VAULT</h1>
     <div id="header-search-wrap">
       <span id="header-search-icon">⌕</span>
       <input type="text" id="header-search" placeholder="Search vault…">
     </div>
-    <select id="genre-filter"><option value="">All genres</option></select>
-    <select id="status-filter" style="display:none;">
-      <option value="">All status</option>
-      <option value="listened">Escuchado</option>
-      <option value="in-progress">A medias</option>
-      <option value="pending">Pendiente</option>
-    </select>
-    <select id="sort-select">
-      <option value="score-desc">Score ↓</option>
-      <option value="score-asc">Score ↑</option>
-      <option value="added-desc">Recent first</option>
-      <option value="added-asc">Oldest first</option>
-      <option value="listened-desc">Last listened</option>
-      <option value="artist-asc">Artist A–Z</option>
-      <option value="year-desc">Year ↓</option>
-    </select>
-    <div class="view-toggle">
-      <button class="view-btn" id="btn-grid" title="Grid view">⊞</button>
-      <button class="view-btn active" id="btn-list" title="List view">☰</button>
+    <div style="flex:1;"></div>
+    <div id="user-session-chip" style="display:none;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:20px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.3);cursor:pointer;" onclick="openProfileView()" title="Ver perfil">
+      <img id="user-session-avatar" src="" alt="" style="width:22px;height:22px;border-radius:50%;object-fit:cover;display:block;" />
+      <span id="user-session-name" style="font-family:'DM Mono',monospace;font-size:11px;color:#c8c8e0;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
     </div>
-    <button id="export-btn" title="Export data as JSON">↓ Export</button>
-    <button id="img-export-btn" title="Export as high-res image">⬡ Image</button>
-    <button id="import-btn" title="Import JSON backup">↑ Import</button>
-    <button id="rater-import-btn" title="Import from Album Rater" style="display:none;">🎵 From Rater</button>
-    <input type="file" id="import-file" accept=".json" style="display:none">
-    <input type="file" id="rater-import-file" accept=".json" style="display:none">
-    <button id="stats-btn">Stats</button>
-    <button id="top10-btn">Top 10</button>
-    <button id="pending-btn" style="display:none;">Pending</button>
-    <button id="compare-btn" style="display:none;">Compare</button>
-    <button id="load-db-btn" title="Cargar álbumes desde la base de datos del Album Rater">☁ Load from DB</button>
-    <button id="add-btn">+ ADD</button>
-  </div>
   </div>
 </header>
+
+<!-- Drawer lateral: contiene todos los controles que antes vivían en el header -->
+<div id="menu-drawer-backdrop">
+  <aside id="menu-drawer">
+    <div id="menu-drawer-header">
+      <span>MENÚ</span>
+      <button id="menu-drawer-close-btn" title="Cerrar" aria-label="Cerrar menú">×</button>
+    </div>
+    <div id="menu-drawer-body">
+
+      <div class="drawer-section">
+        <div class="drawer-label">Navegación</div>
+        <a href="https://rater-page.vercel.app/" class="drawer-link">Ir al Rater</a>
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-label">Filtrar y ordenar</div>
+        <select id="genre-filter"><option value="">All genres</option></select>
+        <select id="status-filter" style="display:none;">
+          <option value="">All status</option>
+          <option value="listened">Escuchado</option>
+          <option value="in-progress">A medias</option>
+          <option value="pending">Pendiente</option>
+        </select>
+        <select id="sort-select">
+          <option value="score-desc">Score ↓</option>
+          <option value="score-asc">Score ↑</option>
+          <option value="added-desc">Recent first</option>
+          <option value="added-asc">Oldest first</option>
+          <option value="listened-desc">Last listened</option>
+          <option value="artist-asc">Artist A–Z</option>
+          <option value="year-desc">Year ↓</option>
+        </select>
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-label">Vista</div>
+        <div class="view-toggle">
+          <button class="view-btn" id="btn-grid" title="Grid view">⊞ Grid</button>
+          <button class="view-btn active" id="btn-list" title="List view">☰ List</button>
+        </div>
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-label">Colección</div>
+        <button id="stats-btn" class="drawer-btn">Stats</button>
+        <button id="top10-btn" class="drawer-btn">Top 10</button>
+        <button id="pending-btn" class="drawer-btn" style="display:none;">Pending</button>
+        <button id="compare-btn" class="drawer-btn" style="display:none;">Compare</button>
+        <button id="load-db-btn" class="drawer-btn" title="Cargar álbumes desde la base de datos del Album Rater">Load from DB</button>
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-label">Datos</div>
+        <button id="export-btn" class="drawer-btn" title="Export data as JSON">Export</button>
+        <button id="img-export-btn" class="drawer-btn" title="Export as high-res image">Export as image</button>
+        <button id="import-btn" class="drawer-btn" title="Import JSON backup">Import</button>
+        <button id="rater-import-btn" class="drawer-btn" title="Import from Album Rater" style="display:none;">From Rater</button>
+        <input type="file" id="import-file" accept=".json" style="display:none">
+        <input type="file" id="rater-import-file" accept=".json" style="display:none">
+      </div>
+
+    </div>
+    <div id="menu-drawer-footer">
+      <button id="add-btn">+ ADD</button>
+    </div>
+  </aside>
+</div>
 
 <!-- NOW PLAYING BAR -->
 <div id="now-playing-bar">
@@ -1207,6 +1287,7 @@
   </div>
   <button id="np-clear" title="Clear now playing">×</button>
 </div>
+
 
 <div id="tiers-container"></div>
 
@@ -1880,7 +1961,8 @@ window.addEventListener('beforeunload', () => {
 async function initVaultApp() {
   renderUserSessionChip();
   await syncVaultCollectionFromServer();
-  await syncVaultProfileFromServer();
+  vaultProfileSyncPromise = syncVaultProfileFromServer();
+  await vaultProfileSyncPromise;
   document.getElementById('profile-avatar-img').src = localStorage.getItem(DISCORD_AVATAR_KEY) || '';
   document.getElementById('profile-username').textContent = localStorage.getItem('discord_user_id') || '';
   // El padding del header se calcula acá (no en window.load) porque hasta este punto
@@ -1899,9 +1981,12 @@ const ACCENT_PRESETS = ['#c8f060', '#e05252', '#4d82e0', '#e87c3e', '#b06de0', '
 // Estado del "perfil ajeno" (solo lectura). Cuando es null, el perfil mostrado es el propio.
 let foreignProfileData = null; // { discord_username, discord_avatar, profile, collection }
 
+let vaultProfileSynced = false;
+let vaultProfileSyncPromise = null;
+
 async function syncVaultProfileFromServer() {
   const token = localStorage.getItem('auth_token');
-  if (!token) return;
+  if (!token) { vaultProfileSynced = true; return; }
   try {
     const res  = await fetch(`${BOT_SERVER}/vault-profile/get`, {
       method: 'POST',
@@ -1911,6 +1996,7 @@ async function syncVaultProfileFromServer() {
     const data = await res.json();
     if (res.ok && data.profile) vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', shelves: [], ...data.profile };
   } catch (e) { /* backend dormido o sin conexión — se usa el default local */ }
+  vaultProfileSynced = true;
 }
 
 async function saveVaultProfile() {
@@ -1931,7 +2017,7 @@ function applyAccentColor(color) {
   document.getElementById('profile-view').style.setProperty('--accent-wash', color + '12');
 }
 
-function openProfileView() {
+async function openProfileView() {
   document.getElementById('tiers-container').style.display = 'none';
   const profileView = document.getElementById('profile-view');
   profileView.style.display = 'block';
@@ -1941,8 +2027,21 @@ function openProfileView() {
   profileView.style.paddingTop = headerH + 'px';
   foreignProfileData = null;
   document.getElementById('profile-search-input').value = '';
-  renderOwnProfile();
   window.scrollTo(0, 0);
+
+  if (!vaultProfileSynced && vaultProfileSyncPromise) {
+    // El backend puede tardar unos segundos en responder (cold start en Render).
+    // Se muestra el perfil con lo disponible y un aviso breve, y se re-renderiza solo
+    // cuando la respuesta real llegue — así nunca se ve un banner/bio vacíos por error.
+    document.getElementById('profile-bio-display').textContent = 'Cargando…';
+    renderOwnProfile();
+    await vaultProfileSyncPromise;
+    if (document.getElementById('profile-view').style.display !== 'none' && !foreignProfileData) {
+      renderOwnProfile();
+    }
+    return;
+  }
+  renderOwnProfile();
 }
 
 function renderOwnProfile() {
@@ -3239,6 +3338,27 @@ document.getElementById('btn-delete-album').addEventListener('click', () => {
   buildTiers(); updateNowPlayingBar(); refreshGenreFilter();
 });
 
+// ── Drawer lateral (menú) ──
+function openMenuDrawer() {
+  document.getElementById('menu-drawer-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMenuDrawer() {
+  document.getElementById('menu-drawer-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('menu-toggle-btn').addEventListener('click', openMenuDrawer);
+document.getElementById('menu-drawer-close-btn').addEventListener('click', closeMenuDrawer);
+document.getElementById('menu-drawer-backdrop').addEventListener('click', e => {
+  if (e.target.id === 'menu-drawer-backdrop') closeMenuDrawer();
+});
+// Cerrar el drawer al elegir una acción, para no taparle al usuario el resultado
+// (stats, top10, add, load from db, etc. abren su propio modal encima).
+['stats-btn','top10-btn','pending-btn','compare-btn','load-db-btn','add-btn','export-btn','img-export-btn','import-btn','rater-import-btn'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('click', closeMenuDrawer);
+});
+
 // ── ADD MODAL ──
 document.getElementById('add-btn').addEventListener('click', () => {
   document.getElementById('add-backdrop').classList.add('open');
@@ -3931,7 +4051,7 @@ document.getElementById('img-export-btn').addEventListener('click', async () => 
   const btn = document.getElementById('img-export-btn');
   if (btn.classList.contains('exporting')) return;
   btn.classList.add('exporting');
-  btn.textContent = '⏳ Rendering…';
+  btn.textContent = 'Rendering…';
 
   try {
     await exportVaultImage();
@@ -3941,7 +4061,7 @@ document.getElementById('img-export-btn').addEventListener('click', async () => 
   }
 
   btn.classList.remove('exporting');
-  btn.textContent = '⬡ Image';
+  btn.textContent = 'Export as image';
 });
 
 async function exportVaultImage() {
