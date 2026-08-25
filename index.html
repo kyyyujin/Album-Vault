@@ -59,16 +59,18 @@
 
   /* ── Drawer lateral (reemplaza los controles que antes vivían en el header) ── */
   #menu-drawer-backdrop {
-    position:fixed; inset:0; z-index:200; display:none;
+    position:fixed; inset:0; z-index:200;
     background:rgba(0,0,0,0.6);
+    opacity:0; pointer-events:none;
+    transition: opacity .3s ease;
   }
-  #menu-drawer-backdrop.open { display:block; }
+  #menu-drawer-backdrop.open { opacity:1; pointer-events:auto; }
   #menu-drawer {
-    position:fixed; top:0; right:0; height:100%; width:300px; max-width:86vw;
-    background:#121216; border-left:1px solid #26262e;
+    position:fixed; top:0; left:0; height:100%; width:300px; max-width:86vw;
+    background:#121216; border-right:1px solid #26262e;
     display:flex; flex-direction:column;
-    transform: translateX(100%);
-    transition: transform .3s cubic-bezier(.4,0,.2,1);
+    transform: translateX(-100%);
+    transition: transform .32s cubic-bezier(.32,.72,0,1);
   }
   #menu-drawer-backdrop.open #menu-drawer { transform: translateX(0); }
   #menu-drawer-header {
@@ -527,6 +529,16 @@
     --accent: #c8f060;
     --accent-dim: rgba(200,240,96,0.3);
     --accent-wash: rgba(200,240,96,0.07);
+  }
+  #profile-banner { height: 220px; }
+  #profile-banner-fade { height: 90px; }
+  @media (min-width: 900px) {
+    #profile-banner { height: 320px; }
+    #profile-banner-fade { height: 130px; }
+  }
+  @media (min-width: 1300px) {
+    #profile-banner { height: 380px; }
+    #profile-banner-fade { height: 160px; }
   }
   @keyframes nlPulse { 0%,100% { opacity:1; } 50% { opacity:0.25; } }
   .accent-swatch {
@@ -1293,8 +1305,9 @@
 
 <!-- ── VISTA DE PERFIL ── -->
 <div id="profile-view" style="display:none;">
-  <div id="profile-banner" style="position:relative;width:100%;height:220px;background:#15151b;background-size:cover;background-position:center;overflow:hidden;">
+  <div id="profile-banner" style="position:relative;width:100%;background:#15151b;background-size:cover;background-position:center;overflow:hidden;">
     <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.65) 100%);"></div>
+    <div id="profile-banner-fade" style="position:absolute;left:0;right:0;bottom:-1px;background:linear-gradient(180deg,rgba(10,10,10,0) 0%,var(--bg,#0a0a0a) 100%);"></div>
     <button id="profile-back-btn" title="Volver" style="position:absolute;top:14px;left:14px;z-index:5;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-size:16px;cursor:pointer;">←</button>
     <div id="profile-search-wrap" style="position:absolute;top:14px;right:14px;z-index:5;display:flex;align-items:center;gap:8px;">
       <input id="profile-search-input" type="text" placeholder="Buscar usuario…" style="width:150px;padding:7px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;outline:none;" />
