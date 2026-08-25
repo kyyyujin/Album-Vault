@@ -480,6 +480,18 @@
   }
   #modal.modal-ready { opacity:1; transform:scale(1); }
 
+  #profile-view {
+    --accent: #c8f060;
+    --accent-dim: rgba(200,240,96,0.3);
+    --accent-wash: rgba(200,240,96,0.07);
+  }
+  @keyframes nlPulse { 0%,100% { opacity:1; } 50% { opacity:0.25; } }
+  .accent-swatch {
+    width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; box-sizing: border-box; padding: 0;
+  }
+  .accent-swatch.active { border-color: #fff; }
+
   .profile-album-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
@@ -1190,7 +1202,10 @@
   <div id="profile-banner" style="position:relative;width:100%;height:220px;background:#15151b;background-size:cover;background-position:center;overflow:hidden;">
     <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.65) 100%);"></div>
     <button id="profile-back-btn" title="Volver" style="position:absolute;top:14px;left:14px;z-index:5;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-size:16px;cursor:pointer;">←</button>
-    <button id="profile-banner-edit-btn" title="Cambiar banner" style="position:absolute;top:14px;right:14px;z-index:5;display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.04em;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Banner</button>
+    <div id="profile-search-wrap" style="position:absolute;top:14px;right:14px;z-index:5;display:flex;align-items:center;gap:8px;">
+      <input id="profile-search-input" type="text" placeholder="Buscar usuario…" style="width:150px;padding:7px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;outline:none;" />
+      <button id="profile-banner-edit-btn" title="Cambiar banner" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.04em;cursor:pointer;white-space:nowrap;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Banner</button>
+    </div>
     <input type="file" id="profile-banner-file" accept="image/*" style="display:none;" />
   </div>
 
@@ -1200,34 +1215,71 @@
       <div style="flex:1;padding-bottom:6px;">
         <div id="profile-username" style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:0.03em;color:#fff;"></div>
       </div>
-      <button id="profile-bio-edit-btn" style="margin-bottom:6px;padding:7px 16px;border-radius:6px;border:1px solid rgba(200,240,96,0.3);background:rgba(200,240,96,0.07);color:#c8f060;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">Editar perfil</button>
+      <button id="profile-bio-edit-btn" style="margin-bottom:6px;padding:7px 16px;border-radius:6px;border:1px solid var(--accent-dim);background:var(--accent-wash);color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">Editar perfil</button>
     </div>
 
     <p id="profile-bio-display" style="margin:18px 0 0;color:#aaa;font-size:13px;line-height:1.6;font-family:'DM Mono',monospace;white-space:pre-wrap;"></p>
 
+    <!-- Now Listening (Last.fm) -->
+    <div id="profile-now-listening" style="display:none;margin-top:16px;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;background:#15151b;border:1px solid #22222a;">
+      <img id="nl-cover" src="" alt="" style="width:44px;height:44px;border-radius:6px;object-fit:cover;background:#1a1a2a;flex-shrink:0;" />
+      <div style="min-width:0;flex:1;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span id="nl-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:nlPulse 1.4s ease-in-out infinite;"></span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#777;text-transform:uppercase;">Escuchando ahora</span>
+        </div>
+        <div id="nl-track" style="font-family:'DM Mono',monospace;font-size:12px;color:#eee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;">—</div>
+        <div id="nl-artist" style="font-family:'DM Mono',monospace;font-size:10px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</div>
+      </div>
+    </div>
+
     <!-- Editor de bio (oculto hasta tocar "Editar perfil") -->
     <div id="profile-bio-editor" style="display:none;margin-top:18px;flex-direction:column;gap:10px;">
       <textarea id="profile-bio-input" maxlength="280" placeholder="Escribí algo sobre vos y tu gusto musical…" style="width:100%;box-sizing:border-box;min-height:90px;background:#15151b;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;padding:12px;resize:vertical;"></textarea>
+      <div>
+        <label style="font-size:10px;color:#777;font-family:'DM Mono',monospace;letter-spacing:0.05em;display:block;margin-bottom:6px;">USUARIO DE LAST.FM (para "Escuchando ahora")</label>
+        <input id="profile-lastfm-input" type="text" placeholder="ej: kyujin_music" style="width:100%;box-sizing:border-box;padding:10px 12px;background:#15151b;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:12px;outline:none;" />
+      </div>
+      <div>
+        <label style="font-size:10px;color:#777;font-family:'DM Mono',monospace;letter-spacing:0.05em;display:block;margin-bottom:6px;">COLOR DE ACENTO</label>
+        <div id="profile-accent-picker" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+      </div>
       <div style="display:flex;gap:8px;justify-content:flex-end;">
         <button id="profile-bio-cancel-btn" style="padding:8px 16px;border-radius:6px;border:1px solid #333;background:none;color:#999;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">Cancelar</button>
-        <button id="profile-bio-save-btn" style="padding:8px 16px;border-radius:6px;border:none;background:#c8f060;color:#0d0d0f;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;">Guardar</button>
+        <button id="profile-bio-save-btn" style="padding:8px 16px;border-radius:6px;border:none;background:var(--accent);color:#0d0d0f;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;">Guardar</button>
       </div>
     </div>
 
     <!-- Estadísticas -->
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px;">
       <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
-        <div id="profile-stat-total" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:#c8f060;">0</div>
+        <div id="profile-stat-total" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);">0</div>
         <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">ÁLBUMES</div>
       </div>
       <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
-        <div id="profile-stat-avg" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:#c8f060;">–</div>
+        <div id="profile-stat-avg" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);">–</div>
         <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">PROMEDIO</div>
       </div>
       <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
-        <div id="profile-stat-genre" style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#c8f060;line-height:1.2;margin-top:4px;">–</div>
+        <div id="profile-stat-genre" style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--accent);line-height:1.2;margin-top:4px;">–</div>
         <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">GÉNERO FAVORITO</div>
       </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px;">
+      <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
+        <div id="profile-stat-artist" style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--accent);line-height:1.2;">–</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">ARTISTA MÁS RATEADO</div>
+      </div>
+      <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
+        <div id="profile-stat-streak" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);">0</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">DÍAS SEGUIDOS RATEANDO</div>
+      </div>
+    </div>
+
+    <!-- Distribución por tier -->
+    <div style="margin-top:20px;background:#15151b;border:1px solid #22222a;border-radius:10px;padding:16px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-bottom:10px;">DISTRIBUCIÓN POR TIER</div>
+      <div id="profile-tier-dist" style="display:flex;flex-direction:column;gap:6px;"></div>
     </div>
 
     <!-- Favoritos (elegidos a mano) -->
@@ -1252,8 +1304,11 @@
       <div id="profile-recent-row" class="profile-album-grid"></div>
     </div>
 
-    <div style="margin-top:44px;text-align:center;">
+    <div id="profile-own-footer" style="margin-top:44px;text-align:center;">
       <span onclick="logoutVaultAuth()" style="color:#e05050;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">Cerrar sesión</span>
+    </div>
+    <div id="profile-foreign-footer" style="display:none;margin-top:44px;text-align:center;">
+      <span onclick="exitForeignProfile()" style="color:#777;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">← Volver a mi perfil</span>
     </div>
   </div>
 </div>
@@ -1780,7 +1835,11 @@ async function initVaultApp() {
 
 // ══════════════════ PERFIL ══════════════════
 
-let vaultProfile = { banner: null, bio: '', pinned: [] };
+let vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '' };
+const ACCENT_PRESETS = ['#c8f060', '#e05252', '#4d82e0', '#e87c3e', '#b06de0', '#3ac4b0', '#f5e642'];
+
+// Estado del "perfil ajeno" (solo lectura). Cuando es null, el perfil mostrado es el propio.
+let foreignProfileData = null; // { discord_username, discord_avatar, profile, collection }
 
 async function syncVaultProfileFromServer() {
   const token = localStorage.getItem('auth_token');
@@ -1792,7 +1851,7 @@ async function syncVaultProfileFromServer() {
       body: JSON.stringify({ token })
     });
     const data = await res.json();
-    if (res.ok && data.profile) vaultProfile = { banner: null, bio: '', pinned: [], ...data.profile };
+    if (res.ok && data.profile) vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', ...data.profile };
   } catch (e) { /* backend dormido o sin conexión — se usa el default local */ }
 }
 
@@ -1808,6 +1867,12 @@ async function saveVaultProfile() {
   } catch (e) { /* backend dormido o sin conexión — se reintenta en la próxima edición */ }
 }
 
+function applyAccentColor(color) {
+  document.getElementById('profile-view').style.setProperty('--accent', color);
+  document.getElementById('profile-view').style.setProperty('--accent-dim', color + '4d');
+  document.getElementById('profile-view').style.setProperty('--accent-wash', color + '12');
+}
+
 function openProfileView() {
   document.getElementById('tiers-container').style.display = 'none';
   const profileView = document.getElementById('profile-view');
@@ -1816,16 +1881,83 @@ function openProfileView() {
   // así que hay que empujar el contenido con el alto real del header.
   const headerH = document.getElementById('header').getBoundingClientRect().height;
   profileView.style.paddingTop = headerH + 'px';
-  document.getElementById('profile-banner').style.backgroundImage = vaultProfile.banner ? `url(${vaultProfile.banner})` : '';
-  document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripción todavía.';
-  renderProfileStats();
-  renderProfileAlbumRows();
+  foreignProfileData = null;
+  document.getElementById('profile-search-input').value = '';
+  renderOwnProfile();
   window.scrollTo(0, 0);
 }
+
+function renderOwnProfile() {
+  document.getElementById('profile-own-footer').style.display = 'block';
+  document.getElementById('profile-foreign-footer').style.display = 'none';
+  document.getElementById('profile-bio-edit-btn').style.display = 'inline-block';
+  document.getElementById('profile-edit-pinned-btn').style.display = 'inline-block';
+  document.getElementById('profile-banner-edit-btn').style.display = 'flex';
+  applyAccentColor(vaultProfile.accentColor || '#c8f060');
+  document.getElementById('profile-avatar-img').src = localStorage.getItem(DISCORD_AVATAR_KEY) || '';
+  document.getElementById('profile-username').textContent = localStorage.getItem('discord_user_id') || '';
+  document.getElementById('profile-banner').style.backgroundImage = vaultProfile.banner ? `url(${vaultProfile.banner})` : '';
+  document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripción todavía.';
+  renderProfileStats(albums, vaultProfile);
+  renderProfileAlbumRows(albums, vaultProfile, false);
+  updateNowListening(vaultProfile.lastfmUsername);
+}
+
+async function openForeignProfile(discordUsername) {
+  const searchInput = document.getElementById('profile-search-input');
+  const original = searchInput.placeholder;
+  searchInput.placeholder = 'Buscando…';
+  searchInput.value = '';
+  try {
+    const res  = await fetch(`${BOT_SERVER}/public-profile/${encodeURIComponent(discordUsername)}`);
+    const data = await res.json();
+    if (!res.ok || !data.ok) { alert(data.error || 'Usuario no encontrado'); return; }
+    foreignProfileData = data;
+
+    document.getElementById('profile-own-footer').style.display = 'none';
+    document.getElementById('profile-foreign-footer').style.display = 'block';
+    document.getElementById('profile-bio-edit-btn').style.display = 'none';
+    document.getElementById('profile-edit-pinned-btn').style.display = 'none';
+    document.getElementById('profile-banner-edit-btn').style.display = 'none';
+
+    const fProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', ...(data.profile || {}) };
+    const fAlbums  = (data.collection && data.collection.albums) || [];
+
+    applyAccentColor(fProfile.accentColor || '#c8f060');
+    document.getElementById('profile-avatar-img').src = data.discord_avatar || '';
+    document.getElementById('profile-username').textContent = data.discord_username || discordUsername;
+    document.getElementById('profile-banner').style.backgroundImage = fProfile.banner ? `url(${fProfile.banner})` : '';
+    document.getElementById('profile-bio-display').textContent = fProfile.bio || 'Sin descripción todavía.';
+    document.getElementById('profile-bio-editor').style.display = 'none';
+    document.getElementById('profile-bio-display').style.display = 'block';
+    renderProfileStats(fAlbums, fProfile);
+    renderProfileAlbumRows(fAlbums, fProfile, true);
+    updateNowListening(fProfile.lastfmUsername);
+    window.scrollTo(0, 0);
+  } catch (e) {
+    alert('No se pudo cargar ese perfil. Puede que el bot esté iniciando — probá de nuevo en unos segundos.');
+  } finally {
+    searchInput.placeholder = original;
+  }
+}
+
+function exitForeignProfile() {
+  foreignProfileData = null;
+  renderOwnProfile();
+  window.scrollTo(0, 0);
+}
+
+document.getElementById('profile-search-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const val = e.target.value.trim();
+    if (val) openForeignProfile(val);
+  }
+});
 
 function closeProfileView() {
   document.getElementById('profile-view').style.display = 'none';
   document.getElementById('tiers-container').style.display = '';
+  stopNowListeningPolling();
 }
 
 document.getElementById('profile-back-btn').addEventListener('click', closeProfileView);
@@ -1858,9 +1990,11 @@ document.getElementById('profile-banner-file').addEventListener('change', e => {
   e.target.value = '';
 });
 
-// ── Bio ──
+// ── Bio + Last.fm + Color de acento ──
 document.getElementById('profile-bio-edit-btn').addEventListener('click', () => {
   document.getElementById('profile-bio-input').value = vaultProfile.bio || '';
+  document.getElementById('profile-lastfm-input').value = vaultProfile.lastfmUsername || '';
+  renderAccentPicker(vaultProfile.accentColor || '#c8f060');
   document.getElementById('profile-bio-editor').style.display = 'flex';
   document.getElementById('profile-bio-display').style.display = 'none';
 });
@@ -1870,28 +2004,137 @@ document.getElementById('profile-bio-cancel-btn').addEventListener('click', () =
 });
 document.getElementById('profile-bio-save-btn').addEventListener('click', () => {
   vaultProfile.bio = document.getElementById('profile-bio-input').value.trim();
+  vaultProfile.lastfmUsername = document.getElementById('profile-lastfm-input').value.trim();
   document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripción todavía.';
   document.getElementById('profile-bio-editor').style.display = 'none';
   document.getElementById('profile-bio-display').style.display = 'block';
+  applyAccentColor(vaultProfile.accentColor || '#c8f060');
+  updateNowListening(vaultProfile.lastfmUsername);
   saveVaultProfile();
 });
 
+function renderAccentPicker(current) {
+  const wrap = document.getElementById('profile-accent-picker');
+  wrap.innerHTML = '';
+  ACCENT_PRESETS.forEach(color => {
+    const btn = document.createElement('button');
+    btn.className = 'accent-swatch' + (color === current ? ' active' : '');
+    btn.style.background = color;
+    btn.type = 'button';
+    btn.addEventListener('click', () => {
+      vaultProfile.accentColor = color;
+      applyAccentColor(color);
+      [...wrap.children].forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+// ── Now Listening (Last.fm) ──
+let _nlInterval = null;
+let _nlCurrentUser = null;
+
+async function fetchNowListening(lfUser) {
+  const box = document.getElementById('profile-now-listening');
+  if (!lfUser) { box.style.display = 'none'; return; }
+  try {
+    const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(lfUser)}&api_key=${LFM_KEY}&format=json&limit=1`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const track = data?.recenttracks?.track?.[0];
+    if (!track || track['@attr']?.nowplaying !== 'true') { box.style.display = 'none'; return; }
+
+    const trackName  = track.name || '';
+    const artistName = track.artist?.['#text'] || '';
+    const img = pickLfmImage(track.image);
+
+    document.getElementById('nl-track').textContent  = trackName;
+    document.getElementById('nl-artist').textContent = artistName;
+    document.getElementById('nl-cover').src = (img && !img.includes('2a96cbd8b46e442fc41c2b86b821562f')) ? img : '';
+    box.style.display = 'flex';
+  } catch (e) { box.style.display = 'none'; }
+}
+
+function updateNowListening(lfUser) {
+  stopNowListeningPolling();
+  if (!lfUser) { document.getElementById('profile-now-listening').style.display = 'none'; return; }
+  _nlCurrentUser = lfUser;
+  fetchNowListening(lfUser);
+  _nlInterval = setInterval(() => fetchNowListening(_nlCurrentUser), 30000);
+}
+
+function stopNowListeningPolling() {
+  if (_nlInterval) { clearInterval(_nlInterval); _nlInterval = null; }
+}
+
 // ── Estadísticas ──
-function renderProfileStats() {
-  const total = albums.length;
+function renderProfileStats(albumList, profile) {
+  const total = albumList.length;
   document.getElementById('profile-stat-total').textContent = total;
 
-  const avg = total ? (albums.reduce((s, a) => s + (Number(a.score) || 0), 0) / total) : null;
+  const avg = total ? (albumList.reduce((s, a) => s + (Number(a.score) || 0), 0) / total) : null;
   document.getElementById('profile-stat-avg').textContent = avg !== null ? avg.toFixed(2) : '–';
 
   const genreCounts = {};
-  albums.forEach(a => (a.genres || []).forEach(g => { genreCounts[g] = (genreCounts[g] || 0) + 1; }));
+  albumList.forEach(a => (a.genres || []).forEach(g => { genreCounts[g] = (genreCounts[g] || 0) + 1; }));
   const topGenre = Object.entries(genreCounts).sort((a, b) => b[1] - a[1])[0];
   document.getElementById('profile-stat-genre').textContent = topGenre ? topGenre[0] : '–';
+
+  const artistCounts = {};
+  albumList.forEach(a => { if (a.artist) artistCounts[a.artist] = (artistCounts[a.artist] || 0) + 1; });
+  const topArtist = Object.entries(artistCounts).sort((a, b) => b[1] - a[1])[0];
+  document.getElementById('profile-stat-artist').textContent = topArtist ? `${topArtist[0]} (${topArtist[1]})` : '–';
+
+  document.getElementById('profile-stat-streak').textContent = computeActivityStreak(albumList);
+
+  renderTierDistribution(albumList);
+}
+
+// Racha de días distintos con actividad registrada (listenDate + fechas de relisten),
+// contando hacia atrás desde el día más reciente con actividad.
+function computeActivityStreak(albumList) {
+  const days = new Set();
+  albumList.forEach(a => {
+    if (a.listenDate) days.add(a.listenDate.slice(0, 10));
+    (a.replays || []).forEach(r => { if (r.date) days.add(r.date.slice(0, 10)); });
+  });
+  if (!days.size) return 0;
+  const sorted = [...days].sort().reverse();
+  let streak = 1;
+  let cursor = new Date(sorted[0] + 'T00:00:00');
+  for (let i = 1; i < sorted.length; i++) {
+    cursor.setDate(cursor.getDate() - 1);
+    const expected = cursor.toISOString().slice(0, 10);
+    if (sorted[i] === expected) streak++;
+    else break;
+  }
+  return streak;
+}
+
+function renderTierDistribution(albumList) {
+  const wrap = document.getElementById('profile-tier-dist');
+  wrap.innerHTML = '';
+  const total = albumList.length || 1;
+  TIERS.forEach(tier => {
+    const count = albumList.filter(a => getTier(a.score)?.id === tier.id).length;
+    if (!count) return;
+    const pct = Math.round((count / total) * 100);
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;';
+    row.innerHTML = `
+      <div style="width:26px;font-family:'DM Mono',monospace;font-size:10px;color:${tier.color};flex-shrink:0;">${tier.label}</div>
+      <div style="flex:1;height:6px;background:#22222a;border-radius:3px;overflow:hidden;">
+        <div style="width:${pct}%;height:100%;background:${tier.color};"></div>
+      </div>
+      <div style="width:34px;text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:#888;flex-shrink:0;">${count}</div>
+    `;
+    wrap.appendChild(row);
+  });
 }
 
 // ── Filas de álbumes (favoritos / top10 / recientes) ──
-function albumMiniCard(album) {
+function albumMiniCard(album, readOnly) {
   const tier = getTier(album.score);
   const div = document.createElement('div');
   div.className = 'profile-album-card';
@@ -1900,33 +2143,37 @@ function albumMiniCard(album) {
     <div class="profile-album-title">${escHtml(album.title)}</div>
     <div class="profile-album-score" style="color:${tier ? tier.color : '#666'};">${album.score}</div>
   `;
-  div.addEventListener('click', () => { closeProfileView(); openDetail(album); });
+  if (!readOnly) {
+    div.addEventListener('click', () => { closeProfileView(); openDetail(album); });
+  } else {
+    div.style.cursor = 'default';
+  }
   return div;
 }
 
-function renderProfileAlbumRows() {
+function renderProfileAlbumRows(albumList, profile, readOnly) {
   // Top 10
   const top10Row = document.getElementById('profile-top10-row');
   top10Row.innerHTML = '';
-  [...albums].sort((a, b) => b.score - a.score).slice(0, 10).forEach(a => top10Row.appendChild(albumMiniCard(a)));
+  [...albumList].sort((a, b) => b.score - a.score).slice(0, 10).forEach(a => top10Row.appendChild(albumMiniCard(a, readOnly)));
 
   // Últimos rateados (por listenDate si existe, si no por orden de creación/id)
   const recentRow = document.getElementById('profile-recent-row');
   recentRow.innerHTML = '';
-  [...albums].sort((a, b) => {
+  [...albumList].sort((a, b) => {
     const da = a.listenDate ? new Date(a.listenDate).getTime() : 0;
     const db = b.listenDate ? new Date(b.listenDate).getTime() : 0;
     return db - da;
-  }).slice(0, 10).forEach(a => recentRow.appendChild(albumMiniCard(a)));
+  }).slice(0, 10).forEach(a => recentRow.appendChild(albumMiniCard(a, readOnly)));
 
   // Favoritos elegidos a mano
   const pinnedRow   = document.getElementById('profile-pinned-row');
   const pinnedEmpty = document.getElementById('profile-pinned-empty');
   pinnedRow.innerHTML = '';
-  const pinnedAlbums = (vaultProfile.pinned || []).map(id => albums.find(a => a.id === id)).filter(Boolean);
+  const pinnedAlbums = (profile.pinned || []).map(id => albumList.find(a => a.id === id)).filter(Boolean);
   if (pinnedAlbums.length) {
     pinnedEmpty.style.display = 'none';
-    pinnedAlbums.forEach(a => pinnedRow.appendChild(albumMiniCard(a)));
+    pinnedAlbums.forEach(a => pinnedRow.appendChild(albumMiniCard(a, readOnly)));
   } else {
     pinnedEmpty.style.display = 'block';
   }
@@ -1957,7 +2204,7 @@ document.getElementById('pinned-picker-save-btn').addEventListener('click', () =
   if (checked.length > 10) { alert('Máximo 10 favoritos.'); return; }
   vaultProfile.pinned = checked.map(c => c.dataset.id);
   document.getElementById('pinned-picker-backdrop').style.display = 'none';
-  renderProfileAlbumRows();
+  renderProfileAlbumRows(albums, vaultProfile, false);
   saveVaultProfile();
 });
 
