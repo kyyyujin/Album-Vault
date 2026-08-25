@@ -1479,6 +1479,29 @@
   </div>
 </div>
 
+<!-- Modal: mini editor de banner (zoom + posición antes de guardar) -->
+<div id="banner-editor-backdrop" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#15151b;border:1px solid #2a2a3a;border-radius:12px;max-width:560px;width:100%;overflow:hidden;">
+    <div style="padding:16px 18px;border-bottom:1px solid #22222a;">
+      <h3 style="margin:0;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;">Ajustar banner</h3>
+    </div>
+    <div id="banner-editor-viewport" style="position:relative;width:100%;aspect-ratio:16/5;overflow:hidden;background:#000;cursor:grab;touch-action:none;">
+      <canvas id="banner-editor-canvas" style="position:absolute;top:0;left:0;"></canvas>
+    </div>
+    <div style="padding:16px 18px;display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:#777;letter-spacing:0.05em;flex-shrink:0;">ZOOM</span>
+        <input id="banner-editor-zoom" type="range" min="100" max="300" value="100" style="flex:1;accent-color:var(--accent,#c8f060);" />
+      </div>
+      <p style="margin:0;color:#666;font-family:'DM Mono',monospace;font-size:10px;">Arrastrá la imagen para moverla dentro del recuadro.</p>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button id="banner-editor-cancel-btn" style="padding:9px 16px;border-radius:6px;border:1px solid #333;background:none;color:#999;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">Cancelar</button>
+        <button id="banner-editor-save-btn" style="padding:9px 18px;border-radius:6px;border:none;background:var(--accent,#c8f060);color:#0d0d0f;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;">Guardar banner</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="scroll-hint">
   <div class="clock-ring">
     <div class="clock-hand hour"></div>
@@ -2146,22 +2169,144 @@ document.getElementById('profile-banner-file').addEventListener('change', e => {
   const reader = new FileReader();
   reader.onload = ev => {
     const img = new Image();
-    img.onload = () => {
-      // Redimensionar antes de guardar, para no mandar imágenes gigantes a la DB.
-      const maxW = 1200;
-      const scale = Math.min(1, maxW / img.width);
-      const canvas = document.createElement('canvas');
-      canvas.width  = img.width  * scale;
-      canvas.height = img.height * scale;
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      vaultProfile.banner = canvas.toDataURL('image/jpeg', 0.82);
-      document.getElementById('profile-banner').style.backgroundImage = `url(${vaultProfile.banner})`;
-      saveVaultProfile();
-    };
+    img.onload = () => openBannerEditor(img);
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
   e.target.value = '';
+});
+
+// ── Mini editor de banner (zoom + arrastrar antes de guardar) ──
+// El recorte usa el mismo ratio 16:5 que el banner real, así lo que se ve acá
+// coincide con lo que va a quedar colocado.
+const BANNER_RATIO = 16 / 5;
+let bannerEditorImg = null;
+let bannerEditorState = { zoom: 1, offX: 0, offY: 0 }; // offX/offY en px de canvas, centrado
+let bannerEditorDrag = null; // { startX, startY, startOffX, startOffY }
+
+function openBannerEditor(img) {
+  bannerEditorImg = img;
+  bannerEditorState = { zoom: 1, offX: 0, offY: 0 };
+  document.getElementById('banner-editor-zoom').value = 100;
+  document.getElementById('banner-editor-backdrop').style.display = 'flex';
+  requestAnimationFrame(() => {
+    setupBannerEditorCanvas();
+    drawBannerEditor();
+  });
+}
+
+function setupBannerEditorCanvas() {
+  const viewport = document.getElementById('banner-editor-viewport');
+  const canvas = document.getElementById('banner-editor-canvas');
+  const rect = viewport.getBoundingClientRect();
+  canvas.width  = rect.width;
+  canvas.height = rect.height;
+}
+
+// La imagen se dibuja siempre "cover" del viewport en zoom 1, y el zoom la agranda desde ahí.
+function getBannerBaseScale() {
+  const canvas = document.getElementById('banner-editor-canvas');
+  return Math.max(canvas.width / bannerEditorImg.width, canvas.height / bannerEditorImg.height);
+}
+
+function drawBannerEditor() {
+  const canvas = document.getElementById('banner-editor-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const baseScale = getBannerBaseScale();
+  const scale = baseScale * bannerEditorState.zoom;
+  const drawW = bannerEditorImg.width  * scale;
+  const drawH = bannerEditorImg.height * scale;
+  const cx = canvas.width  / 2 + bannerEditorState.offX;
+  const cy = canvas.height / 2 + bannerEditorState.offY;
+  ctx.drawImage(bannerEditorImg, cx - drawW / 2, cy - drawH / 2, drawW, drawH);
+}
+
+// Límites de arrastre: no dejar que se vea "más allá" del borde de la imagen.
+function clampBannerOffset() {
+  const canvas = document.getElementById('banner-editor-canvas');
+  const baseScale = getBannerBaseScale();
+  const scale = baseScale * bannerEditorState.zoom;
+  const drawW = bannerEditorImg.width  * scale;
+  const drawH = bannerEditorImg.height * scale;
+  const maxOffX = Math.max(0, (drawW - canvas.width)  / 2);
+  const maxOffY = Math.max(0, (drawH - canvas.height) / 2);
+  bannerEditorState.offX = Math.min(maxOffX, Math.max(-maxOffX, bannerEditorState.offX));
+  bannerEditorState.offY = Math.min(maxOffY, Math.max(-maxOffY, bannerEditorState.offY));
+}
+
+const bannerViewport = document.getElementById('banner-editor-viewport');
+function bannerPointerDown(x, y) {
+  bannerEditorDrag = { startX: x, startY: y, startOffX: bannerEditorState.offX, startOffY: bannerEditorState.offY };
+  bannerViewport.style.cursor = 'grabbing';
+}
+function bannerPointerMove(x, y) {
+  if (!bannerEditorDrag) return;
+  bannerEditorState.offX = bannerEditorDrag.startOffX + (x - bannerEditorDrag.startX);
+  bannerEditorState.offY = bannerEditorDrag.startOffY + (y - bannerEditorDrag.startY);
+  clampBannerOffset();
+  drawBannerEditor();
+}
+function bannerPointerUp() {
+  bannerEditorDrag = null;
+  bannerViewport.style.cursor = 'grab';
+}
+bannerViewport.addEventListener('mousedown', e => bannerPointerDown(e.clientX, e.clientY));
+window.addEventListener('mousemove', e => bannerPointerMove(e.clientX, e.clientY));
+window.addEventListener('mouseup', bannerPointerUp);
+bannerViewport.addEventListener('touchstart', e => {
+  const t = e.touches[0];
+  bannerPointerDown(t.clientX, t.clientY);
+}, { passive: true });
+bannerViewport.addEventListener('touchmove', e => {
+  const t = e.touches[0];
+  bannerPointerMove(t.clientX, t.clientY);
+}, { passive: true });
+bannerViewport.addEventListener('touchend', bannerPointerUp);
+
+document.getElementById('banner-editor-zoom').addEventListener('input', e => {
+  bannerEditorState.zoom = e.target.value / 100;
+  clampBannerOffset();
+  drawBannerEditor();
+});
+
+document.getElementById('banner-editor-cancel-btn').addEventListener('click', () => {
+  document.getElementById('banner-editor-backdrop').style.display = 'none';
+  bannerEditorImg = null;
+});
+
+document.getElementById('banner-editor-save-btn').addEventListener('click', () => {
+  // Se renderiza a una resolución fija (no la del viewport en pantalla) para que
+  // el resultado sea nítido sin importar el tamaño de ventana del que se editó.
+  const outW = 1200;
+  const outH = Math.round(outW / BANNER_RATIO);
+  const out = document.createElement('canvas');
+  out.width = outW; out.height = outH;
+  const octx = out.getContext('2d');
+
+  const editorCanvas = document.getElementById('banner-editor-canvas');
+  const scaleUp = outW / editorCanvas.width;
+  const baseScale = getBannerBaseScale();
+  const scale = baseScale * bannerEditorState.zoom * scaleUp;
+  const drawW = bannerEditorImg.width  * scale;
+  const drawH = bannerEditorImg.height * scale;
+  const cx = out.width  / 2 + bannerEditorState.offX * scaleUp;
+  const cy = out.height / 2 + bannerEditorState.offY * scaleUp;
+  octx.drawImage(bannerEditorImg, cx - drawW / 2, cy - drawH / 2, drawW, drawH);
+
+  vaultProfile.banner = out.toDataURL('image/jpeg', 0.85);
+  document.getElementById('profile-banner').style.backgroundImage = `url(${vaultProfile.banner})`;
+  saveVaultProfile();
+  document.getElementById('banner-editor-backdrop').style.display = 'none';
+  bannerEditorImg = null;
+});
+
+window.addEventListener('resize', () => {
+  if (document.getElementById('banner-editor-backdrop').style.display === 'flex') {
+    setupBannerEditorCanvas();
+    clampBannerOffset();
+    drawBannerEditor();
+  }
 });
 
 // ── Bio + Last.fm + Color de acento ──
