@@ -560,6 +560,67 @@
   .shelf-order-row.dragging { opacity: 0.4; }
   .shelf-order-handle { color: #555; font-size: 14px; flex-shrink: 0; }
 
+  /* ══════════════ Segmentos de estadística del perfil (ancho completo) ══════════════ */
+  .profile-segstat {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 120px;
+    background: #15151b;
+    border: 1px solid #22222a;
+  }
+  @media (min-width: 900px) {
+    .profile-segstat { height: 150px; }
+  }
+  .profile-segstat-bg {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center;
+  }
+  /* Degradado de derecha a izquierda: oscuro donde va el texto (derecha),
+     dejando asomar la carátula del lado izquierdo. */
+  .profile-segstat-fade {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(10,10,10,0.1) 0%, rgba(10,10,10,0.7) 40%, rgba(10,10,10,0.94) 75%);
+  }
+  .profile-segstat-text {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    text-align: right;
+    padding: 16px 22px;
+    box-sizing: border-box;
+  }
+  .profile-segstat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--accent);
+    line-height: 1;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+  @media (min-width: 900px) {
+    .profile-segstat-value { font-size: 52px; }
+  }
+  .profile-segstat-value-sm {
+    font-size: 24px;
+    line-height: 1.2;
+    max-width: 260px;
+  }
+  @media (min-width: 900px) {
+    .profile-segstat-value-sm { font-size: 28px; }
+  }
+  .profile-segstat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #ccc;
+    letter-spacing: 0.1em;
+    margin-top: 6px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  }
+
   /* ══════════════ Efecto de carta holográfica (solo Favoritos) ══════════════ */
   .holo-scene {
     flex: 0 0 auto;
@@ -1543,29 +1604,47 @@
       </div>
     </div>
 
-    <!-- Estadísticas -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px;">
-      <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
-        <div id="profile-stat-total" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);">0</div>
-        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">ÁLBUMES</div>
+    <!-- Estadísticas: segmentos apilados, cada uno a todo el ancho -->
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:28px;">
+      <div class="profile-segstat" id="stat-card-total">
+        <div class="profile-segstat-bg"></div>
+        <div class="profile-segstat-fade"></div>
+        <div class="profile-segstat-text">
+          <div id="profile-stat-total" class="profile-segstat-value">0</div>
+          <div class="profile-segstat-label">ÁLBUMES</div>
+        </div>
       </div>
-      <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
-        <div id="profile-stat-avg" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);">–</div>
-        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">PROMEDIO</div>
+      <div class="profile-segstat" id="stat-card-avg">
+        <div class="profile-segstat-bg"></div>
+        <div class="profile-segstat-fade"></div>
+        <div class="profile-segstat-text">
+          <div id="profile-stat-avg" class="profile-segstat-value">–</div>
+          <div class="profile-segstat-label">PROMEDIO</div>
+        </div>
       </div>
-      <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
-        <div id="profile-stat-genre" style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--accent);line-height:1.2;margin-top:4px;">–</div>
-        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">GÉNERO FAVORITO</div>
+      <div class="profile-segstat" id="stat-card-genre">
+        <div class="profile-segstat-bg"></div>
+        <div class="profile-segstat-fade"></div>
+        <div class="profile-segstat-text">
+          <div id="profile-stat-genre" class="profile-segstat-value profile-segstat-value-sm">–</div>
+          <div class="profile-segstat-label">GÉNERO FAVORITO</div>
+        </div>
       </div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px;">
-      <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
-        <div id="profile-stat-artist" style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--accent);line-height:1.2;">–</div>
-        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">ARTISTA MÁS RATEADO</div>
+      <div class="profile-segstat" id="stat-card-artist">
+        <div class="profile-segstat-bg"></div>
+        <div class="profile-segstat-fade"></div>
+        <div class="profile-segstat-text">
+          <div id="profile-stat-artist" class="profile-segstat-value profile-segstat-value-sm">–</div>
+          <div class="profile-segstat-label">ARTISTA MÁS RATEADO</div>
+        </div>
       </div>
-      <div style="background:#15151b;border:1px solid #22222a;border-radius:10px;padding:14px;text-align:center;">
-        <div id="profile-stat-streak" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);">0</div>
-        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-top:2px;">DÍAS SEGUIDOS RATEANDO</div>
+      <div class="profile-segstat" id="stat-card-streak">
+        <div class="profile-segstat-bg"></div>
+        <div class="profile-segstat-fade"></div>
+        <div class="profile-segstat-text">
+          <div id="profile-stat-streak" class="profile-segstat-value">0</div>
+          <div class="profile-segstat-label">DÍAS SEGUIDOS RATEANDO</div>
+        </div>
       </div>
     </div>
 
@@ -2577,23 +2656,62 @@ function stopNowListeningPolling() {
 function renderProfileStats(albumList, profile) {
   const total = albumList.length;
   document.getElementById('profile-stat-total').textContent = total;
+  setStatCardBg('stat-card-total', pickRandomAlbum(albumList));
 
   const avg = total ? (albumList.reduce((s, a) => s + (Number(a.score) || 0), 0) / total) : null;
   document.getElementById('profile-stat-avg').textContent = avg !== null ? avg.toFixed(2) : '–';
+  setStatCardBg('stat-card-avg', avg !== null ? pickClosestToAverage(albumList, avg) : null);
 
   const genreCounts = {};
   albumList.forEach(a => (a.genres || []).forEach(g => { genreCounts[g] = (genreCounts[g] || 0) + 1; }));
   const topGenre = Object.entries(genreCounts).sort((a, b) => b[1] - a[1])[0];
   document.getElementById('profile-stat-genre').textContent = topGenre ? topGenre[0] : '–';
+  setStatCardBg('stat-card-genre', topGenre ? pickRandomAlbum(albumList.filter(a => (a.genres||[]).includes(topGenre[0]))) : null);
 
   const artistCounts = {};
   albumList.forEach(a => { if (a.artist) artistCounts[a.artist] = (artistCounts[a.artist] || 0) + 1; });
   const topArtist = Object.entries(artistCounts).sort((a, b) => b[1] - a[1])[0];
   document.getElementById('profile-stat-artist').textContent = topArtist ? `${topArtist[0]} (${topArtist[1]})` : '–';
+  setStatCardBg('stat-card-artist', topArtist ? pickRandomAlbum(albumList.filter(a => a.artist === topArtist[0])) : null);
 
   document.getElementById('profile-stat-streak').textContent = computeActivityStreak(albumList);
+  setStatCardBg('stat-card-streak', pickMostRecentlyListened(albumList));
 
   renderTierDistribution(albumList);
+}
+
+// Elige un álbum al azar de la lista dada (estable dentro del mismo render, pero
+// varía entre renders — así cada visita al perfil puede mostrar una carátula distinta).
+function pickRandomAlbum(list) {
+  if (!list || !list.length) return null;
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+// El álbum cuyo score está numéricamente más cerca del promedio calculado.
+function pickClosestToAverage(list, avg) {
+  if (!list.length) return null;
+  return list.reduce((best, a) => {
+    const d = Math.abs((Number(a.score) || 0) - avg);
+    const bd = Math.abs((Number(best.score) || 0) - avg);
+    return d < bd ? a : best;
+  }, list[0]);
+}
+
+// El álbum con el listenDate más reciente (el que más probablemente sostiene la racha actual).
+function pickMostRecentlyListened(list) {
+  if (!list.length) return null;
+  return [...list].sort((a, b) => {
+    const da = a.listenDate ? new Date(a.listenDate).getTime() : 0;
+    const db = b.listenDate ? new Date(b.listenDate).getTime() : 0;
+    return db - da;
+  })[0];
+}
+
+function setStatCardBg(cardId, album) {
+  const card = document.getElementById(cardId);
+  if (!card) return;
+  const bg = card.querySelector('.profile-segstat-bg');
+  bg.style.backgroundImage = (album && album.coverUrl) ? `url(${album.coverUrl})` : 'none';
 }
 
 // Racha de días distintos con actividad registrada (listenDate + fechas de relisten),
