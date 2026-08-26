@@ -565,12 +565,12 @@
     position: relative;
     border-radius: 12px;
     overflow: hidden;
-    height: 120px;
+    height: 190px;
     background: #15151b;
     border: 1px solid #22222a;
   }
   @media (min-width: 900px) {
-    .profile-segstat { height: 150px; }
+    .profile-segstat { height: 260px; }
   }
   .profile-segstat-bg {
     position: absolute; inset: 0;
@@ -591,33 +591,33 @@
     align-items: flex-end;
     justify-content: center;
     text-align: right;
-    padding: 16px 22px;
+    padding: 20px 26px;
     box-sizing: border-box;
   }
   .profile-segstat-value {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 42px;
+    font-size: 60px;
     color: var(--accent);
     line-height: 1;
     text-shadow: 0 2px 8px rgba(0,0,0,0.6);
   }
   @media (min-width: 900px) {
-    .profile-segstat-value { font-size: 52px; }
+    .profile-segstat-value { font-size: 84px; }
   }
   .profile-segstat-value-sm {
-    font-size: 24px;
+    font-size: 30px;
     line-height: 1.2;
-    max-width: 260px;
+    max-width: 320px;
   }
   @media (min-width: 900px) {
-    .profile-segstat-value-sm { font-size: 28px; }
+    .profile-segstat-value-sm { font-size: 38px; max-width: 420px; }
   }
   .profile-segstat-label {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 12px;
     color: #ccc;
     letter-spacing: 0.1em;
-    margin-top: 6px;
+    margin-top: 8px;
     text-shadow: 0 1px 3px rgba(0,0,0,0.6);
   }
 
@@ -5686,6 +5686,12 @@ window.addEventListener('scroll', () => {
 }, { passive:true });
 
 // ── INIT ──
+// "Despertar" al bot en Render apenas se carga la página: un GET liviano a la raíz,
+// disparado en paralelo sin esperar respuesta. Render duerme el servicio gratuito
+// tras inactividad, y el primer request real (login, perfil, etc.) puede tardar
+// varios segundos en ese caso — este ping adelanta ese arranque para cuando el
+// usuario realmente lo necesite.
+fetch(`${BOT_SERVER}/`).catch(() => {});
 loadAlbums();
 checkAuth();
 // Wire up the reveal version globally after everything is loaded
