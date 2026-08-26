@@ -630,6 +630,11 @@
     scroll-snap-align: start;
     aspect-ratio: 2 / 3;
     perspective: 900px;
+    /* Evita el menú nativo de "guardar/copiar imagen" al mantener presionado en
+       móvil, y bloquea selección de texto/imagen accidental durante el gesto. */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
   @media (max-width: 480px) {
     .holo-scene { width: 47%; min-width: 150px; max-width: 220px; }
@@ -656,19 +661,19 @@
   .holo-scene:not(.holo-active) .holo-card {
     transition: transform .5s cubic-bezier(.23,1,.32,1), box-shadow .5s ease-out;
   }
-  /* Flotación suave cuando nadie la está tocando: una leve oscilación continua
+  /* Flotación cuando nadie la está tocando: una oscilación continua marcada
      en vez del tilt quieto de --rx/--ry en 0. Se corta apenas se toca la carta
      (holo-active la pausa) para no competir con el tilt real del dedo/mouse. */
   .holo-scene.holo-idle:not(.holo-active) .holo-card {
-    animation: holoIdleFloat 7s ease-in-out infinite;
+    animation: holoIdleFloat 5.5s ease-in-out infinite;
     animation-delay: var(--holo-idle-delay, 0s);
   }
   @keyframes holoIdleFloat {
-    0%   { transform: rotateX(3deg)  rotateY(-5deg) scale(1); }
-    25%  { transform: rotateX(-2deg) rotateY(4deg)  scale(1); }
-    50%  { transform: rotateX(4deg)  rotateY(6deg)  scale(1); }
-    75%  { transform: rotateX(-3deg) rotateY(-4deg) scale(1); }
-    100% { transform: rotateX(3deg)  rotateY(-5deg) scale(1); }
+    0%   { transform: rotateX(7deg)   rotateY(-11deg) scale(1); }
+    25%  { transform: rotateX(-6deg)  rotateY(9deg)    scale(1); }
+    50%  { transform: rotateX(9deg)   rotateY(12deg)   scale(1); }
+    75%  { transform: rotateX(-7deg)  rotateY(-9deg)   scale(1); }
+    100% { transform: rotateX(7deg)   rotateY(-11deg)  scale(1); }
   }
   .holo-card img {
     position: absolute; inset: 0;
@@ -730,15 +735,15 @@
   .holo-scene.holo-active .holo-rainbow {
     opacity: var(--holo-intensity, 0.9);
   }
-  /* Brillo ambiental suave que recorre la carta solo, cuando no se está tocando */
+  /* Brillo ambiental marcado que recorre la carta solo, cuando no se está tocando */
   .holo-scene.holo-idle:not(.holo-active) .holo-shine {
-    opacity: 0.35;
-    animation: holoIdleShine 7s ease-in-out infinite;
+    opacity: 0.65;
+    animation: holoIdleShine 5.5s ease-in-out infinite;
     animation-delay: var(--holo-idle-delay, 0s);
   }
   .holo-scene.holo-idle:not(.holo-active) .holo-rainbow {
-    opacity: 0.22;
-    animation: holoIdleShine 7s ease-in-out infinite;
+    opacity: 0.45;
+    animation: holoIdleShine 5.5s ease-in-out infinite;
     animation-delay: var(--holo-idle-delay, 0s);
   }
   @keyframes holoIdleShine {
@@ -2769,11 +2774,11 @@ function albumHoloCard(album, readOnly) {
   scene.className = 'holo-scene holo-idle';
   // Delay negativo y aleatorio: arranca cada carta en un punto distinto de su propio
   // ciclo de animación, así no flotan todas exactamente sincronizadas.
-  scene.style.setProperty('--holo-idle-delay', `-${(Math.random() * 7).toFixed(2)}s`);
+  scene.style.setProperty('--holo-idle-delay', `-${(Math.random() * 5.5).toFixed(2)}s`);
   scene.innerHTML = `
     <div class="holo-card">
       ${album.coverUrl ? `<div class="holo-card-bg" style="background-image:url(${escHtml(album.coverUrl)});"></div>` : ''}
-      <img src="${escHtml(album.coverUrl||'')}" alt="${escHtml(album.title)}" />
+      <img src="${escHtml(album.coverUrl||'')}" alt="${escHtml(album.title)}" draggable="false" />
       <div class="holo-rainbow"></div>
       <div class="holo-shine"></div>
       <div class="holo-card-overlay">
@@ -2852,10 +2857,15 @@ function albumHoloCard(album, readOnly) {
 
   // ── Móvil: seguir el dedo mientras se mantiene presionado ──
   let touchMoved = false;
+  let touchScrollParent = null;
   scene.addEventListener('touchstart', e => {
     touchMoved = false;
     const t = e.touches[0];
     pressDown(t.clientX, t.clientY);
+    // Congela el scroll horizontal del carrusel mientras se manipula esta carta,
+    // para que no se deslice el conjunto mientras el dedo mueve el tilt.
+    touchScrollParent = scene.closest('.profile-album-grid');
+    if (touchScrollParent) touchScrollParent.style.overflowX = 'hidden';
   }, { passive: true });
   scene.addEventListener('touchmove', e => {
     touchMoved = true;
@@ -2864,10 +2874,15 @@ function albumHoloCard(album, readOnly) {
   }, { passive: true });
   scene.addEventListener('touchend', () => {
     pressUp();
+    if (touchScrollParent) { touchScrollParent.style.overflowX = ''; touchScrollParent = null; }
     // Evita que un "tap" simple dispare el click justo después del efecto si el
     // dedo se movió mucho (se trató como gesto, no como toque para abrir el álbum).
     if (touchMoved) pendingClick = false;
     setTimeout(() => { pendingClick = true; }, 50);
+  });
+  scene.addEventListener('touchcancel', () => {
+    pressUp();
+    if (touchScrollParent) { touchScrollParent.style.overflowX = ''; touchScrollParent = null; }
   });
 
   if (!readOnly) {
