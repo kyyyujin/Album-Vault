@@ -2389,27 +2389,6 @@ async function openForeignProfile(discordUsername) {
     const fProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', shelves: [], ...(data.profile || {}) };
     const fAlbums  = (data.collection && data.collection.albums) || [];
 
-    // Diagnóstico temporal: si el perfil cargó pero no trae álbumes, mostrar en
-    // pantalla la causa exacta (útil en celular, donde no se puede abrir la consola).
-    const diagId = 'profile-cover-diag';
-    document.getElementById(diagId)?.remove();
-    if (fAlbums.length === 0) {
-      const diag = document.createElement('div');
-      diag.id = diagId;
-      diag.style.cssText = 'margin:10px 0;padding:10px 14px;border-radius:8px;background:rgba(255,80,80,0.12);'
-        + 'border:1px solid rgba(255,80,80,0.35);color:#ff9d9d;font-family:monospace;font-size:11px;line-height:1.5;';
-      let reason;
-      if (data.collection === null || data.collection === undefined) {
-        reason = 'data.collection = null → este usuario nunca sincronizó su colección de Vault a la nube (vault_collection vacío en la DB).';
-      } else if (!data.collection.albums) {
-        reason = `data.collection existe pero no tiene .albums → forma inesperada: ${JSON.stringify(data.collection).slice(0, 200)}`;
-      } else {
-        reason = `data.collection.albums existe pero está vacío (length ${data.collection.albums.length}).`;
-      }
-      diag.textContent = '⚠ Diagnóstico: ' + reason;
-      document.getElementById('profile-bio-display').after(diag);
-    }
-
     applyAccentColor(fProfile.accentColor || '#c8f060');
     document.getElementById('profile-avatar-img').src = data.discord_avatar || '';
     document.getElementById('profile-username').textContent = data.discord_username || discordUsername;
