@@ -2389,6 +2389,20 @@ async function openForeignProfile(discordUsername) {
     const fProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', shelves: [], ...(data.profile || {}) };
     const fAlbums  = (data.collection && data.collection.albums) || [];
 
+    // Diagnóstico temporal: expone lo que el backend vio en la DB (cuántas filas
+    // coincidieron, cuáles usernames, si alguna tenía datos) directo en pantalla,
+    // sin necesitar la consola del navegador.
+    const diagId = 'profile-cover-diag';
+    document.getElementById(diagId)?.remove();
+    if (fAlbums.length === 0 && data._debug) {
+      const diag = document.createElement('div');
+      diag.id = diagId;
+      diag.style.cssText = 'margin:10px 0;padding:10px 14px;border-radius:8px;background:rgba(255,80,80,0.12);'
+        + 'border:1px solid rgba(255,80,80,0.35);color:#ff9d9d;font-family:monospace;font-size:11px;line-height:1.6;white-space:pre-wrap;';
+      diag.textContent = '⚠ Diagnóstico:\n' + JSON.stringify(data._debug, null, 2);
+      document.getElementById('profile-bio-display').after(diag);
+    }
+
     applyAccentColor(fProfile.accentColor || '#c8f060');
     document.getElementById('profile-avatar-img').src = data.discord_avatar || '';
     document.getElementById('profile-username').textContent = data.discord_username || discordUsername;
