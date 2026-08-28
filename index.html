@@ -637,7 +637,7 @@
     user-select: none;
   }
   @media (max-width: 480px) {
-    .holo-scene { width: 86%; min-width: 220px; max-width: 340px; }
+    .holo-scene { width: 47%; min-width: 150px; max-width: 220px; }
   }
   .holo-card {
     position: relative;
@@ -657,28 +657,6 @@
       0 8px 20px rgba(0,0,0,0.5),
       var(--holo-glow, 0 0 0 rgba(0,0,0,0));
     transition: transform .12s ease-out, box-shadow .2s ease-out;
-  }
-  /* Borde de "carta especial": marco con degradado holográfico que envuelve
-     toda la carta, separado del brillo interior (.holo-shine/.holo-rainbow).
-     Técnica sin mask-composite (soporte inconsistente en Safari/Chrome móvil):
-     .holo-scene lleva el degradado de fondo + padding de 2px, y .holo-card
-     (opaco, 100%x100% del content-box) tapa todo menos ese borde de 2px que
-     asoma alrededor — ese borde asomando es el "marco" que se ve. */
-  .holo-scene {
-    position: relative;
-    padding: 2px;
-    border-radius: 12px;
-    background: linear-gradient(
-      120deg,
-      #ff5ab4, #ffd250, #5adcff, #aa6eff, #ff5ab4, #ffd250
-    );
-    background-size: 300% 300%;
-    animation: holoBorderSpin 6s ease-in-out infinite;
-  }
-  @keyframes holoBorderSpin {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
   }
   .holo-scene:not(.holo-active) .holo-card {
     transition: transform .5s cubic-bezier(.23,1,.32,1), box-shadow .5s ease-out;
@@ -805,17 +783,6 @@
     scrollbar-width: none;
   }
   .profile-album-grid::-webkit-scrollbar { display: none; }
-  /* Favoritos en móvil: una carta grande por fila en vez de 2, con snap
-     obligatorio (mandatory) para que quede centrada al soltar el scroll. */
-  @media (max-width: 480px) {
-    #profile-pinned-row.profile-album-grid {
-      scroll-snap-type: x mandatory;
-      justify-content: flex-start;
-      padding-left: 7%;
-      padding-right: 7%;
-      scroll-padding-left: 7%;
-    }
-  }
   .profile-album-card {
     cursor: pointer;
     flex: 0 0 auto;
@@ -2822,6 +2789,21 @@ function albumHoloCard(album, readOnly) {
   `;
   const card = scene.querySelector('.holo-card');
 
+  // Portada rota → intentar iTunes/Last.fm como respaldo antes de rendirse.
+  if (album.coverUrl) {
+    const coverImg = card.querySelector('img');
+    const coverBg  = card.querySelector('.holo-card-bg');
+    attachCoverFallback(coverImg, album.title, album.artist, () => {
+      coverImg.style.display = 'none';
+    });
+    coverImg.addEventListener('load', () => {
+      // Si la cascada cambió el src, refleja la misma URL en el fondo blureado.
+      if (coverBg && coverImg.src !== album.coverUrl) {
+        coverBg.style.backgroundImage = `url(${coverImg.src})`;
+      }
+    });
+  }
+
   const MAX_TILT = 18; // grados — "marcado" según lo pedido
   let rafId = null;
   let pendingClick = true;
@@ -2943,6 +2925,19 @@ function albumMiniCard(album, readOnly) {
       <div class="profile-album-score" style="color:${tier ? tier.color : '#fff'};">${album.score}</div>
     </div>
   `;
+  // Portada rota → intentar iTunes/Last.fm como respaldo antes de rendirse.
+  if (album.coverUrl) {
+    const coverImg = div.querySelector('img');
+    const coverBg  = div.querySelector('.profile-card-bg');
+    attachCoverFallback(coverImg, album.title, album.artist, () => {
+      coverImg.style.display = 'none';
+    });
+    coverImg.addEventListener('load', () => {
+      if (coverBg && coverImg.src !== album.coverUrl) {
+        coverBg.style.backgroundImage = `url(${coverImg.src})`;
+      }
+    });
+  }
   if (!readOnly) {
     div.addEventListener('click', () => { closeProfileView(); openDetail(album); });
   } else {
@@ -3337,6 +3332,84 @@ function pickLfmImage(images) {
   return images[images.length - 1]?.['#text'] || '';
 }
 
+// Cascada de respaldo cuando la portada guardada de un álbum ya no carga (p. ej.
+// Last.fm eliminó/reindexó esa imagen y ahora da 404). Se intenta primero iTunes
+// (suele ser más estable) y, si no hay coincidencia, Last.fm — sin tocar lo que
+// ya está guardado, solo para mostrar algo mientras tanto.
+const LASTFM_PLACEHOLDER = '2a96cbd8b46e442fc41c2b86b821562f';
+function findItunesCoverFallback(itunesAlbums, title, artist) {
+  if (!itunesAlbums?.length) return null;
+  const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const t = norm(title), a = norm(artist);
+  let match = itunesAlbums.find(al => norm(al.collectionName) === t && norm(al.artistName) === a);
+  if (!match) match = itunesAlbums.find(al => norm(al.collectionName).includes(t) || t.includes(norm(al.collectionName)));
+  if (!match) match = itunesAlbums[0];
+  return match ? match.artworkUrl100.replace('100x100bb', '600x600bb') : null;
+}
+async function refetchCoverFallback(title, artist) {
+  if (!title) return null;
+  try {
+    const q = encodeURIComponent(`${artist || ''} ${title}`.trim());
+    const res = await fetch(`https://itunes.apple.com/search?term=${q}&media=music&entity=album&limit=5`);
+    if (res.ok) {
+      const data = await res.json();
+      const cover = findItunesCoverFallback(data.results || [], title, artist || '');
+      if (cover) return cover;
+    }
+  } catch {}
+  try {
+    const url = `${LFM_BASE}?method=album.getinfo&artist=${encodeURIComponent(artist || '')}&album=${encodeURIComponent(title)}&api_key=${LFM_KEY}&format=json`;
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      const cover = pickLfmImage(data?.album?.image);
+      if (cover && !cover.includes(LASTFM_PLACEHOLDER)) return cover;
+    }
+  } catch {}
+  return null;
+}
+// Conecta un <img> de portada a la cascada de respaldo: al fallar la carga, busca
+// una alternativa una sola vez (evita bucles si la alternativa también falla) y,
+// si tampoco hay nada, ejecuta el callback de "sin portada" que le pasen.
+function attachCoverFallback(imgEl, title, artist, onGiveUp) {
+  let tried = false;
+  imgEl.addEventListener('error', async () => {
+    if (tried) { onGiveUp?.(); return; }
+    tried = true;
+    const alt = await refetchCoverFallback(title, artist);
+    if (alt) imgEl.src = alt;
+    else onGiveUp?.();
+  });
+}
+
+// Vault y Rater comparten la misma base de datos (tabla `ratings`). Cuando una
+// portada en Vault quedó rota y ya se corrigió desde el Rater (con su propio
+// botón de guardado), esto simplemente vuelve a leer el cover_url actual desde
+// esa DB — sin re-buscar en iTunes/Last.fm, sin escribir nada, solo releer.
+async function refetchCoverFromRaterDb(album) {
+  const userId = localStorage.getItem('discord_user_id');
+  if (!userId || !album?.title) return false;
+  const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const t = norm(album.title), a = norm(album.artist);
+  try {
+    const res = await fetch(`${RATER_BOT_SERVER}/history?user_id=${encodeURIComponent(userId)}`, { signal: AbortSignal.timeout(15000) });
+    if (!res.ok) return false;
+    const rows = await res.json();
+    if (!Array.isArray(rows)) return false;
+    const match = rows.find(row => {
+      let rowTitle = row.album_title || '';
+      if (rowTitle.startsWith('- ')) rowTitle = rowTitle.replace(/^- /, '').replace(/\s*\[.*\]$/, '').trim();
+      return norm(rowTitle) === t && (!a || norm(row.artist) === a);
+    });
+    if (!match || !match.cover_url || match.cover_url === album.coverUrl) return false;
+    album.coverUrl = match.cover_url;
+    saveAlbums();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // ── UTILS ──
 function getTier(score) {
   if (score === 10) return TIERS[0];
@@ -3686,6 +3759,35 @@ function openDetail(album, originEl) {
   document.getElementById('modal-score').style.color   = tier.color;
   document.getElementById('modal-notes').textContent   = album.notes || '';
   document.getElementById('modal-notes').style.display = album.notes ? 'block' : 'none';
+
+  // Botón discreto para releer el cover_url desde la DB compartida con Rater —
+  // útil cuando la portada guardada quedó rota y ya se corrigió desde el Rater.
+  const oldRefreshBtn = document.getElementById('modal-cover-refresh');
+  if (oldRefreshBtn) oldRefreshBtn.remove();
+  const refreshBtn = document.createElement('button');
+  refreshBtn.id = 'modal-cover-refresh';
+  refreshBtn.title = 'Releer portada desde la base de datos';
+  refreshBtn.textContent = '🔄';
+  refreshBtn.style.cssText = 'background:none;border:none;color:#666;font-size:11px;cursor:pointer;'
+    + 'padding:2px 4px;opacity:0.6;float:right;';
+  refreshBtn.onclick = async (e) => {
+    e.stopPropagation();
+    refreshBtn.disabled = true;
+    refreshBtn.textContent = '⏳';
+    const updated = await refetchCoverFromRaterDb(album);
+    if (updated) {
+      coverEl.src = album.coverUrl;
+      refreshBtn.textContent = '✓';
+    } else {
+      refreshBtn.textContent = '·';
+    }
+    setTimeout(() => {
+      refreshBtn.disabled = false;
+      refreshBtn.textContent = '🔄';
+      refreshBtn.style.opacity = '0.6';
+    }, 1500);
+  };
+  document.getElementById('modal-tier-badge').after(refreshBtn);
 
   // meta row
   const metaParts = [];
