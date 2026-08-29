@@ -766,31 +766,32 @@
         inset 0 0 12px rgba(var(--holo-dominant-rgb, 200,240,96), .18);
     }
     .holo-scene.holo-idle:not(.holo-active) .holo-card {
-      animation: holoIdleFloatMobile 15s cubic-bezier(.45, 0, .55, 1) infinite;
+      animation: holoIdleFloatMobile 24s cubic-bezier(.45, 0, .55, 1) infinite;
       will-change: transform;
       backface-visibility: hidden;
       animation-delay: var(--holo-idle-delay, 0s);
     }
     .holo-scene.holo-idle:not(.holo-active) .holo-shine {
       opacity: .32;
-      animation-duration: 18s;
+      animation-duration: 30s;
     }
     .holo-scene.holo-idle:not(.holo-active) .holo-rainbow {
       opacity: .24;
-      animation-duration: 18s;
+      animation-duration: 30s;
     }
     .holo-card-overlay {
       padding: 34px 16px 16px;
     }
     .holo-title {
-      font-size: 16px;
-      line-height: 1.25;
+      font-size: 32px;
+      line-height: 1.08;
       font-weight: 600;
+      letter-spacing: -.025em;
     }
     .holo-score {
-      font-size: 20px;
-      line-height: 1.15;
-      margin-top: 5px;
+      font-size: 40px;
+      line-height: 1;
+      margin-top: 8px;
     }
   }
   @keyframes holoIdleFloatMobile {
@@ -1805,7 +1806,8 @@
     <div id="profile-banner-fade" style="position:absolute;left:0;right:0;bottom:-1px;background:linear-gradient(180deg,rgba(10,10,10,0) 0%,var(--bg,#0a0a0a) 100%);"></div>
     <button id="profile-back-btn" title="Volver" style="position:absolute;top:14px;left:14px;z-index:5;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-size:16px;cursor:pointer;">←</button>
     <div id="profile-search-wrap" style="position:absolute;top:14px;right:14px;z-index:5;display:flex;align-items:center;gap:8px;">
-      <input id="profile-search-input" type="text" placeholder="Buscar usuario…" style="width:150px;padding:7px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;outline:none;" />
+      <input id="profile-search-input" type="text" placeholder="Buscar usuario…" autocomplete="off" style="width:180px;padding:7px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;outline:none;" />
+      <div id="profile-search-results" style="display:none;position:absolute;top:42px;left:0;width:260px;max-height:300px;overflow-y:auto;background:rgba(14,14,17,.97);backdrop-filter:blur(14px);border:1px solid #2d2d36;border-radius:12px;padding:6px;box-shadow:0 16px 40px rgba(0,0,0,.55);"></div>
       <button id="profile-banner-edit-btn" title="Cambiar banner" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.04em;cursor:pointer;white-space:nowrap;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Banner</button>
     </div>
     <input type="file" id="profile-banner-file" accept="image/*" style="display:none;" />
@@ -2630,6 +2632,7 @@ function renderOwnProfile() {
 }
 
 async function openForeignProfile(discordUsername) {
+  hideProfileSearchResults();
   const searchInput = document.getElementById('profile-search-input');
   const original = searchInput.placeholder;
   searchInput.placeholder = 'Buscando…';
@@ -2675,11 +2678,105 @@ function exitForeignProfile() {
   window.scrollTo(0, 0);
 }
 
-document.getElementById('profile-search-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    const val = e.target.value.trim();
-    if (val) openForeignProfile(val);
+const profileSearchInput = document.getElementById('profile-search-input');
+const profileSearchResults = document.getElementById('profile-search-results');
+let profileSearchTimer = null;
+let profileSearchController = null;
+let profileSearchUsers = [];
+
+function hideProfileSearchResults() {
+  profileSearchResults.style.display = 'none';
+  profileSearchResults.innerHTML = '';
+}
+
+function renderProfileSearchResults(users, query) {
+  profileSearchUsers = users;
+  profileSearchResults.innerHTML = '';
+
+  if (!users.length) {
+    const empty = document.createElement('div');
+    empty.textContent = `No encontramos usuarios con “${query}”`;
+    empty.style.cssText = 'padding:10px 12px;color:#777;font-family:DM Mono,monospace;font-size:10px;line-height:1.4;';
+    profileSearchResults.appendChild(empty);
+  } else {
+    users.forEach(user => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.style.cssText = 'width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border:0;border-radius:8px;background:none;color:#eee;text-align:left;cursor:pointer;font-family:DM Mono,monospace;';
+      item.addEventListener('mouseenter', () => { item.style.background = 'rgba(255,255,255,.07)'; });
+      item.addEventListener('mouseleave', () => { item.style.background = 'none'; });
+
+      const avatar = document.createElement('img');
+      avatar.src = user.discord_avatar || '';
+      avatar.alt = '';
+      avatar.style.cssText = 'width:34px;height:34px;border-radius:50%;object-fit:cover;background:#222;flex-shrink:0;';
+      const name = document.createElement('span');
+      name.textContent = user.discord_username;
+      name.style.cssText = 'font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+      item.append(avatar, name);
+      item.addEventListener('click', () => {
+        hideProfileSearchResults();
+        openForeignProfile(user.discord_username);
+      });
+      profileSearchResults.appendChild(item);
+    });
   }
+  profileSearchResults.style.display = 'block';
+}
+
+async function searchPublicProfiles(query, openFirst = false) {
+  if (!query) { hideProfileSearchResults(); return; }
+  if (profileSearchController) profileSearchController.abort();
+  profileSearchController = new AbortController();
+
+  try {
+    const res = await fetch(`${BOT_SERVER}/public-profiles/search?q=${encodeURIComponent(query)}`, {
+      signal: profileSearchController.signal
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || 'Search failed');
+    const users = Array.isArray(data.users) ? data.users : [];
+    renderProfileSearchResults(users, query);
+    if (openFirst && users[0]) {
+      hideProfileSearchResults();
+      openForeignProfile(users[0].discord_username);
+    } else if (openFirst) {
+      openForeignProfile(query);
+    }
+  } catch (error) {
+    if (error.name !== 'AbortError') hideProfileSearchResults();
+  }
+}
+
+profileSearchInput.addEventListener('input', e => {
+  const query = e.target.value.trim();
+  clearTimeout(profileSearchTimer);
+  if (!query) { hideProfileSearchResults(); return; }
+  profileSearchTimer = setTimeout(() => searchPublicProfiles(query), 260);
+});
+
+profileSearchInput.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    hideProfileSearchResults();
+    profileSearchInput.blur();
+  } else if (e.key === 'ArrowDown') {
+    const first = profileSearchResults.querySelector('button');
+    if (first) { e.preventDefault(); first.focus(); }
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    const query = e.target.value.trim();
+    if (!query) return;
+    if (profileSearchUsers[0]) {
+      hideProfileSearchResults();
+      openForeignProfile(profileSearchUsers[0].discord_username);
+    } else {
+      searchPublicProfiles(query, true);
+    }
+  }
+});
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('profile-search-wrap').contains(e.target)) hideProfileSearchResults();
 });
 
 function closeProfileView() {
@@ -3090,7 +3187,7 @@ function albumHoloCard(album, readOnly) {
   scene.className = 'holo-scene holo-idle';
   // Delay negativo y aleatorio: arranca cada carta en un punto distinto de su propio
   // ciclo de animación, así no flotan todas exactamente sincronizadas.
-  scene.style.setProperty('--holo-idle-delay', `-${(Math.random() * 15).toFixed(2)}s`);
+  scene.style.setProperty('--holo-idle-delay', `-${(Math.random() * 24).toFixed(2)}s`);
   scene.innerHTML = `
     <div class="holo-card">
       ${album.coverUrl ? `<div class="holo-card-bg" style="background-image:url(${escHtml(album.coverUrl)});"></div>` : ''}
