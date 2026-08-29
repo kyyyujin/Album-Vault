@@ -586,15 +586,31 @@
     border-radius: 10px;
     padding: 20px;
   }
+  @media (min-width: 900px) {
+    .profile-album-card, .holo-scene {
+      width: 230px;
+      min-width: 230px;
+      max-width: 230px;
+    }
+    .profile-album-grid { gap: 20px; }
+  }
   @media (min-width: 1100px) {
     .profile-stats-grid .profile-segstat { height: 220px; }
     .profile-stats-grid .profile-segstat:nth-child(-n+2) { height: 270px; }
     .profile-album-card, .holo-scene {
-      width: 190px;
-      min-width: 190px;
-      max-width: 220px;
+      width: 260px;
+      min-width: 260px;
+      max-width: 260px;
     }
-    .profile-album-grid { gap: 18px; }
+    .profile-album-grid { gap: 22px; }
+  }
+  @media (min-width: 1600px) {
+    .profile-album-card, .holo-scene {
+      width: 280px;
+      min-width: 280px;
+      max-width: 280px;
+    }
+    .profile-album-grid { gap: 24px; }
   }
   @media (max-width: 899px) {
     .profile-content-shell {
@@ -867,6 +883,31 @@
   .profile-carousel-shell {
     position: relative;
     min-width: 0;
+    isolation: isolate;
+  }
+  .profile-carousel-shell::before,
+  .profile-carousel-shell::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 6;
+    width: clamp(54px, 7vw, 110px);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .25s ease;
+  }
+  .profile-carousel-shell::before {
+    left: 0;
+    background: linear-gradient(90deg, var(--bg, #0a0a0a) 0%, rgba(10,10,10,.82) 28%, transparent 100%);
+  }
+  .profile-carousel-shell::after {
+    right: 0;
+    background: linear-gradient(270deg, var(--bg, #0a0a0a) 0%, rgba(10,10,10,.82) 28%, transparent 100%);
+  }
+  .profile-carousel-shell.can-scroll-left::before,
+  .profile-carousel-shell.can-scroll-right::after {
+    opacity: 1;
   }
   .profile-carousel-btn {
     position: absolute;
@@ -3137,8 +3178,12 @@ function setupProfileCarousel(grid) {
   const update = () => {
     const max = Math.max(0, grid.scrollWidth - grid.clientWidth);
     const scrollable = max > 6;
-    prev.disabled = !scrollable || grid.scrollLeft <= 4;
-    next.disabled = !scrollable || grid.scrollLeft >= max - 4;
+    const canGoLeft = scrollable && grid.scrollLeft > 4;
+    const canGoRight = scrollable && grid.scrollLeft < max - 4;
+    prev.disabled = !canGoLeft;
+    next.disabled = !canGoRight;
+    shell.classList.toggle('can-scroll-left', canGoLeft);
+    shell.classList.toggle('can-scroll-right', canGoRight);
   };
   grid.addEventListener('scroll', update, { passive: true });
   requestAnimationFrame(update);
