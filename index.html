@@ -2217,12 +2217,25 @@ async function flushVaultCollectionSync(collectionOverride) {
   if (!token) return;
   const collection = collectionOverride || { albums, nowPlayingId };
   try {
-    await fetch(`${BOT_SERVER}/vault-collection`, {
+    const res = await fetch(`${BOT_SERVER}/vault-collection`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, collection })
     });
-  } catch (e) { /* backend dormido o sin conexión — localStorage ya lo tiene igual */ }
+    // fetch() no lanza excepción por códigos de error HTTP (401, 500, etc.), solo
+    // por fallos de red — sin este chequeo, una sesión inválida/expirada fallaba
+    // en silencio para siempre: la app seguía funcionando con localStorage pero
+    // nunca volvía a sincronizar nada a la nube, sin ningún aviso al usuario.
+    if (res.status === 401) {
+      console.warn('[vault-sync] Sesión inválida o expirada — forzando cierre de sesión para pedir login de nuevo.');
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('discord_user_id');
+      localStorage.removeItem(DISCORD_AVATAR_KEY);
+      showAuthOverlay();
+    } else if (!res.ok) {
+      console.warn('[vault-sync] El servidor respondió', res.status, '— la colección solo quedó guardada localmente por ahora.');
+    }
+  } catch (e) { /* backend dormido o sin conexión — localStorage ya lo tiene igual, se reintentará */ }
 }
 
 async function fetchRemoteVaultCollection() {
@@ -2388,20 +2401,6 @@ async function openForeignProfile(discordUsername) {
 
     const fProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', shelves: [], ...(data.profile || {}) };
     const fAlbums  = (data.collection && data.collection.albums) || [];
-
-    // Diagnóstico temporal: expone lo que el backend vio en la DB (cuántas filas
-    // coincidieron, cuáles usernames, si alguna tenía datos) directo en pantalla,
-    // sin necesitar la consola del navegador.
-    const diagId = 'profile-cover-diag';
-    document.getElementById(diagId)?.remove();
-    if (fAlbums.length === 0 && data._debug) {
-      const diag = document.createElement('div');
-      diag.id = diagId;
-      diag.style.cssText = 'margin:10px 0;padding:10px 14px;border-radius:8px;background:rgba(255,80,80,0.12);'
-        + 'border:1px solid rgba(255,80,80,0.35);color:#ff9d9d;font-family:monospace;font-size:11px;line-height:1.6;white-space:pre-wrap;';
-      diag.textContent = '⚠ Diagnóstico:\n' + JSON.stringify(data._debug, null, 2);
-      document.getElementById('profile-bio-display').after(diag);
-    }
 
     applyAccentColor(fProfile.accentColor || '#c8f060');
     document.getElementById('profile-avatar-img').src = data.discord_avatar || '';
