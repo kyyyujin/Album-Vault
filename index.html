@@ -779,13 +779,26 @@
       opacity: .24;
       animation-duration: 18s;
     }
+    .holo-card-overlay {
+      padding: 34px 16px 16px;
+    }
+    .holo-title {
+      font-size: 16px;
+      line-height: 1.25;
+      font-weight: 600;
+    }
+    .holo-score {
+      font-size: 20px;
+      line-height: 1.15;
+      margin-top: 5px;
+    }
   }
   @keyframes holoIdleFloatMobile {
-    0%   { transform: translateZ(0) rotateX(1.2deg)  rotateY(-2deg) scale(.992); }
-    25%  { transform: translateZ(0) rotateX(-.8deg)  rotateY(1.4deg) scale(.998); }
-    50%  { transform: translateZ(0) rotateX(1.4deg)  rotateY(2deg) scale(.994); }
-    75%  { transform: translateZ(0) rotateX(-1.1deg) rotateY(-1.5deg) scale(1); }
-    100% { transform: translateZ(0) rotateX(1.2deg)  rotateY(-2deg) scale(.992); }
+    0%   { transform: translateZ(0) rotateX(.35deg)  rotateY(-.6deg) scale(.998); }
+    25%  { transform: translateZ(0) rotateX(-.25deg) rotateY(.4deg)  scale(1); }
+    50%  { transform: translateZ(0) rotateX(.4deg)   rotateY(.6deg)  scale(.999); }
+    75%  { transform: translateZ(0) rotateX(-.3deg)  rotateY(-.45deg) scale(1); }
+    100% { transform: translateZ(0) rotateX(.35deg)  rotateY(-.6deg) scale(.998); }
   }
   .holo-card {
     position: relative;
