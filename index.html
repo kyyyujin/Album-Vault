@@ -524,6 +524,20 @@
     transition: opacity .35s cubic-bezier(.34,1.2,.64,1), transform .35s cubic-bezier(.34,1.2,.64,1);
   }
   #modal.modal-ready { opacity:1; transform:scale(1); }
+  #modal.detail-readonly #modal-actions,
+  #modal.detail-readonly #btn-add-replay,
+  #modal.detail-readonly #modal-cover-refresh,
+  #modal.detail-readonly .replay-actions,
+  #modal.detail-readonly .track-legendary-btn,
+  #modal.detail-readonly .track-fav-btn,
+  #modal.detail-readonly #btn-now-playing {
+    display: none !important;
+  }
+  #modal.detail-readonly .status-pill {
+    pointer-events: none;
+    cursor: default;
+  }
+
 
   #profile-view {
     --accent: #c8f060;
@@ -588,9 +602,9 @@
   }
   @media (min-width: 900px) {
     .profile-album-card, .holo-scene {
-      width: 230px;
-      min-width: 230px;
-      max-width: 230px;
+      width: 280px;
+      min-width: 280px;
+      max-width: 280px;
     }
     .profile-album-grid { gap: 20px; }
   }
@@ -598,17 +612,17 @@
     .profile-stats-grid .profile-segstat { height: 220px; }
     .profile-stats-grid .profile-segstat:nth-child(-n+2) { height: 270px; }
     .profile-album-card, .holo-scene {
-      width: 260px;
-      min-width: 260px;
-      max-width: 260px;
+      width: 320px;
+      min-width: 320px;
+      max-width: 320px;
     }
     .profile-album-grid { gap: 22px; }
   }
   @media (min-width: 1600px) {
     .profile-album-card, .holo-scene {
-      width: 280px;
-      min-width: 280px;
-      max-width: 280px;
+      width: 340px;
+      min-width: 340px;
+      max-width: 340px;
     }
     .profile-album-grid { gap: 24px; }
   }
@@ -3092,15 +3106,10 @@ function albumHoloCard(album, readOnly) {
     if (touchScrollParent) { touchScrollParent.style.overflowX = ''; touchScrollParent = null; }
   });
 
-  if (!readOnly) {
-    scene.addEventListener('click', () => {
-      if (!pendingClick) return;
-      closeProfileView();
-      openDetail(album);
-    });
-  } else {
-    scene.style.cursor = 'default';
-  }
+  scene.addEventListener('click', () => {
+    if (!pendingClick) return;
+    openDetail(album, scene, readOnly);
+  });
 
   return scene;
 }
@@ -3130,11 +3139,7 @@ function albumMiniCard(album, readOnly) {
       }
     });
   }
-  if (!readOnly) {
-    div.addEventListener('click', () => { closeProfileView(); openDetail(album); });
-  } else {
-    div.style.cursor = 'default';
-  }
+  div.addEventListener('click', () => openDetail(album, div, readOnly));
   return div;
 }
 
@@ -3466,6 +3471,7 @@ let albums = [];
 let selectedRelease = null;
 let editingAlbumId  = null;
 let currentDetailAlbum = null;
+let currentDetailReadOnly = false;
 let nowPlayingId    = null;
 let viewMode        = localStorage.getItem('album_vault_view_mode') || 'list'; // 'grid' | 'list'
 let compareMode     = false;
@@ -4052,8 +4058,10 @@ document.getElementById('compare-backdrop').addEventListener('click', e => {
 });
 
 // ── DETAIL MODAL ──
-function openDetail(album, originEl) {
+function openDetail(album, originEl, readOnly = false) {
   currentDetailAlbum = album;
+  currentDetailReadOnly = readOnly;
+  document.getElementById('modal').classList.toggle('detail-readonly', readOnly);
   const tier = getTier(album.score);
   const coverEl = document.getElementById('modal-cover');
   coverEl.src = album.coverUrl || '';
@@ -4079,6 +4087,7 @@ function openDetail(album, originEl) {
   refreshBtn.textContent = '🔄';
   refreshBtn.style.cssText = 'background:none;border:none;color:#666;font-size:11px;cursor:pointer;'
     + 'padding:2px 4px;opacity:0.6;float:right;';
+  refreshBtn.style.display = readOnly ? 'none' : '';
   refreshBtn.onclick = async (e) => {
     e.stopPropagation();
     refreshBtn.disabled = true;
@@ -4112,12 +4121,14 @@ function openDetail(album, originEl) {
     const pill = document.createElement('button');
     pill.className = `status-pill ${s}${album.status===s?' active':''}`;
     pill.textContent = statusLabel(s);
-    pill.addEventListener('click', () => {
-      album.status = s;
-      saveAlbums();
-      openDetail(album); // refresh
-      buildTiers();
-    });
+    if (!readOnly) {
+      pill.addEventListener('click', () => {
+        album.status = s;
+        saveAlbums();
+        openDetail(album); // refresh
+        buildTiers();
+      });
+    }
     statusRow.appendChild(pill);
   });
   const npBtn = document.createElement('button');
@@ -4129,7 +4140,7 @@ function openDetail(album, originEl) {
     saveAlbums(); updateNowPlayingBar(); buildTiers();
     openDetail(album);
   });
-  statusRow.appendChild(npBtn);
+  if (!readOnly) statusRow.appendChild(npBtn);
 
   // external links
   const linksDiv = document.getElementById('modal-links');
@@ -4306,7 +4317,7 @@ document.getElementById('btn-add-replay').addEventListener('click', () => {
   if (!currentDetailAlbum.replays) currentDetailAlbum.replays = [];
   currentDetailAlbum.replays.push(today);
   saveAlbums();
-  openDetail(currentDetailAlbum);
+  openDetail(currentDetailAlbum, null, currentDetailReadOnly);
 });
 
 document.getElementById('modal-close').addEventListener('click', () => {
