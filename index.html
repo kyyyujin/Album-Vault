@@ -748,7 +748,42 @@
     user-select: none;
   }
   @media (max-width: 480px) {
-    .holo-scene { width: 47%; min-width: 150px; max-width: 220px; }
+    /* Una carta protagonista por vista: se alcanza a insinuar la siguiente al deslizar. */
+    .holo-scene {
+      width: calc(100vw - 64px);
+      min-width: calc(100vw - 64px);
+      max-width: 360px;
+      scroll-snap-align: center;
+      perspective: 1200px;
+    }
+    .holo-card {
+      box-sizing: border-box;
+      border: 2px solid rgba(var(--holo-dominant-rgb, 200,240,96), .9);
+      box-shadow:
+        0 14px 34px rgba(0,0,0,.62),
+        0 0 10px rgba(var(--holo-dominant-rgb, 200,240,96), .72),
+        0 0 28px rgba(var(--holo-dominant-rgb, 200,240,96), .38),
+        inset 0 0 12px rgba(var(--holo-dominant-rgb, 200,240,96), .18);
+    }
+    .holo-scene.holo-idle:not(.holo-active) .holo-card {
+      animation: holoIdleFloatMobile 9s ease-in-out infinite;
+      animation-delay: var(--holo-idle-delay, 0s);
+    }
+    .holo-scene.holo-idle:not(.holo-active) .holo-shine {
+      opacity: .32;
+      animation-duration: 9s;
+    }
+    .holo-scene.holo-idle:not(.holo-active) .holo-rainbow {
+      opacity: .24;
+      animation-duration: 9s;
+    }
+  }
+  @keyframes holoIdleFloatMobile {
+    0%   { transform: rotateX(2.5deg)  rotateY(-4deg) scale(.985); }
+    25%  { transform: rotateX(-2deg)   rotateY(3deg)  scale(1); }
+    50%  { transform: rotateX(3deg)    rotateY(4deg)  scale(.99); }
+    75%  { transform: rotateX(-2.5deg) rotateY(-3deg) scale(1); }
+    100% { transform: rotateX(2.5deg)  rotateY(-4deg) scale(.985); }
   }
   .holo-card {
     position: relative;
@@ -2974,13 +3009,68 @@ function renderTierDistribution(albumList) {
 // de la esquina tocada (transform-origin dinámico) para que esa esquina se "hunda"
 // y el resto se levante, en vez de rotar siempre desde el centro.
 
+function setHoloDominantGlow(scene, coverUrl, fallbackColor) {
+  const applyRgb = (r, g, b) => {
+    scene.style.setProperty('--holo-dominant-rgb', `${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}`);
+  };
+  const fallback = /^#([0-9a-f]{6})$/i.exec(fallbackColor || '');
+  applyRgb(
+    fallback ? parseInt(fallback[1].slice(0, 2), 16) : 200,
+    fallback ? parseInt(fallback[1].slice(2, 4), 16) : 240,
+    fallback ? parseInt(fallback[1].slice(4, 6), 16) : 96
+  );
+  if (!coverUrl) return;
+
+  // Se analiza una copia pequeña. Si el servidor de la portada no permite CORS,
+  // el color de tier aplicado arriba permanece como respaldo seguro.
+  const probe = new Image();
+  probe.crossOrigin = 'anonymous';
+  probe.referrerPolicy = 'no-referrer';
+  probe.onload = () => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 28;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(probe, 0, 0, 28, 28);
+      const pixels = ctx.getImageData(0, 0, 28, 28).data;
+      const bins = new Map();
+
+      for (let i = 0; i < pixels.length; i += 4) {
+        const r = pixels[i], g = pixels[i + 1], b = pixels[i + 2], a = pixels[i + 3];
+        if (a < 180) continue;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        const light = (max + min) / 2;
+        const saturation = max === 0 ? 0 : (max - min) / max;
+        if (light < 24 || light > 236 || saturation < .12) continue;
+        const key = `${r >> 5}-${g >> 5}-${b >> 5}`;
+        const entry = bins.get(key) || { r: 0, g: 0, b: 0, weight: 0 };
+        const weight = 1 + saturation * 4;
+        entry.r += r * weight; entry.g += g * weight; entry.b += b * weight;
+        entry.weight += weight;
+        bins.set(key, entry);
+      }
+
+      const dominant = [...bins.values()].sort((a, b) => b.weight - a.weight)[0];
+      if (dominant?.weight) {
+        // Elevar ligeramente la luminosidad mantiene el borde visible en fondos negros.
+        const r = dominant.r / dominant.weight;
+        const g = dominant.g / dominant.weight;
+        const b = dominant.b / dominant.weight;
+        const boost = Math.max(1, 120 / Math.max(r, g, b));
+        applyRgb(Math.min(255, r * boost), Math.min(255, g * boost), Math.min(255, b * boost));
+      }
+    } catch (_) { /* CORS o imagen no legible: conservar color del tier */ }
+  };
+  probe.src = coverUrl;
+}
+
 function albumHoloCard(album, readOnly) {
   const tier = getTier(album.score);
   const scene = document.createElement('div');
   scene.className = 'holo-scene holo-idle';
   // Delay negativo y aleatorio: arranca cada carta en un punto distinto de su propio
   // ciclo de animación, así no flotan todas exactamente sincronizadas.
-  scene.style.setProperty('--holo-idle-delay', `-${(Math.random() * 5.5).toFixed(2)}s`);
+  scene.style.setProperty('--holo-idle-delay', `-${(Math.random() * 9).toFixed(2)}s`);
   scene.innerHTML = `
     <div class="holo-card">
       ${album.coverUrl ? `<div class="holo-card-bg" style="background-image:url(${escHtml(album.coverUrl)});"></div>` : ''}
@@ -2994,6 +3084,7 @@ function albumHoloCard(album, readOnly) {
     </div>
   `;
   const card = scene.querySelector('.holo-card');
+  setHoloDominantGlow(scene, album.coverUrl, tier?.color || '#c8f060');
 
   // Portada rota → intentar iTunes/Last.fm como respaldo antes de rendirse.
   if (album.coverUrl) {
