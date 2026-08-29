@@ -540,6 +540,72 @@
     #profile-banner { height: 380px; }
     #profile-banner-fade { height: 160px; }
   }
+  /* ── PROFILE RESPONSIVE LAYOUT ──
+     El perfil aprovecha el ancho de escritorio sin perder la lectura cómoda
+     ni el apilado natural de la versión móvil. */
+  .profile-content-shell {
+    width: min(1440px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 0 0 72px;
+  }
+  .profile-identity-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 18px;
+    margin-top: -48px;
+    position: relative;
+    z-index: 2;
+  }
+  .profile-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 32px;
+  }
+  .profile-stats-grid .profile-segstat:nth-child(1),
+  .profile-stats-grid .profile-segstat:nth-child(2) {
+    grid-column: span 6;
+  }
+  .profile-stats-grid .profile-segstat:nth-child(n+3) {
+    grid-column: span 4;
+  }
+  .profile-tier-panel {
+    margin-top: 20px;
+    background: #15151b;
+    border: 1px solid #22222a;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  @media (min-width: 1100px) {
+    .profile-stats-grid .profile-segstat { height: 220px; }
+    .profile-stats-grid .profile-segstat:nth-child(-n+2) { height: 270px; }
+    .profile-album-card, .holo-scene {
+      width: 190px;
+      min-width: 190px;
+      max-width: 220px;
+    }
+    .profile-album-grid { gap: 18px; }
+  }
+  @media (max-width: 899px) {
+    .profile-content-shell {
+      width: auto;
+      margin: 0;
+      padding: 0 20px 60px;
+    }
+    .profile-stats-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 28px;
+    }
+    .profile-identity-row { gap: 16px; }
+  }
+  @media (max-width: 560px) {
+    .profile-content-shell { padding-left: 14px; padding-right: 14px; }
+    .profile-identity-row { flex-wrap: wrap; margin-top: -42px; }
+    .profile-identity-row #profile-avatar-img { width: 84px !important; height: 84px !important; }
+    .profile-identity-row #profile-bio-edit-btn { margin-left: auto; }
+  }
   @keyframes nlPulse { 0%,100% { opacity:1; } 50% { opacity:0.25; } }
   .accent-swatch {
     width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
@@ -1568,8 +1634,8 @@
     <input type="file" id="profile-banner-file" accept="image/*" style="display:none;" />
   </div>
 
-  <div style="max-width:720px;margin:0 auto;padding:0 20px 60px;">
-    <div style="display:flex;align-items:flex-end;gap:16px;margin-top:-48px;position:relative;z-index:2;">
+  <div class="profile-content-shell">
+    <div class="profile-identity-row">
       <img id="profile-avatar-img" src="" alt="" style="width:96px;height:96px;border-radius:50%;object-fit:cover;border:4px solid var(--bg,#0d0d0f);background:#1a1a2a;" />
       <div style="flex:1;padding-bottom:6px;">
         <div id="profile-username" style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:0.03em;color:#fff;"></div>
@@ -1610,7 +1676,7 @@
     </div>
 
     <!-- Estadísticas: segmentos apilados, cada uno a todo el ancho -->
-    <div style="display:flex;flex-direction:column;gap:12px;margin-top:28px;">
+    <div class="profile-stats-grid">
       <div class="profile-segstat" id="stat-card-total">
         <div class="profile-segstat-bg"></div>
         <div class="profile-segstat-fade"></div>
@@ -1654,7 +1720,7 @@
     </div>
 
     <!-- Distribución por tier -->
-    <div style="margin-top:20px;background:#15151b;border:1px solid #22222a;border-radius:10px;padding:16px;">
+    <div class="profile-tier-panel">
       <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-bottom:10px;">DISTRIBUCIÓN POR TIER</div>
       <div id="profile-tier-dist" style="display:flex;flex-direction:column;gap:6px;"></div>
     </div>
