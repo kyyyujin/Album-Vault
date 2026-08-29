@@ -533,12 +533,12 @@
   #profile-banner { height: 220px; }
   #profile-banner-fade { height: 90px; }
   @media (min-width: 900px) {
-    #profile-banner { height: 320px; }
-    #profile-banner-fade { height: 130px; }
+    #profile-banner { height: 540px; }
+    #profile-banner-fade { height: 210px; }
   }
   @media (min-width: 1300px) {
-    #profile-banner { height: 380px; }
-    #profile-banner-fade { height: 160px; }
+    #profile-banner { height: 660px; }
+    #profile-banner-fade { height: 250px; }
   }
   /* ── PROFILE RESPONSIVE LAYOUT ──
      El perfil aprovecha el ancho de escritorio sin perder la lectura cómoda
@@ -551,10 +551,20 @@
   .profile-identity-row {
     display: flex;
     align-items: flex-end;
-    gap: 18px;
-    margin-top: -48px;
+    gap: 22px;
+    margin-top: -72px;
     position: relative;
     z-index: 2;
+  }
+  .profile-identity-row #profile-avatar-img {
+    width: 144px !important;
+    height: 144px !important;
+    border-width: 5px !important;
+  }
+  .profile-identity-row #profile-username {
+    font-size: 42px !important;
+    line-height: 1;
+    letter-spacing: 0.045em !important;
   }
   .profile-stats-grid {
     display: grid;
@@ -600,10 +610,15 @@
     }
     .profile-identity-row { gap: 16px; }
   }
+  @media (max-width: 899px) {
+    .profile-identity-row #profile-avatar-img { width: 108px !important; height: 108px !important; }
+    .profile-identity-row #profile-username { font-size: 32px !important; }
+  }
   @media (max-width: 560px) {
     .profile-content-shell { padding-left: 14px; padding-right: 14px; }
-    .profile-identity-row { flex-wrap: wrap; margin-top: -42px; }
-    .profile-identity-row #profile-avatar-img { width: 84px !important; height: 84px !important; }
+    .profile-identity-row { flex-wrap: wrap; margin-top: -42px; gap: 14px; }
+    .profile-identity-row #profile-avatar-img { width: 92px !important; height: 92px !important; }
+    .profile-identity-row #profile-username { font-size: 30px !important; }
     .profile-identity-row #profile-bio-edit-btn { margin-left: auto; }
   }
   @keyframes nlPulse { 0%,100% { opacity:1; } 50% { opacity:0.25; } }
