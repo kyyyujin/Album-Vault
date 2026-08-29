@@ -750,9 +750,9 @@
   @media (max-width: 480px) {
     /* Una carta protagonista por vista: se alcanza a insinuar la siguiente al deslizar. */
     .holo-scene {
-      width: calc(100vw - 64px);
-      min-width: calc(100vw - 64px);
-      max-width: 360px;
+      width: 85%;
+      min-width: 85%;
+      max-width: 306px;
       scroll-snap-align: center;
       perspective: 1200px;
     }
@@ -766,24 +766,26 @@
         inset 0 0 12px rgba(var(--holo-dominant-rgb, 200,240,96), .18);
     }
     .holo-scene.holo-idle:not(.holo-active) .holo-card {
-      animation: holoIdleFloatMobile 9s ease-in-out infinite;
+      animation: holoIdleFloatMobile 15s cubic-bezier(.45, 0, .55, 1) infinite;
+      will-change: transform;
+      backface-visibility: hidden;
       animation-delay: var(--holo-idle-delay, 0s);
     }
     .holo-scene.holo-idle:not(.holo-active) .holo-shine {
       opacity: .32;
-      animation-duration: 9s;
+      animation-duration: 18s;
     }
     .holo-scene.holo-idle:not(.holo-active) .holo-rainbow {
       opacity: .24;
-      animation-duration: 9s;
+      animation-duration: 18s;
     }
   }
   @keyframes holoIdleFloatMobile {
-    0%   { transform: rotateX(2.5deg)  rotateY(-4deg) scale(.985); }
-    25%  { transform: rotateX(-2deg)   rotateY(3deg)  scale(1); }
-    50%  { transform: rotateX(3deg)    rotateY(4deg)  scale(.99); }
-    75%  { transform: rotateX(-2.5deg) rotateY(-3deg) scale(1); }
-    100% { transform: rotateX(2.5deg)  rotateY(-4deg) scale(.985); }
+    0%   { transform: translateZ(0) rotateX(1.2deg)  rotateY(-2deg) scale(.992); }
+    25%  { transform: translateZ(0) rotateX(-.8deg)  rotateY(1.4deg) scale(.998); }
+    50%  { transform: translateZ(0) rotateX(1.4deg)  rotateY(2deg) scale(.994); }
+    75%  { transform: translateZ(0) rotateX(-1.1deg) rotateY(-1.5deg) scale(1); }
+    100% { transform: translateZ(0) rotateX(1.2deg)  rotateY(-2deg) scale(.992); }
   }
   .holo-card {
     position: relative;
@@ -957,6 +959,11 @@
   .profile-carousel-shell.can-scroll-left::before,
   .profile-carousel-shell.can-scroll-right::after {
     opacity: 1;
+  }
+  /* Favoritos usa cartas especiales: sin fade lateral para no tapar su glow. */
+  .favorites-carousel-shell::before,
+  .favorites-carousel-shell::after {
+    display: none !important;
   }
   .profile-carousel-btn {
     position: absolute;
@@ -3070,7 +3077,7 @@ function albumHoloCard(album, readOnly) {
   scene.className = 'holo-scene holo-idle';
   // Delay negativo y aleatorio: arranca cada carta en un punto distinto de su propio
   // ciclo de animación, así no flotan todas exactamente sincronizadas.
-  scene.style.setProperty('--holo-idle-delay', `-${(Math.random() * 9).toFixed(2)}s`);
+  scene.style.setProperty('--holo-idle-delay', `-${(Math.random() * 15).toFixed(2)}s`);
   scene.innerHTML = `
     <div class="holo-card">
       ${album.coverUrl ? `<div class="holo-card-bg" style="background-image:url(${escHtml(album.coverUrl)});"></div>` : ''}
@@ -3243,6 +3250,7 @@ function setupProfileCarousel(grid) {
   if (!shell) {
     shell = document.createElement('div');
     shell.className = 'profile-carousel-shell';
+    if (grid.id === 'profile-pinned-row') shell.classList.add('favorites-carousel-shell');
     grid.parentNode.insertBefore(shell, grid);
     shell.appendChild(grid);
 
