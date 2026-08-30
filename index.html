@@ -539,6 +539,34 @@
   }
 
 
+  @keyframes profileSkeletonShimmer { to { background-position: -200% 0; } }
+  #profile-view { position:relative; }
+  #profile-view.profile-loading > :not(#profile-loading-skeleton) { visibility:hidden; }
+  #profile-loading-skeleton {
+    display:none; position:absolute; inset:0; z-index:20; background:var(--bg,#0a0a0a);
+    padding-top:inherit; overflow:hidden;
+  }
+  #profile-view.profile-loading #profile-loading-skeleton { display:block; }
+  .profile-skeleton {
+    display:block; border-radius:8px;
+    background:linear-gradient(90deg,#15151b 25%,#262630 38%,#15151b 55%);
+    background-size:200% 100%; animation:profileSkeletonShimmer 1.25s linear infinite;
+  }
+  .profile-skeleton-banner { height:220px; background:linear-gradient(90deg,#15151b 25%,#262630 38%,#15151b 55%);background-size:200% 100%;animation:profileSkeletonShimmer 1.25s linear infinite; }
+  .profile-skeleton-shell { width:min(1440px,calc(100% - 48px));margin:0 auto;padding:0 0 72px; }
+  .profile-skeleton-identity { display:flex;align-items:center;gap:22px;margin-top:-72px;position:relative; }
+  .profile-skeleton-avatar { width:144px;height:144px;border-radius:50%;flex-shrink:0; }
+  .profile-skeleton-name { width:220px;height:34px; }
+  .profile-skeleton-bio { width:min(480px,85%);height:14px;margin-top:30px; }
+  .profile-skeleton-stats { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px; }
+  .profile-skeleton-stats span { height:130px; }
+  .profile-skeleton-section { width:160px;height:18px;margin-top:36px; }
+  .profile-skeleton-cards { display:flex;gap:14px;margin-top:14px;overflow:hidden; }
+  .profile-skeleton-cards span { width:160px;height:240px;flex:0 0 160px; }
+  @media (min-width:900px) { .profile-skeleton-banner { height:540px; }.profile-skeleton-cards span { width:280px;height:420px;flex-basis:280px; } }
+  @media (max-width:899px) { .profile-skeleton-shell { width:auto;padding-left:20px;padding-right:20px; }.profile-skeleton-stats { grid-template-columns:1fr; }.profile-skeleton-stats span { height:100px; }.profile-skeleton-cards span { width:44vw;height:66vw;min-width:150px;max-width:190px;max-height:285px; }.profile-skeleton-identity { margin-top:-42px; }.profile-skeleton-avatar { width:92px;height:92px; } }
+  @media (prefers-reduced-motion:reduce) { .profile-skeleton,.profile-skeleton-banner { animation:none; } }
+
   #profile-view {
     --accent: #c8f060;
     --accent-dim: rgba(200,240,96,0.3);
@@ -1799,6 +1827,18 @@
 
 <!-- ── VISTA DE PERFIL ── -->
 <div id="profile-view" style="display:none;">
+  <div id="profile-loading-skeleton" aria-hidden="true">
+    <div class="profile-skeleton-banner"></div>
+    <div class="profile-skeleton-shell">
+      <div class="profile-skeleton-identity"><span class="profile-skeleton profile-skeleton-avatar"></span><span class="profile-skeleton profile-skeleton-name"></span></div>
+      <span class="profile-skeleton profile-skeleton-bio"></span>
+      <div class="profile-skeleton-stats"><span class="profile-skeleton"></span><span class="profile-skeleton"></span><span class="profile-skeleton"></span></div>
+      <span class="profile-skeleton profile-skeleton-section"></span>
+      <div class="profile-skeleton-cards"><span class="profile-skeleton"></span><span class="profile-skeleton"></span><span class="profile-skeleton"></span></div>
+      <span class="profile-skeleton profile-skeleton-section"></span>
+      <div class="profile-skeleton-cards"><span class="profile-skeleton"></span><span class="profile-skeleton"></span><span class="profile-skeleton"></span></div>
+    </div>
+  </div>
   <div id="profile-banner" style="position:relative;width:100%;background:#15151b;background-size:cover;background-position:center;overflow:hidden;">
     <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.65) 100%);"></div>
     <div id="profile-banner-fade" style="position:absolute;left:0;right:0;bottom:-1px;background:linear-gradient(180deg,rgba(10,10,10,0) 0%,var(--bg,#0a0a0a) 100%);"></div>
@@ -1950,7 +1990,11 @@
       <h3 style="margin:0;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;">Elegir favoritos <span style="color:#666;font-size:12px;font-family:'DM Mono',monospace;">(máx. 10)</span></h3>
       <button id="pinned-picker-close-btn" style="background:none;border:none;color:#999;font-size:18px;cursor:pointer;">×</button>
     </div>
-    <div id="pinned-picker-list" style="overflow-y:auto;padding:10px 18px;flex:1;"></div>
+    <div style="padding:12px 18px 0;">
+      <input id="pinned-picker-search" type="search" autocomplete="off" placeholder="Buscar en tu colección…" style="width:100%;box-sizing:border-box;padding:10px 12px;background:#0d0d0f;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:12px;outline:none;" />
+      <div id="pinned-picker-count" style="margin-top:8px;color:#777;font-family:'DM Mono',monospace;font-size:10px;"></div>
+    </div>
+    <div id="pinned-picker-list" style="overflow-y:auto;padding:8px 18px 10px;flex:1;"></div>
     <div style="padding:14px 18px;border-top:1px solid #22222a;">
       <button id="pinned-picker-save-btn" style="width:100%;padding:12px;border-radius:8px;border:none;background:#c8f060;color:#0d0d0f;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;">Guardar favoritos</button>
     </div>
@@ -1983,7 +2027,10 @@
       <button id="shelf-tab-albums" class="shelf-tab active" data-tab="albums">Álbumes</button>
       <button id="shelf-tab-order" class="shelf-tab" data-tab="order">Orden</button>
     </div>
-    <div id="shelf-picker-list" style="overflow-y:auto;padding:10px 18px;flex:1;"></div>
+    <div id="shelf-picker-list" style="overflow-y:auto;padding:10px 18px;flex:1;">
+      <input id="shelf-picker-search" type="search" autocomplete="off" placeholder="Buscar en tu colección…" style="width:100%;box-sizing:border-box;padding:10px 12px;background:#0d0d0f;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:12px;outline:none;margin-bottom:8px;" />
+      <div id="shelf-picker-items"></div>
+    </div>
     <div id="shelf-picker-order-list" style="display:none;overflow-y:auto;padding:10px 18px;flex:1;"></div>
     <div style="padding:14px 18px;border-top:1px solid #22222a;display:flex;gap:8px;">
       <button id="shelf-delete-btn" style="padding:12px 16px;border-radius:8px;border:1px solid rgba(224,80,80,0.3);background:rgba(224,80,80,0.08);color:#e05050;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">Eliminar estantería</button>
