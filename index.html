@@ -2631,6 +2631,10 @@ function applyAccentColor(color) {
   document.getElementById('profile-view').style.setProperty('--accent-wash', color + '12');
 }
 
+function setProfileLoading(isLoading) {
+  document.getElementById('profile-view').classList.toggle('profile-loading', isLoading);
+}
+
 async function openProfileView() {
   document.getElementById('tiers-container').style.display = 'none';
   const profileView = document.getElementById('profile-view');
@@ -2644,17 +2648,17 @@ async function openProfileView() {
   window.scrollTo(0, 0);
 
   if (!vaultProfileSynced && vaultProfileSyncPromise) {
-    // El backend puede tardar unos segundos en responder (cold start en Render).
-    // Se muestra el perfil con lo disponible y un aviso breve, y se re-renderiza solo
-    // cuando la respuesta real llegue — así nunca se ve un banner/bio vacíos por error.
-    document.getElementById('profile-bio-display').textContent = 'Cargando…';
-    renderOwnProfile();
+    // Mientras despierta Render o llega el perfil remoto, mostramos una estructura
+    // estable en vez de campos vacíos que cambian de golpe.
+    setProfileLoading(true);
     await vaultProfileSyncPromise;
+    setProfileLoading(false);
     if (document.getElementById('profile-view').style.display !== 'none' && !foreignProfileData) {
       renderOwnProfile();
     }
     return;
   }
+  setProfileLoading(false);
   renderOwnProfile();
 }
 
@@ -2682,6 +2686,7 @@ async function openForeignProfile(discordUsername) {
   const original = searchInput.placeholder;
   searchInput.placeholder = 'Buscando…';
   searchInput.value = '';
+  setProfileLoading(true);
   try {
     const res  = await fetch(`${BOT_SERVER}/public-profile/${encodeURIComponent(discordUsername)}`);
     const data = await res.json();
@@ -2713,6 +2718,7 @@ async function openForeignProfile(discordUsername) {
   } catch (e) {
     alert('No se pudo cargar ese perfil. Puede que el bot esté iniciando — probá de nuevo en unos segundos.');
   } finally {
+    setProfileLoading(false);
     searchInput.placeholder = original;
   }
 }
@@ -3584,6 +3590,7 @@ function openShelfPicker(shelfId) {
   const shelf = (vaultProfile.shelves || []).find(s => s.id === shelfId);
   if (!shelf) return;
   shelfPickerSelection = [...(shelf.albumIds || [])];
+  document.getElementById('shelf-picker-search').value = '';
   document.getElementById('shelf-picker-heading').textContent = shelf.title;
   switchShelfTab('albums');
   renderShelfPickerAlbumsTab();
@@ -3592,10 +3599,14 @@ function openShelfPicker(shelfId) {
 }
 
 function renderShelfPickerAlbumsTab() {
-  const list = document.getElementById('shelf-picker-list');
+  const list = document.getElementById('shelf-picker-items');
   list.innerHTML = '';
   const current = new Set(shelfPickerSelection);
-  [...albums].sort((a, b) => b.score - a.score).forEach(a => {
+  const query = (document.getElementById('shelf-picker-search').value || '').trim().toLowerCase();
+  [...albums]
+    .filter(a => !query || `${a.title} ${a.artist}`.toLowerCase().includes(query))
+    .sort((a, b) => b.score - a.score)
+    .forEach(a => {
     const row = document.createElement('label');
     row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #1e1e24;cursor:pointer;';
     row.innerHTML = `
@@ -3655,6 +3666,7 @@ function switchShelfTab(tab) {
   document.getElementById('shelf-picker-list').style.display = tab === 'albums' ? 'block' : 'none';
   document.getElementById('shelf-picker-order-list').style.display = tab === 'order' ? 'block' : 'none';
 }
+document.getElementById('shelf-picker-search').addEventListener('input', renderShelfPickerAlbumsTab);
 document.getElementById('shelf-tab-albums').addEventListener('click', () => switchShelfTab('albums'));
 document.getElementById('shelf-tab-order').addEventListener('click', () => {
   renderShelfPickerOrderTab();
@@ -3692,29 +3704,78 @@ document.getElementById('shelf-delete-btn').addEventListener('click', () => {
 });
 
 // ── Editor de favoritos ──
-document.getElementById('profile-edit-pinned-btn').addEventListener('click', () => {
+let pinnedPickerSelection = [];
+let pinnedDragId = null;
+
+function renderPinnedPicker() {
   const list = document.getElementById('pinned-picker-list');
+  const count = document.getElementById('pinned-picker-count');
+  const query = (document.getElementById('pinned-picker-search').value || '').trim().toLowerCase();
+  const selected = new Set(pinnedPickerSelection);
+  const byScore = [...albums].sort((a, b) => b.score - a.score);
+  const visible = byScore
+    .filter(a => !query || `${a.title} ${a.artist}`.toLowerCase().includes(query))
+    .sort((a, b) => {
+      const ai = pinnedPickerSelection.indexOf(String(a.id));
+      const bi = pinnedPickerSelection.indexOf(String(b.id));
+      if (ai !== -1 && bi !== -1) return ai - bi;
+      if (ai !== -1) return -1;
+      if (bi !== -1) return 1;
+      return b.score - a.score;
+    });
+
   list.innerHTML = '';
-  const current = new Set((vaultProfile.pinned || []).map(id => String(id)));
-  [...albums].sort((a, b) => b.score - a.score).forEach(a => {
+  count.textContent = `${pinnedPickerSelection.length}/10 elegidos${pinnedPickerSelection.length ? ' · Arrastrá los seleccionados para ordenarlos' : ''}`;
+  visible.forEach(a => {
+    const id = String(a.id);
+    const isSelected = selected.has(id);
     const row = document.createElement('label');
-    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #1e1e24;cursor:pointer;';
+    row.draggable = isSelected;
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #1e1e24;cursor:pointer;' + (isSelected ? 'background:rgba(200,240,96,.045);' : '');
     row.innerHTML = `
-      <input type="checkbox" data-id="${escHtml(String(a.id))}" ${current.has(String(a.id)) ? 'checked' : ''} style="width:16px;height:16px;flex-shrink:0;" />
+      <span style="width:13px;color:${isSelected ? 'var(--accent,#c8f060)' : 'transparent'};font-size:15px;cursor:grab;flex-shrink:0;">⋮⋮</span>
+      <input type="checkbox" data-id="${escHtml(id)}" ${isSelected ? 'checked' : ''} style="width:16px;height:16px;flex-shrink:0;" />
       <img src="${escHtml(a.coverUrl||'')}" style="width:34px;height:34px;border-radius:4px;object-fit:cover;background:#1a1a2a;flex-shrink:0;" />
       <span style="font-family:'DM Mono',monospace;font-size:12px;color:#ddd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(a.title)} — ${escHtml(a.artist)}</span>
     `;
+    row.querySelector('input').addEventListener('change', e => {
+      if (e.target.checked) {
+        if (pinnedPickerSelection.length >= 10) { e.target.checked = false; alert('Máximo 10 favoritos.'); return; }
+        pinnedPickerSelection.push(id);
+      } else {
+        pinnedPickerSelection = pinnedPickerSelection.filter(selectedId => selectedId !== id);
+      }
+      renderPinnedPicker();
+    });
+    row.addEventListener('dragstart', () => { if (isSelected) { pinnedDragId = id; row.style.opacity = '.45'; } });
+    row.addEventListener('dragend', () => { pinnedDragId = null; row.style.opacity = ''; });
+    row.addEventListener('dragover', e => { if (isSelected) e.preventDefault(); });
+    row.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!isSelected || !pinnedDragId || pinnedDragId === id) return;
+      const from = pinnedPickerSelection.indexOf(pinnedDragId);
+      const to = pinnedPickerSelection.indexOf(id);
+      pinnedPickerSelection.splice(from, 1);
+      pinnedPickerSelection.splice(to, 0, pinnedDragId);
+      renderPinnedPicker();
+    });
     list.appendChild(row);
   });
+  if (!visible.length) list.innerHTML = '<p style="color:#666;font-family:DM Mono,monospace;font-size:11px;padding:10px 0;">No encontramos álbumes con esa búsqueda.</p>';
+}
+
+document.getElementById('profile-edit-pinned-btn').addEventListener('click', () => {
+  pinnedPickerSelection = (vaultProfile.pinned || []).map(id => String(id));
+  document.getElementById('pinned-picker-search').value = '';
+  renderPinnedPicker();
   document.getElementById('pinned-picker-backdrop').style.display = 'flex';
 });
+document.getElementById('pinned-picker-search').addEventListener('input', renderPinnedPicker);
 document.getElementById('pinned-picker-close-btn').addEventListener('click', () => {
   document.getElementById('pinned-picker-backdrop').style.display = 'none';
 });
 document.getElementById('pinned-picker-save-btn').addEventListener('click', () => {
-  const checked = [...document.querySelectorAll('#pinned-picker-list input[type="checkbox"]:checked')];
-  if (checked.length > 10) { alert('Máximo 10 favoritos.'); return; }
-  vaultProfile.pinned = checked.map(c => c.dataset.id);
+  vaultProfile.pinned = [...pinnedPickerSelection];
   document.getElementById('pinned-picker-backdrop').style.display = 'none';
   renderProfileAlbumRows(albums, vaultProfile, false);
   saveVaultProfile();
