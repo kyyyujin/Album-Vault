@@ -1315,6 +1315,45 @@
   #btn-delete-album { background:transparent; border-color:#3a1a1a; color:#e05252; }
   #btn-delete-album:hover { background:#e05252; color:#fff; border-color:#e05252; }
 
+  /* ── IMMERSIVE ALBUM DETAIL ──
+     La portada deja de ser una miniatura dentro de un diálogo: es el espacio
+     al que entra el usuario, con su color y textura extendidos por la pantalla. */
+  #modal-backdrop { padding:0; }
+  #modal {
+    width:100%; max-width:none; height:100%; max-height:none; border:none;
+    background:#0d0d10; overflow:hidden;
+  }
+  #modal-art-bg {
+    position:absolute; inset:-42px; z-index:0; pointer-events:none;
+    background-position:center; background-size:cover;
+    filter:blur(34px) saturate(1.45) brightness(.32);
+    transform:scale(1.09); opacity:.9;
+  }
+  #modal::after {
+    content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:linear-gradient(90deg,rgba(5,5,7,.18) 0%,rgba(5,5,7,.3) 44%,rgba(9,9,12,.94) 100%);
+  }
+  #modal > :not(#modal-art-bg) { position:relative; z-index:1; }
+  #modal-cover {
+    width:clamp(320px,52vw,860px); min-width:0; height:100%; aspect-ratio:auto;
+    position:relative; top:auto; align-self:stretch; object-fit:cover;
+    box-shadow:22px 0 60px rgba(0,0,0,.32);
+  }
+  #modal-body {
+    width:min(520px,48vw); min-width:0; padding:58px 42px 36px;
+    background:linear-gradient(90deg,rgba(13,13,17,.84),rgba(13,13,17,.97));
+    backdrop-filter:blur(16px);
+  }
+  #modal-close {
+    top:18px; right:22px; z-index:3; color:#fff; font-size:26px;
+    border:1px solid rgba(255,255,255,.22); border-radius:50%;
+    width:38px; height:38px; padding:0; background:rgba(0,0,0,.28);
+    backdrop-filter:blur(8px);
+  }
+  #modal-close:hover { background:rgba(255,255,255,.14); color:#fff; }
+
+
+
   /* ── ADD MODAL ── */
   #add-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.88); backdrop-filter:blur(10px); z-index:300; display:none; align-items:center; justify-content:center; padding:30px; }
   #add-backdrop.open { display:flex; }
@@ -1659,9 +1698,17 @@
     .tier-label { width:80px; min-width:80px; }
     .tier-letter { font-size:56px; }
     .album-card:nth-child(n) { width:130px; height:130px; }
-    #modal { flex-direction:column; }
-    #modal-cover { width:100%; min-width:unset; position:static; max-height:200px; object-fit:cover; }
-    #modal-body { padding:16px; }
+    #modal { flex-direction:column; overflow-y:auto; }
+    #modal-cover {
+      width:100%; min-width:unset; height:44vh; min-height:250px; max-height:none;
+      position:relative; object-fit:cover; flex-shrink:0;
+    }
+    #modal::after { background:linear-gradient(180deg,rgba(5,5,7,.08) 0%,rgba(5,5,7,.14) 38%,rgba(9,9,12,.94) 100%); }
+    #modal-body {
+      width:100%; overflow:visible; flex:none; margin-top:-28px; padding:28px 18px 28px;
+      border-radius:24px 24px 0 0; background:rgba(13,13,17,.94);
+    }
+    #modal-close { top:14px; right:14px; }
     .compare-cols { grid-template-columns:1fr; }
     .album-list-row { padding:10px 16px; gap:12px; max-width:100%; overflow:hidden; }
     .album-list-thumb { width:50px; height:50px; }
@@ -2074,7 +2121,8 @@
 <!-- DETAIL MODAL -->
 <div id="modal-backdrop">
   <div id="modal">
-    <button id="modal-close">×</button>
+    <div id="modal-art-bg" aria-hidden="true"></div>
+    <button id="modal-close" aria-label="Cerrar detalle">×</button>
     <img id="modal-cover" src="" alt="">
     <div id="modal-body">
       <div id="modal-tier-badge"></div>
@@ -4400,8 +4448,13 @@ function openDetail(album, originEl, readOnly = false) {
   document.getElementById('modal').classList.toggle('detail-readonly', readOnly);
   const tier = getTier(album.score);
   const coverEl = document.getElementById('modal-cover');
+  const modalArtBg = document.getElementById('modal-art-bg');
   coverEl.src = album.coverUrl || '';
-  coverEl.onerror = () => { coverEl.src = ''; };
+  modalArtBg.style.backgroundImage = album.coverUrl ? `url("${album.coverUrl.replace(/"/g, '\\\"')}")` : '';
+  coverEl.onerror = () => {
+    coverEl.src = '';
+    modalArtBg.style.backgroundImage = '';
+  };
 
   document.getElementById('modal-tier-badge').textContent  = tier.label + ' · ' + album.score;
   document.getElementById('modal-tier-badge').style.color  = tier.color;
