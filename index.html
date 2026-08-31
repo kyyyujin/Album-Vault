@@ -21,54 +21,7 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; }
-  body {
-    --vault-atmosphere-a: rgba(200,240,96,.045);
-    --vault-atmosphere-b: rgba(77,130,224,.035);
-    background:
-      radial-gradient(ellipse at 12% 0%, var(--vault-atmosphere-a), transparent 38%),
-      radial-gradient(ellipse at 92% 92%, var(--vault-atmosphere-b), transparent 42%),
-      var(--bg);
-    background-attachment:fixed;
-    color:var(--text); font-family:'DM Mono',monospace; overflow-x:hidden; cursor:default;
-    transition:background .5s ease, color .35s ease;
-  }
-
-  /* ── VAULT ATMOSPHERES ── */
-  body[data-vault-theme="nocturne"] {
-    --bg:#060914; --surface:#0b1020; --border:#1d2946; --text:#e0ebff; --muted:#64718e;
-    --vault-atmosphere-a:rgba(77,130,224,.18); --vault-atmosphere-b:rgba(58,196,176,.10);
-  }
-  body[data-vault-theme="rose-film"] {
-    --bg:#130d16; --surface:#1a111d; --border:#39233c; --text:#f5e8f0; --muted:#9a708c;
-    --vault-atmosphere-a:rgba(224,82,145,.14); --vault-atmosphere-b:rgba(176,109,224,.10);
-  }
-  body[data-vault-theme="chrome"] {
-    --bg:#0c0e11; --surface:#15181c; --border:#343b43; --text:#eef2f5; --muted:#8a949d;
-    --vault-atmosphere-a:rgba(184,204,220,.12); --vault-atmosphere-b:rgba(89,133,170,.08);
-  }
-  body[data-vault-theme="nocturne"] #header,
-  body[data-vault-theme="nocturne"] #menu-drawer,
-  body[data-vault-theme="nocturne"] #modal-body { background:rgba(8,13,30,.9); }
-  body[data-vault-theme="rose-film"] #header,
-  body[data-vault-theme="rose-film"] #menu-drawer,
-  body[data-vault-theme="rose-film"] #modal-body { background:rgba(25,13,28,.91); }
-  body[data-vault-theme="chrome"] #header,
-  body[data-vault-theme="chrome"] #menu-drawer,
-  body[data-vault-theme="chrome"] #modal-body { background:rgba(18,22,27,.92); }
-  .vault-theme-picker { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
-  .vault-theme-option {
-    display:flex; align-items:center; gap:7px; min-width:0; padding:9px 8px; border-radius:7px;
-    border:1px solid #2a2a2e; background:#17171b; color:#8b8b93; cursor:pointer;
-    font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.04em; text-align:left;
-    transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease;
-  }
-  .vault-theme-option:hover { transform:translateY(-1px); border-color:#555; color:var(--text); }
-  .vault-theme-option.active { border-color:var(--text); background:#222228; color:var(--text); box-shadow:0 6px 16px rgba(0,0,0,.2); }
-  .vault-theme-swatch { width:15px; height:15px; border-radius:50%; flex-shrink:0; border:1px solid rgba(255,255,255,.2); }
-  .vault-theme-option[data-vault-theme="default"] .vault-theme-swatch { background:linear-gradient(135deg,#c8f060,#0a0a0a); }
-  .vault-theme-option[data-vault-theme="nocturne"] .vault-theme-swatch { background:linear-gradient(135deg,#4d82e0,#3ac4b0); }
-  .vault-theme-option[data-vault-theme="rose-film"] .vault-theme-swatch { background:linear-gradient(135deg,#e0528a,#b06de0); }
-  .vault-theme-option[data-vault-theme="chrome"] .vault-theme-swatch { background:linear-gradient(135deg,#edf3f7,#53606c); }
+  body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; overflow-x:hidden; cursor:default; }
 
   /* ── HEADER HIDE/SHOW ON SCROLL ── */
   #header {
@@ -1446,44 +1399,46 @@
   }
   @media (prefers-reduced-motion:reduce) { .tier-row::before { animation:none; } }
 
-  /* ── PROFILE ROOM / GALLERY MODE ── */
-  #profile-view.profile-room-mode {
-    background:
-      radial-gradient(ellipse at 50% 0%,color-mix(in srgb,var(--accent,#c8f060) 13%,transparent),transparent 38%),
-      linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px),
-      linear-gradient(#0b0b0f,#080809);
-    background-size:auto,42px 42px,auto;
+  /* ── RATING CEREMONY ── */
+  #rating-ceremony {
+    position:fixed; inset:0; z-index:1200; display:none; align-items:center; justify-content:center;
+    overflow:hidden; background:rgba(4,4,6,.96); isolation:isolate;
   }
-  #profile-view.profile-room-mode .profile-content-shell {
-    margin-top:20px; padding:28px min(28px,3vw) 82px;
-    background:linear-gradient(135deg,rgba(27,25,25,.76),rgba(10,10,12,.9));
-    border:1px solid rgba(255,255,255,.09); border-radius:18px;
-    box-shadow:0 28px 70px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.04);
+  #rating-ceremony.active { display:flex; }
+  #rating-ceremony::before {
+    content:''; position:absolute; inset:-50px; z-index:-1; opacity:.42;
+    background:var(--ceremony-cover) center/cover; filter:blur(42px) saturate(1.5) brightness(.42);
+    transform:scale(1.12);
   }
-  #profile-view.profile-room-mode .profile-album-grid {
-    padding:18px 20px 26px !important; border:1px solid rgba(255,255,255,.08);
-    border-bottom:12px solid #17110e; border-radius:10px 10px 4px 4px;
-    background:linear-gradient(180deg,rgba(44,35,30,.34),rgba(18,14,13,.56));
-    box-shadow:inset 0 -4px 0 rgba(0,0,0,.35),0 15px 28px rgba(0,0,0,.25);
+  .ceremony-stage { width:min(320px,76vw); text-align:center; }
+  .ceremony-cover {
+    width:100%; aspect-ratio:1; object-fit:cover; display:block; border-radius:5px;
+    box-shadow:0 28px 70px rgba(0,0,0,.58),0 0 0 1px rgba(255,255,255,.16);
+    opacity:0; transform:scale(.78) translateY(20px);
   }
-  #profile-view.profile-room-mode .profile-tier-panel,
-  #profile-view.profile-room-mode .profile-segstat {
-    background-color:rgba(22,18,20,.77); border-color:rgba(255,255,255,.11);
+  .ceremony-overline { margin:18px 0 7px; color:#a3a3aa; font-size:9px; letter-spacing:3px; }
+  .ceremony-title { color:#fff; font-family:'DM Serif Display',serif; font-size:23px; line-height:1.15; }
+  .ceremony-seal {
+    width:116px; height:116px; margin:24px auto 14px; border:1px solid var(--ceremony-tier);
+    border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative;
+    background:radial-gradient(circle at 34% 24%,rgba(255,255,255,.18),rgba(12,12,15,.92) 58%);
+    color:var(--ceremony-tier); font-family:'Bebas Neue',sans-serif; font-size:42px;
+    box-shadow:0 0 0 7px rgba(0,0,0,.22),0 18px 40px rgba(0,0,0,.5),0 0 30px color-mix(in srgb,var(--ceremony-tier) 30%,transparent);
+    opacity:0; transform:scale(.55) rotate(-18deg);
   }
-  #profile-view.profile-room-mode .profile-carousel-shell::before,
-  #profile-view.profile-room-mode .profile-carousel-shell::after { width:76px; }
-  #profile-room-toggle.active {
-    color:var(--accent,#c8f060) !important; border-color:var(--accent,#c8f060) !important;
-    background:color-mix(in srgb,var(--accent,#c8f060) 13%,rgba(0,0,0,.5)) !important;
+  .ceremony-seal::before { content:'VAULT SCORE'; position:absolute; top:21px; color:#fff; opacity:.62; font-family:'DM Mono',monospace; font-size:7px; letter-spacing:1.7px; }
+  .ceremony-tier { color:var(--ceremony-tier); font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:5px; opacity:0; transform:translateY(12px); }
+  #rating-ceremony.playing .ceremony-cover { animation:ceremonyCover .7s cubic-bezier(.22,1,.36,1) forwards; }
+  #rating-ceremony.playing .ceremony-seal { animation:ceremonySeal .56s .76s cubic-bezier(.2,1.4,.4,1) forwards; }
+  #rating-ceremony.playing .ceremony-tier { animation:ceremonyText .42s 1.36s ease forwards; }
+  #rating-ceremony.leaving .ceremony-stage { animation:ceremonyExit .65s ease forwards; }
+  @keyframes ceremonyCover { to { opacity:1; transform:scale(1) translateY(0); } }
+  @keyframes ceremonySeal { to { opacity:1; transform:scale(1) rotate(-4deg); } }
+  @keyframes ceremonyText { to { opacity:1; transform:translateY(0); } }
+  @keyframes ceremonyExit { to { opacity:0; transform:scale(.72) translateY(-10vh); } }
+  @media (prefers-reduced-motion:reduce) {
+    #rating-ceremony.playing .ceremony-cover,#rating-ceremony.playing .ceremony-seal,#rating-ceremony.playing .ceremony-tier,#rating-ceremony.leaving .ceremony-stage { animation:none; opacity:1; transform:none; }
   }
-  @media (max-width:600px) {
-    #profile-room-toggle { width:36px; padding:7px !important; justify-content:center; font-size:0 !important; }
-    #profile-room-toggle::before { content:'⌂'; font-size:16px; line-height:1; }
-    #profile-view.profile-room-mode .profile-content-shell { margin-top:10px; padding:20px 12px 62px; border-radius:14px; }
-    #profile-view.profile-room-mode .profile-album-grid { padding:14px 12px 20px !important; }
-  }
-
-
 
   /* ── ADD MODAL ── */
   #add-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.88); backdrop-filter:blur(10px); z-index:300; display:none; align-items:center; justify-content:center; padding:30px; }
@@ -1973,16 +1928,6 @@
       </div>
 
       <div class="drawer-section">
-        <div class="drawer-label">Atmósfera del Vault</div>
-        <div class="vault-theme-picker" role="group" aria-label="Elegir atmósfera">
-          <button class="vault-theme-option" type="button" data-vault-theme="default"><span class="vault-theme-swatch"></span>Default</button>
-          <button class="vault-theme-option" type="button" data-vault-theme="nocturne"><span class="vault-theme-swatch"></span>Nocturna</button>
-          <button class="vault-theme-option" type="button" data-vault-theme="rose-film"><span class="vault-theme-swatch"></span>Rose film</button>
-          <button class="vault-theme-option" type="button" data-vault-theme="chrome"><span class="vault-theme-swatch"></span>Chrome</button>
-        </div>
-      </div>
-
-      <div class="drawer-section">
         <div class="drawer-label">Datos</div>
         <button id="export-btn" class="drawer-btn" title="Export data as JSON">Export</button>
         <button id="img-export-btn" class="drawer-btn" title="Export as high-res image">Export as image</button>
@@ -2035,7 +1980,6 @@
       <input id="profile-search-input" type="text" placeholder="Buscar usuario…" autocomplete="off" style="width:180px;padding:7px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;outline:none;" />
       <div id="profile-search-results" style="display:none;position:absolute;top:42px;left:0;width:260px;max-height:300px;overflow-y:auto;background:rgba(14,14,17,.97);backdrop-filter:blur(14px);border:1px solid #2d2d36;border-radius:12px;padding:6px;box-shadow:0 16px 40px rgba(0,0,0,.55);"></div>
       <button id="profile-banner-edit-btn" title="Cambiar banner" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.04em;cursor:pointer;white-space:nowrap;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Banner</button>
-      <button id="profile-room-toggle" type="button" title="Explorar como sala" aria-pressed="false" style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.04em;cursor:pointer;white-space:nowrap;">⌂ Sala</button>
     </div>
     <input type="file" id="profile-banner-file" accept="image/*" style="display:none;" />
   </div>
@@ -2290,6 +2234,17 @@
         <button class="modal-action-btn" id="btn-delete-album">✕ Delete</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- RATING CEREMONY -->
+<div id="rating-ceremony" aria-live="polite" aria-label="Álbum guardado">
+  <div class="ceremony-stage">
+    <img class="ceremony-cover" id="ceremony-cover" src="" alt="">
+    <div class="ceremony-overline">NUEVA PIEZA EN EL VAULT</div>
+    <div class="ceremony-title" id="ceremony-title"></div>
+    <div class="ceremony-seal" id="ceremony-score"></div>
+    <div class="ceremony-tier" id="ceremony-tier"></div>
   </div>
 </div>
 
@@ -2824,22 +2779,6 @@ function applyAccentColor(color) {
 function setProfileLoading(isLoading) {
   document.getElementById('profile-view').classList.toggle('profile-loading', isLoading);
 }
-
-function setProfileRoomMode(enabled, persist = true) {
-  const active = Boolean(enabled);
-  const profileView = document.getElementById('profile-view');
-  const button = document.getElementById('profile-room-toggle');
-  profileView.classList.toggle('profile-room-mode', active);
-  button.classList.toggle('active', active);
-  button.setAttribute('aria-pressed', String(active));
-  button.title = active ? 'Volver a vista normal' : 'Explorar como sala';
-  if (window.innerWidth > 600) button.textContent = active ? '↙ Normal' : '⌂ Sala';
-  if (persist) localStorage.setItem('album_vault_room_mode', String(active));
-}
-
-document.getElementById('profile-room-toggle').addEventListener('click', () => {
-  setProfileRoomMode(!document.getElementById('profile-view').classList.contains('profile-room-mode'));
-});
 
 async function openProfileView() {
   document.getElementById('tiers-container').style.display = 'none';
@@ -5413,6 +5352,32 @@ document.getElementById('clear-selection').addEventListener('click', () => {
   searchResultsEl.style.display = 'none'; searchResultsEl.innerHTML = '';
 });
 
+let ratingCeremonyTimer = null;
+
+function playRatingCeremony(album) {
+  const tier = getTier(album.score);
+  if (!tier) return;
+  const ceremony = document.getElementById('rating-ceremony');
+  const cover = document.getElementById('ceremony-cover');
+  ceremony.style.setProperty('--ceremony-tier', tier.color);
+  ceremony.style.setProperty('--ceremony-cover', album.coverUrl ? `url("${album.coverUrl.replace(/"/g, '\\\"')}")` : 'none');
+  cover.src = album.coverUrl || '';
+  cover.alt = album.title || '';
+  document.getElementById('ceremony-title').textContent = album.title;
+  document.getElementById('ceremony-score').textContent = Number(album.score).toFixed(2);
+  document.getElementById('ceremony-tier').textContent = `${tier.label} · ${Number(album.score).toFixed(2)}`;
+
+  if (ratingCeremonyTimer) clearTimeout(ratingCeremonyTimer);
+  ceremony.className = 'active';
+  requestAnimationFrame(() => ceremony.classList.add('playing'));
+  ratingCeremonyTimer = setTimeout(() => ceremony.classList.add('leaving'), 2100);
+  setTimeout(() => {
+    ceremony.className = '';
+    const target = document.getElementById('tier-' + tier.id);
+    target?.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 2740);
+}
+
 // ── SAVE ──
 document.getElementById('save-btn').addEventListener('click', () => {
   const title      = document.getElementById('input-title').value.trim();
@@ -5442,6 +5407,7 @@ document.getElementById('save-btn').addEventListener('click', () => {
   const tracks = tracksRaw.split('\n').map(t => t.trim()).filter(Boolean);
   const genres = genresRaw ? genresRaw.split(',').map(g => g.trim()).filter(Boolean) : [];
 
+  let newlySavedAlbum = null;
   if (editingAlbumId) {
     const idx = albums.findIndex(a => a.id === editingAlbumId);
     if (idx !== -1) {
@@ -5449,10 +5415,11 @@ document.getElementById('save-btn').addEventListener('click', () => {
         coverUrl: selectedRelease?.coverUrl || albums[idx].coverUrl };
     }
   } else {
-    albums.push({ id:'alb_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+    newlySavedAlbum = { id:'alb_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
       title, artist, year, score, tracks, notes, genres, listenDate, status,
       coverUrl: selectedRelease?.coverUrl || '',
-      addedAt: Date.now(), replays:[] });
+      addedAt: Date.now(), replays:[] };
+    albums.push(newlySavedAlbum);
   }
 
   saveAlbums();
@@ -5479,7 +5446,9 @@ document.getElementById('save-btn').addEventListener('click', () => {
   closeAddModal();
   refreshGenreFilter();
   buildTiersWithReveal();
-  if (!savedIsPending) {
+  if (newlySavedAlbum && !savedIsPending) {
+    setTimeout(() => playRatingCeremony(newlySavedAlbum), 120);
+  } else if (!savedIsPending) {
     setTimeout(() => {
       document.getElementById('tier-'+getTier(savedScore).id)?.scrollIntoView({ behavior:'smooth' });
     }, 200);
@@ -6707,27 +6676,6 @@ const hint = document.getElementById('scroll-hint');
 window.addEventListener('scroll', () => {
   hint.classList.toggle('hidden', window.scrollY > 80);
 }, { passive:true });
-
-// ── VAULT THEME ──
-const VAULT_THEME_KEY = 'album_vault_theme';
-const VAULT_THEMES = new Set(['default', 'nocturne', 'rose-film', 'chrome']);
-
-function applyVaultTheme(theme, persist = true) {
-  const selected = VAULT_THEMES.has(theme) ? theme : 'default';
-  document.body.dataset.vaultTheme = selected;
-  document.querySelectorAll('.vault-theme-option').forEach(button => {
-    const isActive = button.dataset.vaultTheme === selected;
-    button.classList.toggle('active', isActive);
-    button.setAttribute('aria-pressed', String(isActive));
-  });
-  if (persist) localStorage.setItem(VAULT_THEME_KEY, selected);
-}
-
-document.querySelectorAll('.vault-theme-option').forEach(button => {
-  button.addEventListener('click', () => applyVaultTheme(button.dataset.vaultTheme));
-});
-applyVaultTheme(localStorage.getItem(VAULT_THEME_KEY) || 'default', false);
-setProfileRoomMode(localStorage.getItem('album_vault_room_mode') === 'true', false);
 
 // ── INIT ──
 // "Despertar" al bot en Render apenas se carga la página: un GET liviano a la raíz,
