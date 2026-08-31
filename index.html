@@ -21,7 +21,54 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; }
-  body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; overflow-x:hidden; cursor:default; }
+  body {
+    --vault-atmosphere-a: rgba(200,240,96,.045);
+    --vault-atmosphere-b: rgba(77,130,224,.035);
+    background:
+      radial-gradient(ellipse at 12% 0%, var(--vault-atmosphere-a), transparent 38%),
+      radial-gradient(ellipse at 92% 92%, var(--vault-atmosphere-b), transparent 42%),
+      var(--bg);
+    background-attachment:fixed;
+    color:var(--text); font-family:'DM Mono',monospace; overflow-x:hidden; cursor:default;
+    transition:background .5s ease, color .35s ease;
+  }
+
+  /* ── VAULT ATMOSPHERES ── */
+  body[data-vault-theme="nocturne"] {
+    --bg:#060914; --surface:#0b1020; --border:#1d2946; --text:#e0ebff; --muted:#64718e;
+    --vault-atmosphere-a:rgba(77,130,224,.18); --vault-atmosphere-b:rgba(58,196,176,.10);
+  }
+  body[data-vault-theme="rose-film"] {
+    --bg:#130d16; --surface:#1a111d; --border:#39233c; --text:#f5e8f0; --muted:#9a708c;
+    --vault-atmosphere-a:rgba(224,82,145,.14); --vault-atmosphere-b:rgba(176,109,224,.10);
+  }
+  body[data-vault-theme="chrome"] {
+    --bg:#0c0e11; --surface:#15181c; --border:#343b43; --text:#eef2f5; --muted:#8a949d;
+    --vault-atmosphere-a:rgba(184,204,220,.12); --vault-atmosphere-b:rgba(89,133,170,.08);
+  }
+  body[data-vault-theme="nocturne"] #header,
+  body[data-vault-theme="nocturne"] #menu-drawer,
+  body[data-vault-theme="nocturne"] #modal-body { background:rgba(8,13,30,.9); }
+  body[data-vault-theme="rose-film"] #header,
+  body[data-vault-theme="rose-film"] #menu-drawer,
+  body[data-vault-theme="rose-film"] #modal-body { background:rgba(25,13,28,.91); }
+  body[data-vault-theme="chrome"] #header,
+  body[data-vault-theme="chrome"] #menu-drawer,
+  body[data-vault-theme="chrome"] #modal-body { background:rgba(18,22,27,.92); }
+  .vault-theme-picker { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+  .vault-theme-option {
+    display:flex; align-items:center; gap:7px; min-width:0; padding:9px 8px; border-radius:7px;
+    border:1px solid #2a2a2e; background:#17171b; color:#8b8b93; cursor:pointer;
+    font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.04em; text-align:left;
+    transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease;
+  }
+  .vault-theme-option:hover { transform:translateY(-1px); border-color:#555; color:var(--text); }
+  .vault-theme-option.active { border-color:var(--text); background:#222228; color:var(--text); box-shadow:0 6px 16px rgba(0,0,0,.2); }
+  .vault-theme-swatch { width:15px; height:15px; border-radius:50%; flex-shrink:0; border:1px solid rgba(255,255,255,.2); }
+  .vault-theme-option[data-vault-theme="default"] .vault-theme-swatch { background:linear-gradient(135deg,#c8f060,#0a0a0a); }
+  .vault-theme-option[data-vault-theme="nocturne"] .vault-theme-swatch { background:linear-gradient(135deg,#4d82e0,#3ac4b0); }
+  .vault-theme-option[data-vault-theme="rose-film"] .vault-theme-swatch { background:linear-gradient(135deg,#e0528a,#b06de0); }
+  .vault-theme-option[data-vault-theme="chrome"] .vault-theme-swatch { background:linear-gradient(135deg,#edf3f7,#53606c); }
 
   /* ── HEADER HIDE/SHOW ON SCROLL ── */
   #header {
@@ -1848,6 +1895,16 @@
         <button id="pending-btn" class="drawer-btn" style="display:none;">Pending</button>
         <button id="compare-btn" class="drawer-btn" style="display:none;">Compare</button>
         <button id="load-db-btn" class="drawer-btn" title="Cargar álbumes desde la base de datos del Album Rater">Load from DB</button>
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-label">Atmósfera del Vault</div>
+        <div class="vault-theme-picker" role="group" aria-label="Elegir atmósfera">
+          <button class="vault-theme-option" type="button" data-vault-theme="default"><span class="vault-theme-swatch"></span>Default</button>
+          <button class="vault-theme-option" type="button" data-vault-theme="nocturne"><span class="vault-theme-swatch"></span>Nocturna</button>
+          <button class="vault-theme-option" type="button" data-vault-theme="rose-film"><span class="vault-theme-swatch"></span>Rose film</button>
+          <button class="vault-theme-option" type="button" data-vault-theme="chrome"><span class="vault-theme-swatch"></span>Chrome</button>
+        </div>
       </div>
 
       <div class="drawer-section">
@@ -6558,6 +6615,26 @@ const hint = document.getElementById('scroll-hint');
 window.addEventListener('scroll', () => {
   hint.classList.toggle('hidden', window.scrollY > 80);
 }, { passive:true });
+
+// ── VAULT THEME ──
+const VAULT_THEME_KEY = 'album_vault_theme';
+const VAULT_THEMES = new Set(['default', 'nocturne', 'rose-film', 'chrome']);
+
+function applyVaultTheme(theme, persist = true) {
+  const selected = VAULT_THEMES.has(theme) ? theme : 'default';
+  document.body.dataset.vaultTheme = selected;
+  document.querySelectorAll('.vault-theme-option').forEach(button => {
+    const isActive = button.dataset.vaultTheme === selected;
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+  if (persist) localStorage.setItem(VAULT_THEME_KEY, selected);
+}
+
+document.querySelectorAll('.vault-theme-option').forEach(button => {
+  button.addEventListener('click', () => applyVaultTheme(button.dataset.vaultTheme));
+});
+applyVaultTheme(localStorage.getItem(VAULT_THEME_KEY) || 'default', false);
 
 // ── INIT ──
 // "Despertar" al bot en Render apenas se carga la página: un GET liviano a la raíz,
