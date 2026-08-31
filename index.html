@@ -1939,7 +1939,8 @@
 
     </div>
     <div id="menu-drawer-footer">
-      <button id="add-btn">+ ADD</button>
+      <!-- Flujo manual preservado en el código, oculto por ahora: la entrada principal es Load from DB. -->
+      <button id="add-btn" style="display:none;">+ ADD</button>
     </div>
   </aside>
 </div>
@@ -5514,7 +5515,7 @@ document.getElementById('rater-import-file').addEventListener('change', e => {
 
       // Small toast
       const toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#f0a830;color:#000;font-family:"DM Mono",monospace;font-size:12px;font-weight:600;padding:10px 20px;letter-spacing:1px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s';
+      toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#f0a830;color:#000;font-family:"DM Mono",monospace;font-size:12px;font-weight:600;padding:10px 20px;letter-spacing:1px;z-index:1199;pointer-events:none;opacity:0;transition:opacity .3s';
       toast.textContent = `📤 ${data.title} importado desde Rater`;
       document.body.appendChild(toast);
       requestAnimationFrame(() => { toast.style.opacity = '1'; });
@@ -6575,6 +6576,7 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
   if (!dbSyncSelected.size) return;
 
   let added = 0, updated = 0;
+  const importedAlbums = [];
   dbSyncSelected.forEach(i => {
     const item = dbSyncItems[i];
     if (!item) return;
@@ -6613,7 +6615,7 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
       if (item.notes) existing.notes = item.notes;
       updated++;
     } else {
-      albums.push({
+      const importedAlbum = {
         id:          Date.now() + Math.random(),
         title:       item.title,
         artist:      item.artist,
@@ -6630,7 +6632,9 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
         replays:     [],
         scoreHistory:[{ score: parseFloat(item.score), date: item.listenDate, label: 'Importado desde Rater DB' }],
         _dbId:       item._dbId,
-      });
+      };
+      albums.push(importedAlbum);
+      importedAlbums.push(importedAlbum);
       added++;
     }
   });
@@ -6639,6 +6643,12 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
   buildTiersWithReveal();
   refreshGenreFilter();
   closeDbSync();
+
+  // Si importaste varios a la vez, celebramos la última incorporación sin
+  // encadenar muchas ceremonias seguidas.
+  if (importedAlbums.length) {
+    setTimeout(() => playRatingCeremony(importedAlbums[importedAlbums.length - 1]), 120);
+  }
 
   const parts = [];
   if (added)   parts.push(`${added} importado${added !== 1 ? 's' : ''}`);
