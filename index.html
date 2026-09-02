@@ -1401,45 +1401,42 @@
   #modal > #modal-close:active { transform:scale(.94); }
   #modal > #modal-close:focus-visible { outline:2px solid var(--accent,#c8f060); outline-offset:3px; }
 
-  /* En escritorio: portada cuadrada completa, cuyo color se disuelve hacia
-     el panel oscuro de información. */
+  /* En escritorio la carátula es una columna cuadrada propia: determina su
+     espacio y comparte exactamente la altura del panel de información. */
   @media (min-width:900px) {
     #modal {
       --modal-dominant-rgb: 200 240 96;
-      width:min(84vw,1200px);
-      height:min(78vh,800px);
-      max-height:78vh;
+      width:min(92vw,1280px);
+      height:min(62vw,74vh,720px);
+      max-height:min(62vw,74vh,720px);
       border:1px solid rgba(255,255,255,.12);
       border-radius:16px;
       background:#0a0a0d;
       box-shadow:0 34px 100px rgba(0,0,0,.68);
     }
-    #modal-art-bg {
-      inset:-42px auto -42px -42px;
-      width:58%;
-      opacity:.66;
-      filter:blur(38px) saturate(1.5) brightness(.5);
-    }
-    #modal::after {
-      background:linear-gradient(90deg,
-        rgb(var(--modal-dominant-rgb) / .52) 0%,
-        rgb(var(--modal-dominant-rgb) / .25) 34%,
-        rgba(10,10,13,.75) 57%,
-        #0a0a0d 78%);
-    }
+    /* Sin fondo independiente: la portada forma literalmente el lado izquierdo. */
+    #modal-art-bg { display:none; }
+    #modal::after { background:none; }
     #modal-cover {
-      width:48%;
-      height:auto;
+      flex:0 0 auto;
+      width:auto;
+      height:100%;
       aspect-ratio:1;
-      align-self:center;
-      object-fit:contain;
+      align-self:stretch;
+      object-fit:cover;
       object-position:center;
-      background:rgba(0,0,0,.16);
-      box-shadow:18px 0 60px rgba(0,0,0,.28),0 18px 50px rgba(0,0,0,.34),inset 0 0 0 1px rgba(255,255,255,.1);
+      background:transparent;
+      box-shadow:none;
     }
     #modal-body {
-      width:52%;
-      background:linear-gradient(90deg,rgba(10,10,13,.35),#0a0a0d 20%);
+      flex:1 1 auto;
+      width:auto;
+      height:100%;
+      background:linear-gradient(90deg,
+        rgb(var(--modal-dominant-rgb) / .58) 0%,
+        rgb(var(--modal-dominant-rgb) / .28) 18%,
+        rgba(10,10,13,.9) 53%,
+        #0a0a0d 82%);
     }
   }
 
