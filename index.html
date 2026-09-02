@@ -299,7 +299,7 @@
   #tiers-container { padding-top:57px; overflow-x:hidden; }
 
   .tier-row {
-    display:flex; min-height:100vh; border-bottom:none;
+    display:flex; min-height:0; border-bottom:none;
     position:relative; overflow:hidden;
   }
   /* Tier separator: colored top border that bleeds left into the label */
@@ -1432,9 +1432,9 @@
       flex:1 1 auto;
       width:auto;
       height:100%;
-      /* El panel es negro sólido; su sombra se desvanece hacia la portada. */
+      /* Panel sólido, sin capa ni degradado sobre la portada. */
       background:#0a0a0d;
-      box-shadow:-115px 0 110px rgba(10,10,13,.96);
+      box-shadow:none;
     }
   }
 
