@@ -1148,26 +1148,23 @@
     position: relative;
   }
 
-  /* Favoritos funciona como una selección curada: dos piezas grandes por fila
-     en escritorio, sin convertir el resto de carruseles en una cuadrícula. */
+  /* Favoritos conserva su carrusel, pero cada pieza ocupa media franja
+     para darle a la selección un peso mucho más protagonista en escritorio. */
   @media (min-width: 900px) {
     .favorites-carousel-shell {
       max-width: 1040px;
     }
     #profile-pinned-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      display: flex;
       gap: 28px;
-      overflow: visible;
-      padding-bottom: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 4px;
     }
     #profile-pinned-row .holo-scene {
-      width: 100%;
-      min-width: 0;
-      max-width: none;
-    }
-    .favorites-carousel-shell .profile-carousel-btn {
-      display: none !important;
+      width: calc((100% - 28px) / 2);
+      min-width: calc((100% - 28px) / 2);
+      max-width: 506px;
     }
   }
 
