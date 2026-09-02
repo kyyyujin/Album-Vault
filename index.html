@@ -1411,7 +1411,16 @@
       border-radius:16px;
       box-shadow:0 34px 100px rgba(0,0,0,.68);
     }
-    #modal-cover { width:52%; }
+    /* La columna visual conserva el ambiente difuminado del álbum; la portada
+       real se muestra completa, cuadrada y centrada sobre él. */
+    #modal-cover {
+      width:52%;
+      height:100%;
+      object-fit:contain;
+      object-position:center;
+      background:transparent;
+      box-shadow:22px 0 60px rgba(0,0,0,.32), inset 0 0 0 1px rgba(255,255,255,.08);
+    }
     #modal-body { width:48%; }
   }
 
