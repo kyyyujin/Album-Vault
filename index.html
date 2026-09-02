@@ -1148,6 +1148,29 @@
     position: relative;
   }
 
+  /* Favoritos funciona como una selección curada: dos piezas grandes por fila
+     en escritorio, sin convertir el resto de carruseles en una cuadrícula. */
+  @media (min-width: 900px) {
+    .favorites-carousel-shell {
+      max-width: 1040px;
+    }
+    #profile-pinned-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+      overflow: visible;
+      padding-bottom: 0;
+    }
+    #profile-pinned-row .holo-scene {
+      width: 100%;
+      min-width: 0;
+      max-width: none;
+    }
+    .favorites-carousel-shell .profile-carousel-btn {
+      display: none !important;
+    }
+  }
+
   /* En móvil el carrusel se mueve con el dedo: mantenemos los fades como pista visual,
      pero quitamos las flechas que tapaban las portadas. */
   @media (max-width: 899px) {
