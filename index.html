@@ -1432,11 +1432,9 @@
       flex:1 1 auto;
       width:auto;
       height:100%;
-      background:linear-gradient(90deg,
-        rgb(var(--modal-dominant-rgb) / .58) 0%,
-        rgb(var(--modal-dominant-rgb) / .28) 18%,
-        rgba(10,10,13,.9) 53%,
-        #0a0a0d 82%);
+      /* El panel es negro sólido; su sombra se desvanece hacia la portada. */
+      background:#0a0a0d;
+      box-shadow:-115px 0 110px rgba(10,10,13,.96);
     }
   }
 
