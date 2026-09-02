@@ -4716,7 +4716,8 @@ function openDetail(album, originEl, readOnly = false) {
   refreshBtn.textContent = '🔄';
   refreshBtn.style.cssText = 'background:none;border:none;color:#666;font-size:11px;cursor:pointer;'
     + 'padding:2px 4px;opacity:0.6;float:right;';
-  refreshBtn.style.display = readOnly ? 'none' : '';
+  // Se conserva la acción para mantenimiento, pero no se expone en el detalle por ahora.
+  refreshBtn.style.display = 'none';
   refreshBtn.onclick = async (e) => {
     e.stopPropagation();
     refreshBtn.disabled = true;
