@@ -1401,27 +1401,46 @@
   #modal > #modal-close:active { transform:scale(.94); }
   #modal > #modal-close:focus-visible { outline:2px solid var(--accent,#c8f060); outline-offset:3px; }
 
-  /* En escritorio el detalle conserva el impacto visual, pero deja respirar al Vault. */
+  /* En escritorio: portada cuadrada completa, cuyo color se disuelve hacia
+     el panel oscuro de información. */
   @media (min-width:900px) {
     #modal {
-      width:60vw;
-      height:min(82vh,860px);
-      max-height:82vh;
+      --modal-dominant-rgb: 200 240 96;
+      width:min(84vw,1200px);
+      height:min(78vh,800px);
+      max-height:78vh;
       border:1px solid rgba(255,255,255,.12);
       border-radius:16px;
+      background:#0a0a0d;
       box-shadow:0 34px 100px rgba(0,0,0,.68);
     }
-    /* La columna visual conserva el ambiente difuminado del álbum; la portada
-       real se muestra completa, cuadrada y centrada sobre él. */
+    #modal-art-bg {
+      inset:-42px auto -42px -42px;
+      width:58%;
+      opacity:.66;
+      filter:blur(38px) saturate(1.5) brightness(.5);
+    }
+    #modal::after {
+      background:linear-gradient(90deg,
+        rgb(var(--modal-dominant-rgb) / .52) 0%,
+        rgb(var(--modal-dominant-rgb) / .25) 34%,
+        rgba(10,10,13,.75) 57%,
+        #0a0a0d 78%);
+    }
     #modal-cover {
-      width:52%;
-      height:100%;
+      width:48%;
+      height:auto;
+      aspect-ratio:1;
+      align-self:center;
       object-fit:contain;
       object-position:center;
-      background:transparent;
-      box-shadow:22px 0 60px rgba(0,0,0,.32), inset 0 0 0 1px rgba(255,255,255,.08);
+      background:rgba(0,0,0,.16);
+      box-shadow:18px 0 60px rgba(0,0,0,.28),0 18px 50px rgba(0,0,0,.34),inset 0 0 0 1px rgba(255,255,255,.1);
     }
-    #modal-body { width:48%; }
+    #modal-body {
+      width:52%;
+      background:linear-gradient(90deg,rgba(10,10,13,.35),#0a0a0d 20%);
+    }
   }
 
   /* El score funciona como un sello de colección: conserva el color del tier y
@@ -4599,6 +4618,44 @@ document.getElementById('compare-backdrop').addEventListener('click', e => {
 // ── DETAIL MODAL ──
 let detailCloseTimer = null;
 
+function setModalDominantColor(coverUrl, fallbackColor) {
+  const modal = document.getElementById('modal');
+  const apply = (r, g, b) => modal.style.setProperty('--modal-dominant-rgb', `${Math.round(r)} ${Math.round(g)} ${Math.round(b)}`);
+  const fallback = /^#([0-9a-f]{6})$/i.exec(fallbackColor || '');
+  apply(
+    fallback ? parseInt(fallback[1].slice(0, 2), 16) : 18,
+    fallback ? parseInt(fallback[1].slice(2, 4), 16) : 18,
+    fallback ? parseInt(fallback[1].slice(4, 6), 16) : 22
+  );
+  if (!coverUrl) return;
+
+  const probe = new Image();
+  probe.crossOrigin = 'anonymous';
+  probe.referrerPolicy = 'no-referrer';
+  probe.onload = () => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 24;
+      const ctx = canvas.getContext('2d', { willReadFrequently:true });
+      ctx.drawImage(probe, 0, 0, 24, 24);
+      const pixels = ctx.getImageData(0, 0, 24, 24).data;
+      let red = 0, green = 0, blue = 0, weight = 0;
+      for (let i = 0; i < pixels.length; i += 4) {
+        const r = pixels[i], g = pixels[i + 1], b = pixels[i + 2], a = pixels[i + 3];
+        if (a < 180) continue;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        const saturation = max === 0 ? 0 : (max - min) / max;
+        const light = (max + min) / 2;
+        if (light < 22 || light > 238 || saturation < .1) continue;
+        const pixelWeight = 1 + saturation * 3;
+        red += r * pixelWeight; green += g * pixelWeight; blue += b * pixelWeight; weight += pixelWeight;
+      }
+      if (weight) apply(red / weight, green / weight, blue / weight);
+    } catch (_) { /* La portada no permite CORS: queda el color del tier. */ }
+  };
+  probe.src = coverUrl;
+}
+
 function openDetail(album, originEl, readOnly = false) {
   if (detailCloseTimer) {
     clearTimeout(detailCloseTimer);
@@ -4612,6 +4669,7 @@ function openDetail(album, originEl, readOnly = false) {
   const modalArtBg = document.getElementById('modal-art-bg');
   coverEl.src = album.coverUrl || '';
   modalArtBg.style.backgroundImage = album.coverUrl ? `url("${album.coverUrl.replace(/"/g, '\\\"')}")` : '';
+  setModalDominantColor(album.coverUrl, tier.color);
   coverEl.onerror = () => {
     coverEl.src = '';
     modalArtBg.style.backgroundImage = '';
