@@ -6570,15 +6570,22 @@ function getVaultDuplicate(item) {
     a.artist.trim().toLowerCase() === item.artist.trim().toLowerCase()
   ) || null;
 }
+function hasReviewUpdate(item, existing) {
+  const incoming = (item.notes || '').trim();
+  return !!incoming && incoming !== (existing?.notes || '').trim();
+}
 function isAlreadyInVault(item) {
   const dup = getVaultDuplicate(item);
   if (!dup) return false;
-  // Same score → truly already in, block it
-  return Math.abs(dup.score - item.score) < 0.001;
+  // Un score igual solo está al día si tampoco llegó una reseña nueva desde Rater.
+  return Math.abs(dup.score - item.score) < 0.001 && !hasReviewUpdate(item, dup);
 }
 function isUpdateAvailable(item) {
   const dup = getVaultDuplicate(item);
-  return dup && (parseFloat(item.score) - parseFloat(dup.score)) >= 0.001;
+  return !!dup && (
+    Math.abs(parseFloat(item.score) - parseFloat(dup.score)) >= 0.001 ||
+    hasReviewUpdate(item, dup)
+  );
 }
 
 function renderDbSyncList() {
@@ -6666,7 +6673,10 @@ function renderDbSyncList() {
       const existing = getVaultDuplicate(item);
       const tag = document.createElement('div');
       tag.className = 'dbsync-update-tag';
-      tag.textContent = `↑ ${existing.score.toFixed(2)} → ${item.score.toFixed(2)}`;
+      const scoreChanged = Math.abs(parseFloat(existing.score) - parseFloat(item.score)) >= 0.001;
+      tag.textContent = scoreChanged
+        ? `↑ ${existing.score.toFixed(2)} → ${item.score.toFixed(2)}`
+        : '✎ reseña actualizada';
       div.appendChild(checkEl);
       div.appendChild(thumb);
       div.appendChild(info);
@@ -6726,36 +6736,36 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
 
     const existing = getVaultDuplicate(item);
 
-    if (existing && Math.abs(parseFloat(existing.score) - parseFloat(item.score)) < 0.001) return; // same, skip
+    const scoreChanged = existing && Math.abs(parseFloat(existing.score) - parseFloat(item.score)) >= 0.001;
+    const reviewChanged = existing && hasReviewUpdate(item, existing);
+    if (existing && !scoreChanged && !reviewChanged) return;
 
     if (existing) {
-      // Save old score to history before updating
-      if (!existing.scoreHistory) existing.scoreHistory = [];
-      // Add old score entry if not already recorded
-      const lastEntry = existing.scoreHistory[existing.scoreHistory.length - 1];
-      if (!lastEntry || Math.abs(lastEntry.score - parseFloat(existing.score)) >= 0.001) {
+      if (scoreChanged) {
+        // Save score history only when the score really changed.
+        if (!existing.scoreHistory) existing.scoreHistory = [];
+        const lastEntry = existing.scoreHistory[existing.scoreHistory.length - 1];
+        if (!lastEntry || Math.abs(lastEntry.score - parseFloat(existing.score)) >= 0.001) {
+          existing.scoreHistory.push({
+            score: parseFloat(existing.score),
+            date:  existing.listenDate || new Date().toISOString().slice(0,10),
+            label: 'Antes del re-score'
+          });
+        }
         existing.scoreHistory.push({
-          score: parseFloat(existing.score),
-          date:  existing.listenDate || new Date().toISOString().slice(0,10),
-          label: 'Antes del re-score'
+          score: parseFloat(item.score),
+          date:  item.listenDate || new Date().toISOString().slice(0,10),
+          label: 'Re-score desde Rater DB'
         });
+        existing.score       = parseFloat(item.score);
+        existing.year        = item.year;
+        existing.coverUrl    = item.coverUrl;
+        existing.genres      = item.genres;
+        existing.listenDate  = item.listenDate;
+        existing.tracks      = item.tracks;
+        existing.trackScores = item.trackScores || {};
       }
-      // Add new score entry
-      existing.scoreHistory.push({
-        score: parseFloat(item.score),
-        date:  item.listenDate || new Date().toISOString().slice(0,10),
-        label: 'Re-score desde Rater DB'
-      });
-
-      // Update in place — preserve id, notes, replays, scoreHistory
-      existing.score       = parseFloat(item.score);
-      existing.year        = item.year;
-      existing.coverUrl    = item.coverUrl;
-      existing.genres      = item.genres;
-      existing.listenDate  = item.listenDate;
-      existing.tracks      = item.tracks;
-      existing.trackScores = item.trackScores || {};
-      if (item.notes) existing.notes = item.notes;
+      if (reviewChanged) existing.notes = item.notes.trim();
       updated++;
     } else {
       const importedAlbum = {
