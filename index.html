@@ -4108,6 +4108,16 @@ function loadAlbums() {
       const data = JSON.parse(saved);
       albums       = data.albums       || [];
       nowPlayingId = data.nowPlayingId || null;
+      // Las portadas antiguas de iTunes se guardaban a 600 px. La misma imagen
+      // admite una variante de 1200 px, así que se mejora localmente sin volver a buscar.
+      let upgraded = false;
+      albums.forEach(album => {
+        const nextCover = typeof album.coverUrl === 'string' && /mzstatic\\.com/i.test(album.coverUrl)
+          ? album.coverUrl.replace(/\\d+x\\d+bb/i, '1200x1200bb')
+          : album.coverUrl;
+        if (nextCover !== album.coverUrl) { album.coverUrl = nextCover; upgraded = true; }
+      });
+      if (upgraded) localStorage.setItem('album_vault_v3', JSON.stringify({ albums, nowPlayingId }));
     }
   } catch(e) { albums = []; }
   buildTiers();
@@ -4221,18 +4231,23 @@ function findItunesCoverFallback(itunesAlbums, title, artist) {
   let match = itunesAlbums.find(al => norm(al.collectionName) === t && norm(al.artistName) === a);
   if (!match) match = itunesAlbums.find(al => norm(al.collectionName).includes(t) || t.includes(norm(al.collectionName)));
   if (!match) match = itunesAlbums[0];
-  return match ? match.artworkUrl100.replace('100x100bb', '600x600bb') : null;
+  return match ? match.artworkUrl100.replace('100x100bb', '1200x1200bb') : null;
 }
-async function refetchCoverFallback(title, artist) {
+async function getHighResItunesCover(title, artist) {
   if (!title) return null;
   try {
     const q = encodeURIComponent(`${artist || ''} ${title}`.trim());
     const res = await fetch(`https://itunes.apple.com/search?term=${q}&media=music&entity=album&limit=5`);
-    if (res.ok) {
-      const data = await res.json();
-      const cover = findItunesCoverFallback(data.results || [], title, artist || '');
-      if (cover) return cover;
-    }
+    if (!res.ok) return null;
+    const data = await res.json();
+    return findItunesCoverFallback(data.results || [], title, artist || '');
+  } catch { return null; }
+}
+async function refetchCoverFallback(title, artist) {
+  if (!title) return null;
+  try {
+    const cover = await getHighResItunesCover(title, artist);
+    if (cover) return cover;
   } catch {}
   try {
     const url = `${LFM_BASE}?method=album.getinfo&artist=${encodeURIComponent(artist || '')}&album=${encodeURIComponent(title)}&api_key=${LFM_KEY}&format=json`;
@@ -5489,6 +5504,11 @@ async function selectLfmRelease(title, artist, coverUrl, itemEl) {
     const bigCover = pickLfmImage(info.image);
     if (bigCover) coverUrl = bigCover;
   }
+
+  // Last.fm conserva una buena coincidencia de edición, pero sus archivos pueden ser
+  // chicos. Si iTunes encuentra el mismo álbum/artista, preferimos su arte grande.
+  const itunesCover = await getHighResItunesCover(title, artist);
+  if (itunesCover) coverUrl = itunesCover;
 
   if (year) document.getElementById('input-year').value = year;
   document.getElementById('selected-sub-text').textContent = `${artist}${year ? ' · ' + year : ''}`;
