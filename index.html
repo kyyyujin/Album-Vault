@@ -1307,7 +1307,11 @@
     .pending-title { font-size:13px; }
     .sh-score { font-size:28px; }
   }
-  #modal-cover { width:240px; min-width:240px; aspect-ratio:1; object-fit:cover; align-self:flex-start; position:sticky; top:0; background:#1a1a1a; }
+  #modal-cover-stage {
+    width:240px; min-width:240px; aspect-ratio:1; align-self:flex-start;
+    position:sticky; top:0; overflow:hidden; background:#1a1a1a;
+  }
+  #modal-cover { width:100%; height:100%; object-fit:cover; display:block; }
   #modal-body { padding:28px 26px; flex:1; overflow-y:auto; }
   #modal-tier-badge { display:inline-block; font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:3px; padding:3px 10px; margin-bottom:12px; border:1px solid currentColor; }
   #modal-title { font-family:'DM Serif Display',serif; font-size:24px; line-height:1.2; margin-bottom:4px; }
@@ -1336,7 +1340,34 @@
   #btn-now-playing { font-size:9px; letter-spacing:1.5px; padding:3px 10px; border:1px solid #3ab870; color:#3ab870; background:none; cursor:pointer; transition:all .2s; }
   #btn-now-playing:hover, #btn-now-playing.active { background:#3ab870; color:#0a0a0a; }
 
-  #modal-notes { font-size:11px; color:#888; line-height:1.7; margin-bottom:18px; border-top:1px solid var(--border); padding-top:14px; }
+  /* La reseña se superpone a la portada: compacta por defecto y expandible al tocar. */
+  #modal-review-overlay {
+    position:absolute; z-index:2; left:0; right:0; bottom:0; width:100%;
+    max-height:48%; box-sizing:border-box; overflow:hidden; border:0;
+    padding:66px 22px 18px; background:linear-gradient(180deg,transparent 0%,rgba(5,5,7,.78) 40%,rgba(5,5,7,.96) 100%);
+    color:var(--text); text-align:center; font-family:'DM Mono',monospace;
+    font-size:11px; line-height:1.62; white-space:pre-line;
+  }
+  #modal-review-overlay.expandable { cursor:pointer; }
+  #modal-review-overlay:focus-visible { outline:2px solid var(--accent,#c8f060); outline-offset:-4px; }
+  .modal-review-kicker {
+    display:block; margin-bottom:7px; color:var(--accent,#c8f060);
+    font-size:8px; font-weight:700; letter-spacing:2.2px; text-transform:uppercase;
+  }
+  #modal-review-text {
+    display:-webkit-box; overflow:hidden; -webkit-box-orient:vertical;
+    -webkit-line-clamp:3;
+  }
+  #modal-review-overlay.expanded {
+    max-height:90%; overflow-y:auto;
+    background:linear-gradient(180deg,rgba(5,5,7,.42) 0%,rgba(5,5,7,.94) 28%,rgba(5,5,7,.98) 100%);
+  }
+  #modal-review-overlay.expanded #modal-review-text { display:block; overflow:visible; }
+  #modal-review-hint {
+    display:none; margin-top:8px; color:rgba(255,255,255,.58);
+    font-size:8px; letter-spacing:1.2px; text-transform:uppercase;
+  }
+  #modal-review-overlay.expandable #modal-review-hint { display:block; }
   /* replay history */
   #modal-replays { margin-bottom:18px; border-top:1px solid var(--border); padding-top:14px; }
   #modal-replays h4 { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
@@ -1400,11 +1431,12 @@
     background:linear-gradient(90deg,rgba(5,5,7,.18) 0%,rgba(5,5,7,.3) 44%,rgba(9,9,12,.94) 100%);
   }
   #modal > :not(#modal-art-bg) { position:relative; z-index:1; }
-  #modal-cover {
+  #modal-cover-stage {
     width:clamp(320px,52vw,860px); min-width:0; height:100%; aspect-ratio:auto;
-    position:relative; top:auto; align-self:stretch; object-fit:cover;
+    position:relative; top:auto; align-self:stretch;
     box-shadow:22px 0 60px rgba(0,0,0,.32);
   }
+  #modal-cover { width:100%; height:100%; object-fit:cover; }
   #modal-body {
     width:min(520px,48vw); min-width:0; padding:58px 42px 36px;
     background:linear-gradient(90deg,rgba(13,13,17,.84),rgba(13,13,17,.97));
@@ -1443,17 +1475,16 @@
     /* Sin fondo independiente: la portada forma literalmente el lado izquierdo. */
     #modal-art-bg { display:none; }
     #modal::after { background:none; }
-    #modal-cover {
+    #modal-cover-stage {
       flex:0 0 auto;
       width:auto;
       height:100%;
       aspect-ratio:1;
       align-self:stretch;
-      object-fit:cover;
-      object-position:center;
       background:transparent;
       box-shadow:none;
     }
+    #modal-cover { width:100%; height:100%; object-fit:cover; object-position:center; }
     #modal-body {
       flex:1 1 auto;
       width:auto;
@@ -1888,10 +1919,12 @@
     .tier-letter { font-size:56px; }
     .album-card:nth-child(n) { width:130px; height:130px; }
     #modal { flex-direction:column; overflow-y:auto; }
-    #modal-cover {
+    #modal-cover-stage {
       width:100%; min-width:unset; height:44vh; min-height:250px; max-height:none;
-      position:relative; object-fit:cover; flex-shrink:0;
+      position:relative; flex-shrink:0;
     }
+    #modal-cover { width:100%; height:100%; object-fit:cover; }
+    #modal-review-overlay { padding:58px 20px 16px; font-size:10px; }
     #modal::after { background:linear-gradient(180deg,rgba(5,5,7,.08) 0%,rgba(5,5,7,.14) 38%,rgba(9,9,12,.94) 100%); }
     #modal-body {
       width:100%; overflow:visible; flex:none; margin-top:-28px; padding:28px 18px 28px;
@@ -2313,7 +2346,14 @@
   <div id="modal">
     <div id="modal-art-bg" aria-hidden="true"></div>
     <button id="modal-close" aria-label="Cerrar detalle">×</button>
-    <img id="modal-cover" src="" alt="">
+    <div id="modal-cover-stage">
+      <img id="modal-cover" src="" alt="">
+      <button id="modal-review-overlay" type="button" hidden aria-expanded="false">
+        <span class="modal-review-kicker">Reseña</span>
+        <span id="modal-review-text"></span>
+        <span id="modal-review-hint">Tocar para leer completa</span>
+      </button>
+    </div>
     <div id="modal-body">
       <div id="modal-tier-badge"></div>
       <h2 id="modal-title"></h2>
@@ -2322,7 +2362,6 @@
       <div id="modal-score"></div>
       <div id="modal-status-row"></div>
       <div id="modal-links"></div>
-      <div id="modal-notes"></div>
       <div id="modal-replays">
         <h4>Listen history</h4>
         <div id="modal-replay-list"></div>
@@ -4703,8 +4742,19 @@ function openDetail(album, originEl, readOnly = false) {
   document.getElementById('modal-artist').textContent  = album.artist;
   document.getElementById('modal-score').textContent   = album.score;
   document.getElementById('modal-score').style.color   = tier.color;
-  document.getElementById('modal-notes').textContent   = album.notes || '';
-  document.getElementById('modal-notes').style.display = album.notes ? 'block' : 'none';
+
+  const reviewOverlay = document.getElementById('modal-review-overlay');
+  const reviewText = document.getElementById('modal-review-text');
+  const reviewHint = document.getElementById('modal-review-hint');
+  const review = (album.notes || '').trim();
+  const reviewIsLong = review.length > 220;
+  reviewText.textContent = review;
+  reviewOverlay.hidden = !review;
+  reviewOverlay.disabled = !reviewIsLong;
+  reviewOverlay.classList.toggle('expandable', reviewIsLong);
+  reviewOverlay.classList.remove('expanded');
+  reviewOverlay.setAttribute('aria-expanded', 'false');
+  reviewHint.textContent = reviewIsLong ? 'Tocar para leer completa' : '';
 
   // Botón discreto para releer el cover_url desde la DB compartida con Rater —
   // útil cuando la portada guardada quedó rota y ya se corrigió desde el Rater.
@@ -4967,6 +5017,15 @@ function closeDetailModal() {
     detailCloseTimer = null;
   }, 360);
 }
+
+document.getElementById('modal-review-overlay').addEventListener('click', function() {
+  if (!this.classList.contains('expandable')) return;
+  const expanded = this.classList.toggle('expanded');
+  this.setAttribute('aria-expanded', String(expanded));
+  document.getElementById('modal-review-hint').textContent = expanded
+    ? 'Tocar para contraer'
+    : 'Tocar para leer completa';
+});
 
 document.getElementById('modal-close').addEventListener('click', closeDetailModal);
 document.getElementById('modal-backdrop').addEventListener('click', e => {
