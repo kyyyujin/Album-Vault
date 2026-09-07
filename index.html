@@ -4765,7 +4765,8 @@ function openDetail(album, originEl, readOnly = false) {
   const review = (album.notes || '').trim();
   const reviewIsLong = review.length > 220;
   reviewText.textContent = review;
-  reviewOverlay.hidden = !review;
+  // The review remains saved and synchronized, but is intentionally hidden in the album detail for now.
+  reviewOverlay.hidden = true;
   reviewOverlay.disabled = !reviewIsLong;
   reviewOverlay.classList.toggle('expandable', reviewIsLong);
   reviewOverlay.classList.remove('expanded');
@@ -6622,6 +6623,7 @@ async function fetchFromRaterDb() {
         year:      row.year      || '',
         genre:     row.genre     || '',
         coverUrl:  row.cover_url || '',
+        coverScore: row.cover_score === null || row.cover_score === undefined || row.cover_score === '' ? null : parseFloat(row.cover_score),
         score,
         tier,
         finalRank: row.final_rank || tier?.label || '',
@@ -6667,6 +6669,13 @@ function isUpdateAvailable(item) {
     hasReviewUpdate(item, dup)
   );
 }
+function hasScoreUpdate(item, existing = getVaultDuplicate(item)) {
+  return !!existing && Math.abs(parseFloat(item.score) - parseFloat(existing.score)) >= 0.001;
+}
+function shouldShowInDbSync(item) {
+  const existing = getVaultDuplicate(item);
+  return !existing || hasScoreUpdate(item, existing);
+}
 
 function renderDbSyncList() {
   const list = document.getElementById('dbsync-list');
@@ -6674,13 +6683,23 @@ function renderDbSyncList() {
 
   if (!dbSyncItems.length) return;
 
-  // Auto-select all not already in vault (including updates)
-  dbSyncSelected.clear();
-  dbSyncItems.forEach((item, i) => {
-    if (!isAlreadyInVault(item)) dbSyncSelected.add(i);
-  });
+  // Only offer albums that are new to this Vault or have a new final score.
+  const visibleItems = dbSyncItems
+    .map((item, i) => ({ item, i }))
+    .filter(({ item }) => shouldShowInDbSync(item));
 
-  dbSyncItems.forEach((item, i) => {
+  dbSyncSelected.clear();
+  visibleItems.forEach(({ i }) => dbSyncSelected.add(i));
+
+  if (!visibleItems.length) {
+    document.getElementById('dbsync-status').textContent = 'Todos tus álbumes de la base ya están al día en el Vault.';
+    document.getElementById('dbsync-actions').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('dbsync-status').textContent = visibleItems.length + ' álbum' + (visibleItems.length !== 1 ? 'es' : '') + ' nuevo' + (visibleItems.length !== 1 ? 's' : '') + ' o con re-score disponible' + (visibleItems.length !== 1 ? 's' : '') + '.';
+
+  visibleItems.forEach(({ item, i }) => {
     const alreadyIn    = isAlreadyInVault(item);
     const updateAvail  = isUpdateAvailable(item);
     const selected     = dbSyncSelected.has(i);
@@ -6794,7 +6813,7 @@ function updateDbSyncCount() {
 
 // Select all / deselect all
 document.getElementById('dbsync-select-all').addEventListener('click', () => {
-  const allSelectable = dbSyncItems.map((item, i) => ({ item, i })).filter(({ item }) => !isAlreadyInVault(item) || isUpdateAvailable(item));
+  const allSelectable = dbSyncItems.map((item, i) => ({ item, i })).filter(({ item }) => shouldShowInDbSync(item));
   const allSelected = allSelectable.every(({ i }) => dbSyncSelected.has(i));
   if (allSelected) {
     allSelectable.forEach(({ i }) => dbSyncSelected.delete(i));
@@ -6840,6 +6859,7 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
         existing.score       = parseFloat(item.score);
         existing.year        = item.year;
         existing.coverUrl    = item.coverUrl;
+        existing.coverScore  = item.coverScore;
         existing.genres      = item.genres;
         existing.listenDate  = item.listenDate;
         existing.tracks      = item.tracks;
@@ -6855,6 +6875,7 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
         year:        item.year,
         score:       parseFloat(item.score),
         coverUrl:    item.coverUrl,
+        coverScore:  item.coverScore,
         genres:      item.genres,
         status:      'listened',
         listenDate:  item.listenDate,
