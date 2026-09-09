@@ -6671,7 +6671,9 @@ function hasScoreUpdate(item, existing = getVaultDuplicate(item)) {
 }
 function shouldShowInDbSync(item) {
   const existing = getVaultDuplicate(item);
-  return !existing || hasScoreUpdate(item, existing);
+  // No repitas álbumes ya sincronizados, pero sí ofrecé cualquier cambio que
+  // todavía no llegó al Vault: un re-score o una reseña nueva/editada.
+  return !existing || hasScoreUpdate(item, existing) || hasReviewUpdate(item, existing);
 }
 
 function renderDbSyncList() {
@@ -6694,7 +6696,7 @@ function renderDbSyncList() {
     return;
   }
 
-  document.getElementById('dbsync-status').textContent = visibleItems.length + ' álbum' + (visibleItems.length !== 1 ? 'es' : '') + ' nuevo' + (visibleItems.length !== 1 ? 's' : '') + ' o con re-score disponible' + (visibleItems.length !== 1 ? 's' : '') + '.';
+  document.getElementById('dbsync-status').textContent = visibleItems.length + ' álbum' + (visibleItems.length !== 1 ? 'es' : '') + ' nuevo' + (visibleItems.length !== 1 ? 's' : '') + ' o con actualización disponible' + (visibleItems.length !== 1 ? 's' : '') + '.';
 
   visibleItems.forEach(({ item, i }) => {
     const alreadyIn    = isAlreadyInVault(item);
