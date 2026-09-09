@@ -1340,15 +1340,16 @@
   #btn-now-playing { font-size:9px; letter-spacing:1.5px; padding:3px 10px; border:1px solid #3ab870; color:#3ab870; background:none; cursor:pointer; transition:all .2s; }
   #btn-now-playing:hover, #btn-now-playing.active { background:#3ab870; color:#0a0a0a; }
 
-  /* La reseña se superpone a la portada: compacta por defecto y expandible al tocar. */
+  /* Reseña dentro de los datos del álbum: compacta por defecto y expandible. */
   #modal-review-overlay {
-    position:absolute; z-index:2; left:0; right:0; bottom:0; width:100%;
-    max-height:48%; box-sizing:border-box; overflow:hidden; border:0;
-    padding:66px 22px 18px; background:linear-gradient(180deg,transparent 0%,rgba(5,5,7,.78) 40%,rgba(5,5,7,.96) 100%);
-    color:var(--text); text-align:center; font-family:'DM Mono',monospace;
+    width:100%; box-sizing:border-box; overflow:hidden; border:1px solid rgba(255,255,255,.09);
+    padding:13px 14px 12px; margin:0 0 16px; background:rgba(255,255,255,.035);
+    color:var(--text); text-align:left; font-family:'DM Mono',monospace;
     font-size:11px; line-height:1.62; white-space:pre-line;
+    border-radius:10px; box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
   }
   #modal-review-overlay.expandable { cursor:pointer; }
+  #modal-review-overlay:disabled { cursor:default; }
   #modal-review-overlay:focus-visible { outline:2px solid var(--accent,#c8f060); outline-offset:-4px; }
   .modal-review-kicker {
     display:block; margin-bottom:7px; color:var(--accent,#c8f060);
@@ -1359,10 +1360,7 @@
     display:-webkit-box; overflow:hidden; -webkit-box-orient:vertical;
     -webkit-line-clamp:3;
   }
-  #modal-review-overlay.expanded {
-    max-height:90%; overflow-y:auto;
-    background:linear-gradient(180deg,rgba(5,5,7,.42) 0%,rgba(5,5,7,.94) 28%,rgba(5,5,7,.98) 100%);
-  }
+  #modal-review-overlay.expanded { overflow:visible; background:rgba(255,255,255,.055); }
   #modal-review-overlay.expanded #modal-review-text { display:block; overflow:visible; }
   #modal-review-hint {
     display:none; margin-top:8px; color:rgba(255,255,255,.58);
@@ -1925,7 +1923,7 @@
       position:relative; flex-shrink:0;
     }
     #modal-cover { width:100%; height:100%; object-fit:cover; }
-    #modal-review-overlay { padding:58px 20px 16px; font-size:10px; }
+    #modal-review-overlay { padding:12px 13px 11px; font-size:10px; margin-bottom:14px; }
     #modal::after { background:linear-gradient(180deg,rgba(5,5,7,.08) 0%,rgba(5,5,7,.14) 38%,rgba(9,9,12,.94) 100%); }
     #modal-body {
       width:100%; overflow:visible; flex:none; margin-top:-28px; padding:28px 18px 28px;
@@ -2349,11 +2347,6 @@
     <button id="modal-close" aria-label="Cerrar detalle">×</button>
     <div id="modal-cover-stage">
       <img id="modal-cover" src="" alt="">
-      <button id="modal-review-overlay" type="button" hidden aria-expanded="false">
-        <span class="modal-review-kicker">Reseña</span>
-        <span id="modal-review-text"></span>
-        <span id="modal-review-hint">Tocar para leer completa</span>
-      </button>
     </div>
     <div id="modal-body">
       <div id="modal-tier-badge"></div>
@@ -2362,6 +2355,11 @@
       <div id="modal-meta"></div>
       <div id="modal-score"></div>
       <div id="modal-status-row"></div>
+      <button id="modal-review-overlay" type="button" hidden aria-expanded="false">
+        <span class="modal-review-kicker">Reseña</span>
+        <span id="modal-review-text"></span>
+        <span id="modal-review-hint">Tocar para leer completa</span>
+      </button>
       <div id="modal-links"></div>
       <div id="modal-replays">
         <h4>Listen history</h4>
@@ -4765,8 +4763,7 @@ function openDetail(album, originEl, readOnly = false) {
   const review = (album.notes || '').trim();
   const reviewIsLong = review.length > 220;
   reviewText.textContent = review;
-  // The review remains saved and synchronized, but is intentionally hidden in the album detail for now.
-  reviewOverlay.hidden = true;
+  reviewOverlay.hidden = !review;
   reviewOverlay.disabled = !reviewIsLong;
   reviewOverlay.classList.toggle('expandable', reviewIsLong);
   reviewOverlay.classList.remove('expanded');
