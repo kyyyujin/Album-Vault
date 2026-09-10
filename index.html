@@ -2070,6 +2070,70 @@
   @media (max-width:1099px) { .profile-stats-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.profile-dashboard{grid-template-columns:1fr!important}.profile-lower-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.profile-activity-panel{grid-column:1/-1}.profile-artist-list{max-width:430px}.profile-hero-content{width:min(100% - 42px,1440px)} }
   @media (max-width:720px) { #header-inner{padding:10px 14px;gap:9px}#menu-toggle-btn{display:none}.header-nav{display:none}#header h1{font-size:20px;letter-spacing:3px}#header-search-wrap{flex:1;margin-left:0}#header-search{padding-top:9px;padding-bottom:9px}#user-session-name{display:none}#user-session-chip{padding:3px!important}#profile-banner{height:410px!important}#profile-back-btn{top:15px!important;left:14px!important}#profile-search-wrap{top:15px!important;right:14px!important}#profile-search-input{width:132px!important}#profile-banner-edit-btn{width:36px!important;padding:9px!important;font-size:0!important;justify-content:center}#profile-banner-edit-btn svg{width:15px;height:15px}.profile-hero-content{width:calc(100% - 28px);gap:14px;padding-bottom:27px;align-items:flex-end}.profile-hero-avatar{width:88px;height:88px;border-width:3px}.profile-hero-name{font-size:48px}.profile-hero-bio{font-size:11px;margin-top:8px;-webkit-line-clamp:3}.profile-hero-actions{position:absolute;right:0;bottom:-55px}.profile-content-shell{width:auto!important;padding:66px 14px 58px!important}.profile-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin-top:0!important}.profile-segstat{height:116px!important}.profile-segstat:last-child{grid-column:1/-1}.profile-dashboard,.profile-lower-grid{grid-template-columns:1fr!important;gap:12px;margin-top:12px}.profile-panel{border-radius:15px}.profile-panel-head{padding:15px 14px 9px}#profile-top10-row{display:flex!important;overflow-x:auto!important;gap:11px!important;padding:0 14px 8px!important;scroll-snap-type:x proximity}.profile-top-panel .profile-carousel-shell{display:contents}#profile-top10-row .profile-album-card{flex:0 0 128px!important;width:128px!important;scroll-snap-align:start}.profile-artist-list{padding-left:12px;padding-right:12px}.profile-artist-avatar{width:45px;height:45px}.profile-activity-item{grid-template-columns:38px minmax(0,1fr) auto}.profile-activity-date{display:none}.profile-editorial{margin-top:12px;min-height:120px;padding:19px}.profile-editorial-quote{font-size:20px}#profile-pinned-section .holo-scene{width:73vw!important;min-width:73vw!important;max-width:300px!important;}.profile-carousel-btn{display:none!important;} }
 
+
+  /* PROFILE V3.1 — estadísticas integradas en el hero */
+  #profile-banner { height:clamp(500px,48vw,650px)!important; }
+  .profile-hero-content { bottom:174px!important; padding-bottom:0!important; }
+  #profile-banner > .profile-stats-grid {
+    position:absolute; z-index:3;
+    left:50%; bottom:24px;
+    width:min(1440px,calc(100% - 56px));
+    margin:0!important;
+    transform:translateX(-50%);
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  }
+  #profile-banner > .profile-stats-grid .profile-segstat {
+    height:126px!important;
+    background:linear-gradient(145deg,rgba(17,24,35,.78),rgba(9,13,20,.67))!important;
+    border-color:rgba(220,233,255,.16)!important;
+    backdrop-filter:blur(17px) saturate(1.1);
+    -webkit-backdrop-filter:blur(17px) saturate(1.1);
+  }
+  #profile-banner > .profile-stats-grid .profile-segstat::after {
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(130deg,rgba(255,255,255,.035),transparent 48%);
+  }
+  .profile-content-shell { padding-top:20px!important; }
+  @media (max-width:1099px) {
+    #profile-banner { height:600px!important; }
+    .profile-hero-content { bottom:292px!important; }
+    #profile-banner > .profile-stats-grid {
+      grid-template-columns:repeat(3,minmax(0,1fr))!important;
+      bottom:20px;
+    }
+    #profile-banner > .profile-stats-grid .profile-segstat { height:116px!important; }
+  }
+  @media (max-width:720px) {
+    #profile-banner { height:500px!important; }
+    .profile-hero-content { bottom:145px!important; }
+    .profile-hero-actions { right:0!important;bottom:0!important; }
+    #profile-banner > .profile-stats-grid {
+      display:flex!important;
+      left:14px;right:0;bottom:17px;
+      width:auto;
+      transform:none;
+      gap:9px!important;
+      overflow-x:auto;
+      padding:2px 14px 5px 0;
+      scroll-snap-type:x proximity;
+      scrollbar-width:none;
+      -webkit-overflow-scrolling:touch;
+    }
+    #profile-banner > .profile-stats-grid::-webkit-scrollbar { display:none; }
+    #profile-banner > .profile-stats-grid .profile-segstat {
+      flex:0 0 142px;
+      height:108px!important;
+      scroll-snap-align:start;
+      border-radius:14px!important;
+    }
+    #profile-banner > .profile-stats-grid .profile-segstat:last-child { grid-column:auto; }
+    #profile-banner > .profile-stats-grid .profile-segstat-text { padding:14px!important; }
+    #profile-banner > .profile-stats-grid .profile-segstat-value { font-size:34px!important; }
+    #profile-banner > .profile-stats-grid .profile-segstat-value-sm { font-size:15px!important; }
+    #profile-banner > .profile-stats-grid .profile-segstat::before { width:27px;height:27px;left:13px;top:12px;font-size:13px; }
+    .profile-content-shell { padding-top:14px!important; }
+  }
+
 </style>
 </head>
 <body>
@@ -2231,11 +2295,7 @@
       <div class="profile-hero-meta"><span class="profile-eyebrow">Perfil musical</span><div id="profile-username" class="profile-hero-name"></div><p id="profile-hero-bio" class="profile-hero-bio"></p></div>
       <div class="profile-hero-actions"><button id="profile-bio-edit-btn">Editar perfil</button></div>
     </div>
-  </div>
-  <div class="profile-content-shell">
-    <div id="profile-content-old-identity"></div><p id="profile-bio-display"></p>
-    <div id="profile-now-listening"><img id="nl-cover" src="" alt="" /><div style="min-width:0;flex:1;"><div style="display:flex;align-items:center;gap:6px;"><span id="nl-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:nlPulse 1.4s ease-in-out infinite;"></span><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#777;text-transform:uppercase;">Escuchando ahora</span></div><div id="nl-track">—</div><div id="nl-artist">—</div></div></div>
-    <div id="profile-bio-editor" style="display:none;flex-direction:column;gap:10px;"><textarea id="profile-bio-input" maxlength="280" placeholder="Escribí algo sobre vos y tu gusto musical…"></textarea><div><label>USUARIO DE LAST.FM (para "Escuchando ahora")</label><input id="profile-lastfm-input" type="text" placeholder="ej: kyujin_music" /></div><div><label>COLOR DE ACENTO</label><div id="profile-accent-picker"></div></div><div style="display:flex;gap:8px;justify-content:flex-end;"><button id="profile-bio-cancel-btn">Cancelar</button><button id="profile-bio-save-btn">Guardar</button></div></div>
+    <!-- Resumen del perfil integrado dentro del banner -->
     <div class="profile-stats-grid">
       <div class="profile-segstat" id="stat-card-total" data-icon="◫"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-total" class="profile-segstat-value">0</div><div class="profile-segstat-label">ÁLBUMES</div></div></div>
       <div class="profile-segstat" id="stat-card-avg" data-icon="★"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-avg" class="profile-segstat-value">–</div><div class="profile-segstat-label">PROMEDIO</div></div></div>
@@ -2243,6 +2303,11 @@
       <div class="profile-segstat" id="stat-card-artist" data-icon="♬"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-artist" class="profile-segstat-value profile-segstat-value-sm">–</div><div class="profile-segstat-label">ARTISTA MÁS RATEADO</div></div></div>
       <div class="profile-segstat" id="stat-card-streak" data-icon="✦"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-streak" class="profile-segstat-value">0</div><div class="profile-segstat-label">DÍAS SEGUIDOS</div></div></div>
     </div>
+  </div>
+  <div class="profile-content-shell">
+    <div id="profile-content-old-identity"></div><p id="profile-bio-display"></p>
+    <div id="profile-now-listening"><img id="nl-cover" src="" alt="" /><div style="min-width:0;flex:1;"><div style="display:flex;align-items:center;gap:6px;"><span id="nl-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:nlPulse 1.4s ease-in-out infinite;"></span><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#777;text-transform:uppercase;">Escuchando ahora</span></div><div id="nl-track">—</div><div id="nl-artist">—</div></div></div>
+    <div id="profile-bio-editor" style="display:none;flex-direction:column;gap:10px;"><textarea id="profile-bio-input" maxlength="280" placeholder="Escribí algo sobre vos y tu gusto musical…"></textarea><div><label>USUARIO DE LAST.FM (para "Escuchando ahora")</label><input id="profile-lastfm-input" type="text" placeholder="ej: kyujin_music" /></div><div><label>COLOR DE ACENTO</label><div id="profile-accent-picker"></div></div><div style="display:flex;gap:8px;justify-content:flex-end;"><button id="profile-bio-cancel-btn">Cancelar</button><button id="profile-bio-save-btn">Guardar</button></div></div>
     <div class="profile-dashboard">
       <section class="profile-panel profile-top-panel"><div class="profile-panel-head"><div><span class="profile-panel-title">♬ Top álbumes</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">Mejor puntuados</span></div></div><div id="profile-top10-row" class="profile-album-grid"></div></section>
       <section class="profile-panel"><div class="profile-panel-head"><span class="profile-panel-title">Géneros favoritos</span><span class="profile-panel-kicker">por colección</span></div><div id="profile-genre-dist" class="profile-bar-list"></div></section>
