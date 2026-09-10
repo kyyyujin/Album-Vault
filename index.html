@@ -2078,7 +2078,8 @@
     display:grid!important;
     position:absolute; z-index:3;
     left:50%; bottom:24px;
-    width:min(1440px,calc(100% - 56px));
+    /* En PC el grupo es compacto: cada stat tiene aire sin llenar todo el banner. */
+    width:min(1050px,calc(100% - 56px));
     margin:0!important;
     transform:translateX(-50%);
     grid-template-columns:repeat(5,minmax(0,1fr))!important;
