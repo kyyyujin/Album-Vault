@@ -2017,7 +2017,9 @@
   .profile-panel-kicker { color:#7e8aa0;font-size:9px;letter-spacing:.12em;text-transform:uppercase; }
   .profile-panel-action { background:transparent;border:1px solid rgba(205,222,255,.13);border-radius:8px;color:#aeb8ca;padding:6px 10px;font:10px 'DM Mono',monospace;cursor:pointer; }
   .profile-panel-action:hover { border-color:rgba(255,255,255,.3);color:#fff; }
-  .profile-top-panel { padding-bottom:20px; }
+  /* Top álbumes conserva una franja de aire real bajo los textos y las notas.
+     Así las cards no quedan recortadas ni obligan a buscar la puntuación. */
+  .profile-top-panel { padding-bottom:32px; }
   #profile-top10-row { display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px!important;padding:0 16px!important;overflow:visible!important; }
   #profile-top10-row .profile-album-card { width:auto!important;min-width:0!important;max-width:none!important;aspect-ratio:auto!important;height:auto!important;border-radius:12px!important;overflow:visible!important;background:transparent!important;position:relative; }
   #profile-top10-row .profile-album-card img { position:relative!important;width:100%!important;aspect-ratio:1!important;border-radius:11px!important;object-fit:cover!important;box-shadow:0 8px 22px rgba(0,0,0,.28);transition:transform .22s,filter .22s; }
@@ -2066,14 +2068,24 @@
   .profile-editorial-note { margin-top:12px;color:#8c98ad;font-size:9px;letter-spacing:.12em;text-transform:uppercase; }
 
   #profile-pinned-section,#profile-shelves-section { margin-top:28px!important; }
-  #profile-pinned-section .profile-album-grid { padding:0 0 10px!important;margin:0!important; }
+  #profile-pinned-section .profile-album-grid {
+    padding:0 0 16px!important;
+    margin:0!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    scroll-snap-type:x mandatory!important;
+    overscroll-behavior-x:contain;
+    touch-action:pan-x pinch-zoom;
+    -webkit-overflow-scrolling:touch;
+  }
+  #profile-pinned-section .holo-scene { touch-action:pan-x pinch-zoom; }
   #profile-pinned-section .holo-scene { width:190px!important;min-width:190px!important;max-width:190px!important;aspect-ratio:1/1!important; }
   #profile-pinned-section .holo-card { border-radius:14px!important; }
   #profile-pinned-section .holo-title { font-size:20px!important; }
   #profile-pinned-section .holo-score { font-size:23px!important; }
   .profile-shelf-wrap { margin-top:28px!important; }
   @media (max-width:1099px) { .profile-stats-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.profile-dashboard{grid-template-columns:1fr!important}.profile-lower-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.profile-activity-panel{grid-column:1/-1}.profile-artist-list{max-width:430px}.profile-hero-content{width:min(100% - 42px,1440px)} }
-  @media (max-width:720px) { #header-inner{padding:10px 14px;gap:9px}#menu-toggle-btn{display:none}.header-nav{display:none}#header h1{font-size:20px;letter-spacing:3px}#header-search-wrap{flex:1;margin-left:0}#header-search{padding-top:9px;padding-bottom:9px}#user-session-name{display:none}#user-session-chip{padding:3px!important}#profile-banner{height:410px!important}#profile-back-btn{top:15px!important;left:14px!important}#profile-search-wrap{top:15px!important;right:14px!important}#profile-search-input{width:132px!important}#profile-banner-edit-btn{width:36px!important;padding:9px!important;font-size:0!important;justify-content:center}#profile-banner-edit-btn svg{width:15px;height:15px}.profile-hero-content{width:calc(100% - 28px);gap:14px;padding-bottom:27px;align-items:flex-end}.profile-hero-avatar{width:88px;height:88px;border-width:3px}.profile-hero-name{font-size:48px}.profile-hero-bio{font-size:11px;margin-top:8px;-webkit-line-clamp:3}.profile-hero-actions{position:absolute;right:0;bottom:-55px}.profile-content-shell{width:auto!important;padding:66px 14px 58px!important}.profile-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin-top:0!important}.profile-segstat{height:116px!important}.profile-segstat:last-child{grid-column:1/-1}.profile-dashboard,.profile-lower-grid{grid-template-columns:1fr!important;gap:12px;margin-top:12px}.profile-panel{border-radius:15px}.profile-panel-head{padding:15px 14px 9px}#profile-top10-row{display:flex!important;overflow-x:auto!important;gap:12px!important;padding:0 14px 16px!important;scroll-snap-type:x proximity}.profile-top-panel .profile-carousel-shell{display:contents}#profile-top10-row .profile-album-card{flex:0 0 144px!important;width:144px!important;scroll-snap-align:start}.profile-top-panel{padding-bottom:22px}.profile-top-panel #profile-top10-row .profile-album-card-overlay{padding-top:9px!important}.profile-top-panel #profile-top10-row .profile-album-score{margin-top:5px!important}.profile-artist-list{padding-left:12px;padding-right:12px}.profile-artist-avatar{width:45px;height:45px}.profile-activity-item{grid-template-columns:38px minmax(0,1fr) auto}.profile-activity-date{display:none}.profile-editorial{margin-top:12px;min-height:120px;padding:19px}.profile-editorial-quote{font-size:20px}#profile-pinned-section .holo-scene{width:73vw!important;min-width:73vw!important;max-width:300px!important;}.profile-carousel-btn{display:none!important;} }
+  @media (max-width:720px) { #header-inner{padding:10px 14px;gap:9px}#menu-toggle-btn{display:none}.header-nav{display:none}#header h1{font-size:20px;letter-spacing:3px}#header-search-wrap{flex:1;margin-left:0}#header-search{padding-top:9px;padding-bottom:9px}#user-session-name{display:none}#user-session-chip{padding:3px!important}#profile-banner{height:410px!important}#profile-back-btn{top:15px!important;left:14px!important}#profile-search-wrap{top:15px!important;right:14px!important}#profile-search-input{width:132px!important}#profile-banner-edit-btn{width:36px!important;padding:9px!important;font-size:0!important;justify-content:center}#profile-banner-edit-btn svg{width:15px;height:15px}.profile-hero-content{width:calc(100% - 28px);gap:14px;padding-bottom:27px;align-items:flex-end}.profile-hero-avatar{width:88px;height:88px;border-width:3px}.profile-hero-name{font-size:48px}.profile-hero-bio{font-size:11px;margin-top:8px;-webkit-line-clamp:3}.profile-hero-actions{position:absolute;right:0;bottom:-55px}.profile-content-shell{width:auto!important;padding:66px 14px 58px!important}.profile-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin-top:0!important}.profile-segstat{height:116px!important}.profile-segstat:last-child{grid-column:1/-1}.profile-dashboard,.profile-lower-grid{grid-template-columns:1fr!important;gap:12px;margin-top:12px}.profile-panel{border-radius:15px}.profile-panel-head{padding:15px 14px 9px}#profile-top10-row{display:flex!important;overflow-x:auto!important;gap:12px!important;padding:0 14px 30px!important;scroll-snap-type:x proximity}.profile-top-panel .profile-carousel-shell{display:contents}#profile-top10-row .profile-album-card{flex:0 0 144px!important;width:144px!important;scroll-snap-align:start}.profile-top-panel{padding-bottom:34px}.profile-top-panel #profile-top10-row .profile-album-card-overlay{padding-top:9px!important}.profile-top-panel #profile-top10-row .profile-album-score{margin-top:5px!important}.profile-artist-list{padding-left:12px;padding-right:12px}.profile-artist-avatar{width:45px;height:45px}.profile-activity-item{grid-template-columns:38px minmax(0,1fr) auto}.profile-activity-date{display:none}.profile-editorial{margin-top:12px;min-height:120px;padding:19px}.profile-editorial-quote{font-size:20px}#profile-pinned-section .holo-scene{width:73vw!important;min-width:73vw!important;max-width:300px!important;}.profile-carousel-btn{display:none!important;} }
 
 
   /* PROFILE V3.1 — estadísticas integradas en el hero */
@@ -3792,32 +3804,42 @@ function albumHoloCard(album, readOnly) {
 
   // ── Móvil: seguir el dedo mientras se mantiene presionado ──
   let touchMoved = false;
-  let touchScrollParent = null;
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let isHorizontalSwipe = false;
   scene.addEventListener('touchstart', e => {
     touchMoved = false;
     const t = e.touches[0];
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+    isHorizontalSwipe = false;
     pressDown(t.clientX, t.clientY);
-    // Congela el scroll horizontal del carrusel mientras se manipula esta carta,
-    // para que no se deslice el conjunto mientras el dedo mueve el tilt.
-    touchScrollParent = scene.closest('.profile-album-grid');
-    if (touchScrollParent) touchScrollParent.style.overflowX = 'hidden';
   }, { passive: true });
   scene.addEventListener('touchmove', e => {
-    touchMoved = true;
     const t = e.touches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+    if (Math.abs(dx) + Math.abs(dy) > 7) touchMoved = true;
+    // El carrusel tiene prioridad al arrastrar lateralmente. Antes se ocultaba
+    // overflow-x durante todo el toque y en móvil ya no se podía deslizar.
+    if (Math.abs(dx) > Math.abs(dy) + 4) {
+      isHorizontalSwipe = true;
+      pendingClick = false;
+      pressUp();
+      return;
+    }
+    if (isHorizontalSwipe) return;
     applyTiltFromEvent(t.clientX, t.clientY);
   }, { passive: true });
   scene.addEventListener('touchend', () => {
     pressUp();
-    if (touchScrollParent) { touchScrollParent.style.overflowX = ''; touchScrollParent = null; }
     // Evita que un "tap" simple dispare el click justo después del efecto si el
     // dedo se movió mucho (se trató como gesto, no como toque para abrir el álbum).
-    if (touchMoved) pendingClick = false;
+    if (touchMoved || isHorizontalSwipe) pendingClick = false;
     setTimeout(() => { pendingClick = true; }, 50);
   });
   scene.addEventListener('touchcancel', () => {
     pressUp();
-    if (touchScrollParent) { touchScrollParent.style.overflowX = ''; touchScrollParent = null; }
   });
 
   scene.addEventListener('click', () => {
