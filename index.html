@@ -2965,9 +2965,8 @@ async function initVaultApp() {
   await syncVaultCollectionFromServer();
   vaultProfileSyncPromise = syncVaultProfileFromServer();
   await vaultProfileSyncPromise;
-  document.getElementById('profile-avatar-img').src = readOnly ? guestArtwork('AV','#62c9ff') : (localStorage.getItem(DISCORD_AVATAR_KEY) || '');
-  document.getElementById('profile-username').textContent = readOnly ? 'INVITADO' : (localStorage.getItem('discord_user_id') || '');
-  document.querySelector('.profile-eyebrow').textContent = readOnly ? 'Modo invitado · solo lectura' : 'Perfil musical';
+  document.getElementById('profile-avatar-img').src = localStorage.getItem(DISCORD_AVATAR_KEY) || '';
+  document.getElementById('profile-username').textContent = localStorage.getItem('discord_user_id') || '';
   // El padding del header se calcula acá (no en window.load) porque hasta este punto
   // el header estuvo oculto detrás del overlay de login, y su altura real habría sido 0.
   const headerH = document.getElementById('header').getBoundingClientRect().height;
@@ -3060,8 +3059,9 @@ function renderOwnProfile() {
   document.getElementById('profile-banner-edit-btn').style.display = readOnly ? 'none' : 'flex';
   document.getElementById('profile-new-shelf-btn').style.display = readOnly || (vaultProfile.shelves||[]).length >= 5 ? 'none' : 'inline-block';
   applyAccentColor(vaultProfile.accentColor || '#c8f060');
-  document.getElementById('profile-avatar-img').src = localStorage.getItem(DISCORD_AVATAR_KEY) || '';
-  document.getElementById('profile-username').textContent = localStorage.getItem('discord_user_id') || '';
+  document.getElementById('profile-avatar-img').src = readOnly ? guestArtwork('AV','#62c9ff') : (localStorage.getItem(DISCORD_AVATAR_KEY) || '');
+  document.getElementById('profile-username').textContent = readOnly ? 'INVITADO' : (localStorage.getItem('discord_user_id') || '');
+  document.querySelector('.profile-eyebrow').textContent = readOnly ? 'Modo invitado · solo lectura' : 'Perfil musical';
   document.getElementById('profile-banner').style.backgroundImage = vaultProfile.banner ? `url(${vaultProfile.banner})` : '';
   document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripción todavía.';
   document.getElementById('profile-hero-bio').textContent = vaultProfile.bio || 'Tu archivo personal de música.';
