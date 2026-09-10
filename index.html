@@ -2078,15 +2078,15 @@
     display:grid!important;
     position:absolute; z-index:3;
     left:50%; bottom:24px;
-    /* En PC el grupo es compacto: cada stat tiene aire sin llenar todo el banner. */
-    width:min(1050px,calc(100% - 56px));
+    /* En PC se alinea con las secciones inferiores, con cards más horizontales. */
+    width:min(1440px,calc(100% - 56px));
     margin:0!important;
     transform:translateX(-50%);
     grid-template-columns:repeat(5,minmax(0,1fr))!important;
   }
   #profile-banner > .profile-stats-grid .profile-segstat {
     grid-column:auto!important;
-    height:126px!important;
+    height:108px!important;
     background:linear-gradient(145deg,rgba(17,24,35,.78),rgba(9,13,20,.67))!important;
     border-color:rgba(220,233,255,.16)!important;
     backdrop-filter:blur(17px) saturate(1.1);
