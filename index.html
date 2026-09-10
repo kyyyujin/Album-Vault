@@ -1198,9 +1198,6 @@
   }
   .top10-tier-section-meta { font-size:9px; letter-spacing:2px; color:var(--muted); }
   #pending-backdrop {
-Warning: truncated output (original token count: 22638)
-Total output lines: 1200
-
     position:fixed; inset:0; background:rgba(0,0,0,.92); backdrop-filter:blur(14px);
     z-index:400; display:none; align-items:center; justify-content:center; padding:30px;
   }
@@ -1945,7 +1942,34 @@ Total output lines: 1200
 
     /* top10 mobile */
     #top10-modal { padding:20px 14px; }
- …638 tokens truncated…rgba(205,222,255,.1); padding:10px 15px 10px 35px; }
+    #top10-modal h2 { font-size:24px; letter-spacing:4px; margin-bottom:4px; }
+    #top10-modal .top10-subtitle { margin-bottom:18px; }
+    .top10-item { padding:10px 12px; gap:10px; }
+    .top10-rank { font-size:28px; min-width:32px; }
+    .top10-thumb { width:52px; height:52px; }
+    .top10-title { font-size:13px; }
+    .top10-artist { font-size:10px; }
+    .top10-score { font-size:28px; min-width:44px; }
+    .top10-tier-badge { display:none; }
+    .top10-legendary-badge { font-size:7px; padding:2px 5px; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     PROFILE V3 — editorial musical dashboard
+     La funcionalidad existente conserva sus mismos IDs; este bloque solo cambia
+     la composición visual y aprovecha los datos que ya están en memoria.
+  ═══════════════════════════════════════════════════════════════════ */
+  :root { --vault-panel:rgba(16,20,29,.74); --vault-panel-strong:rgba(13,16,24,.9); --vault-line:rgba(205,222,255,.105); --vault-radius:18px; }
+  body { background:#07090f; background-image:radial-gradient(90rem 46rem at 92% -15%,rgba(43,77,133,.16),transparent 58%),radial-gradient(62rem 40rem at -12% 26%,rgba(72,41,89,.12),transparent 60%); }
+  #header { background:rgba(7,10,16,.78); border-color:rgba(205,222,255,.08); backdrop-filter:blur(20px) saturate(1.25); -webkit-backdrop-filter:blur(20px) saturate(1.25); }
+  #header-inner { max-width:1560px; margin:0 auto; padding:11px 28px; gap:20px; }
+  #header h1 { font-size:23px; letter-spacing:4.5px; background:linear-gradient(90deg,#fff 20%,#a9b5cc); -webkit-background-clip:text; }
+  #menu-toggle-btn { width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.03);border-color:rgba(205,222,255,.11); }
+  .header-nav { display:flex;align-items:center;gap:4px; margin-left:8px; }
+  .header-nav a,.header-nav button { color:#99a3b8;background:transparent;border:0;padding:8px 10px;font:500 10px 'DM Mono',monospace;letter-spacing:.04em;text-decoration:none;cursor:pointer;border-radius:8px; }
+  .header-nav a:hover,.header-nav button:hover { color:#fff;background:rgba(255,255,255,.055); }
+  #header-search-wrap { flex:0 1 460px; margin-left:10px; }
+  #header-search { width:100%; border-radius:12px; background:rgba(15,19,29,.72); border-color:rgba(205,222,255,.1); padding:10px 15px 10px 35px; }
   #header-search:focus { width:100%;border-color:rgba(184,204,255,.35);background:rgba(18,23,35,.9); }
   #user-session-chip { border-color:rgba(205,222,255,.13)!important;background:rgba(255,255,255,.045)!important;padding:4px 11px 4px 4px!important; }
   #user-session-avatar { width:28px!important;height:28px!important; }
