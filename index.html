@@ -1953,6 +1953,123 @@
     .top10-tier-badge { display:none; }
     .top10-legendary-badge { font-size:7px; padding:2px 5px; }
   }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     PROFILE V3 — editorial musical dashboard
+     La funcionalidad existente conserva sus mismos IDs; este bloque solo cambia
+     la composición visual y aprovecha los datos que ya están en memoria.
+  ═══════════════════════════════════════════════════════════════════ */
+  :root { --vault-panel:rgba(16,20,29,.74); --vault-panel-strong:rgba(13,16,24,.9); --vault-line:rgba(205,222,255,.105); --vault-radius:18px; }
+  body { background:#07090f; background-image:radial-gradient(90rem 46rem at 92% -15%,rgba(43,77,133,.16),transparent 58%),radial-gradient(62rem 40rem at -12% 26%,rgba(72,41,89,.12),transparent 60%); }
+  #header { background:rgba(7,10,16,.78); border-color:rgba(205,222,255,.08); backdrop-filter:blur(20px) saturate(1.25); -webkit-backdrop-filter:blur(20px) saturate(1.25); }
+  #header-inner { max-width:1560px; margin:0 auto; padding:11px 28px; gap:20px; }
+  #header h1 { font-size:23px; letter-spacing:4.5px; background:linear-gradient(90deg,#fff 20%,#a9b5cc); -webkit-background-clip:text; }
+  #menu-toggle-btn { width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.03);border-color:rgba(205,222,255,.11); }
+  .header-nav { display:flex;align-items:center;gap:4px; margin-left:8px; }
+  .header-nav a,.header-nav button { color:#99a3b8;background:transparent;border:0;padding:8px 10px;font:500 10px 'DM Mono',monospace;letter-spacing:.04em;text-decoration:none;cursor:pointer;border-radius:8px; }
+  .header-nav a:hover,.header-nav button:hover { color:#fff;background:rgba(255,255,255,.055); }
+  #header-search-wrap { flex:0 1 460px; margin-left:10px; }
+  #header-search { width:100%; border-radius:12px; background:rgba(15,19,29,.72); border-color:rgba(205,222,255,.1); padding:10px 15px 10px 35px; }
+  #header-search:focus { width:100%;border-color:rgba(184,204,255,.35);background:rgba(18,23,35,.9); }
+  #user-session-chip { border-color:rgba(205,222,255,.13)!important;background:rgba(255,255,255,.045)!important;padding:4px 11px 4px 4px!important; }
+  #user-session-avatar { width:28px!important;height:28px!important; }
+
+  #profile-view { --profile-radius:18px; --profile-border:rgba(207,224,255,.11); --profile-panel:rgba(14,18,27,.72); background:linear-gradient(180deg,#090d15 0%,#080a10 48%,#08090d 100%); min-height:100vh; }
+  #profile-banner { height:clamp(350px,40vw,520px)!important; border-bottom:1px solid rgba(207,224,255,.07); background-position:center 32%!important; }
+  #profile-banner::before { content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,8,14,.9) 0%,rgba(5,8,14,.48) 48%,rgba(5,8,14,.72) 100%),linear-gradient(0deg,#090c14 0%,transparent 58%);z-index:0; }
+  #profile-banner > div[style*="linear-gradient"] { display:none; }
+  #profile-banner-fade { height:170px!important;z-index:1!important;background:linear-gradient(180deg,transparent 0%,#090c14 100%)!important; }
+  #profile-back-btn { top:22px!important;left:28px!important;width:38px!important;height:38px!important;border-radius:12px!important;border-color:rgba(255,255,255,.14)!important;background:rgba(5,8,14,.54)!important; }
+  #profile-search-wrap { top:22px!important;right:28px!important;gap:9px!important; }
+  #profile-search-input { width:230px!important;padding:10px 15px!important;border-radius:11px!important;border-color:rgba(255,255,255,.14)!important;background:rgba(5,8,14,.52)!important; }
+  #profile-banner-edit-btn { border-radius:11px!important;border-color:rgba(255,255,255,.14)!important;background:rgba(5,8,14,.52)!important;padding:10px 13px!important; }
+  .profile-hero-content { position:absolute;z-index:2;left:0;right:0;bottom:0;width:min(1440px,calc(100% - 56px));margin:auto;display:flex;align-items:flex-end;gap:24px;padding-bottom:38px; }
+  .profile-hero-avatar { width:132px;height:132px;border-radius:50%;object-fit:cover;border:4px solid rgba(213,228,255,.9);background:#171c28;box-shadow:0 14px 42px rgba(0,0,0,.45);flex:0 0 auto; }
+  .profile-hero-meta { min-width:0;flex:1;padding-bottom:3px; }
+  .profile-eyebrow { display:block;color:rgba(221,232,255,.61);font-size:10px;letter-spacing:.17em;text-transform:uppercase;margin-bottom:9px; }
+  .profile-hero-name { font-family:'Bebas Neue',sans-serif;font-size:clamp(46px,5vw,74px);line-height:.9;letter-spacing:.045em;color:#fff;text-shadow:0 4px 22px rgba(0,0,0,.35); }
+  .profile-hero-bio { max-width:620px;margin-top:12px;color:rgba(237,241,249,.74);font-size:13px;line-height:1.55;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
+  .profile-hero-actions { display:flex;gap:9px;align-items:center;padding-bottom:4px; }
+  #profile-bio-edit-btn { margin:0!important;padding:10px 15px!important;border-radius:11px!important;border-color:rgba(255,255,255,.18)!important;background:rgba(255,255,255,.08)!important;color:#fff!important;backdrop-filter:blur(10px); }
+  #profile-content-old-identity,#profile-bio-display { display:none!important; }
+  .profile-content-shell { width:min(1440px,calc(100% - 56px))!important;padding:28px 0 76px!important; }
+  #profile-now-listening { margin-top:0!important;border-radius:var(--profile-radius)!important;background:rgba(20,28,38,.64)!important;border-color:var(--profile-border)!important; }
+  #profile-bio-editor { padding:18px;border:1px solid var(--profile-border);border-radius:var(--profile-radius);background:var(--profile-panel); }
+
+  .profile-stats-grid { grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px!important;margin-top:22px!important; }
+  .profile-segstat { height:126px!important;border-radius:var(--profile-radius)!important;background:linear-gradient(145deg,rgba(25,32,45,.82),rgba(12,16,24,.8))!important;border-color:var(--profile-border)!important;overflow:hidden!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.025); }
+  .profile-segstat::before { content:attr(data-icon);position:absolute;left:15px;top:15px;width:30px;height:30px;border-radius:10px;background:rgba(255,255,255,.055);color:var(--accent);display:grid;place-items:center;font-size:15px; }
+  .profile-segstat-bg,.profile-segstat-fade { display:none!important; }
+  .profile-segstat-text { align-items:flex-start!important;justify-content:flex-end!important;text-align:left!important;padding:16px!important; }
+  .profile-segstat-value { font-family:'Bebas Neue',sans-serif!important;font-size:40px!important;line-height:.94!important;letter-spacing:.025em!important;color:#fff!important;text-shadow:none!important;max-width:100%!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .profile-segstat-value-sm { font-family:'DM Mono',monospace!important;font-size:17px!important;line-height:1.1!important;font-weight:500;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical; }
+  .profile-segstat-label { margin-top:6px!important;color:#8994aa!important;font-size:9px!important;letter-spacing:.12em!important; }
+  #stat-card-total{--accent:#62c9ff} #stat-card-avg{--accent:#ffd166} #stat-card-genre{--accent:#d989ff} #stat-card-artist{--accent:#6ee7cf} #stat-card-streak{--accent:#ff79b0}
+
+  .profile-dashboard { display:grid;grid-template-columns:minmax(0,1.65fr) minmax(320px,.85fr);gap:16px;margin-top:16px;align-items:start; }
+  .profile-lower-grid { display:grid;grid-template-columns:1.12fr .82fr 1.06fr;gap:16px;margin-top:16px;align-items:start; }
+  .profile-panel { border:1px solid var(--profile-border);border-radius:var(--profile-radius);background:linear-gradient(145deg,rgba(18,24,35,.78),rgba(11,14,21,.8));backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px);overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.025); }
+  .profile-panel-head { min-height:54px;padding:17px 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px; }
+  .profile-panel-title { color:#f4f7fc;font-size:13px;letter-spacing:.025em;font-weight:500; }
+  .profile-panel-kicker { color:#7e8aa0;font-size:9px;letter-spacing:.12em;text-transform:uppercase; }
+  .profile-panel-action { background:transparent;border:1px solid rgba(205,222,255,.13);border-radius:8px;color:#aeb8ca;padding:6px 10px;font:10px 'DM Mono',monospace;cursor:pointer; }
+  .profile-panel-action:hover { border-color:rgba(255,255,255,.3);color:#fff; }
+  .profile-top-panel { padding-bottom:15px; }
+  #profile-top10-row { display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px!important;padding:0 16px!important;overflow:visible!important; }
+  #profile-top10-row .profile-album-card { width:auto!important;min-width:0!important;max-width:none!important;aspect-ratio:auto!important;height:auto!important;border-radius:12px!important;overflow:visible!important;background:transparent!important;position:relative; }
+  #profile-top10-row .profile-album-card img { position:relative!important;width:100%!important;aspect-ratio:1!important;border-radius:11px!important;object-fit:cover!important;box-shadow:0 8px 22px rgba(0,0,0,.28);transition:transform .22s,filter .22s; }
+  #profile-top10-row .profile-album-card:hover img { transform:translateY(-4px);filter:brightness(1.08); }
+  #profile-top10-row .profile-card-bg { display:none; }
+  #profile-top10-row .profile-album-card-overlay { position:relative!important;padding:8px 1px 0!important;background:none!important; }
+  #profile-top10-row .profile-album-title { font-size:11px!important;color:#eff3fa!important; }
+  #profile-top10-row .profile-album-score { font-size:11px!important;float:right;margin-top:3px!important; }
+  .profile-rank { position:absolute;z-index:2;top:6px;left:6px;min-width:23px;padding:4px 6px;border-radius:7px;background:rgba(8,11,17,.78);border:1px solid rgba(255,255,255,.16);color:#fff;font-size:10px;text-align:center; }
+  .profile-album-artist { color:#8490a5;font-size:9px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+
+  .profile-bar-list { padding:4px 18px 18px;display:flex;flex-direction:column;gap:13px; }
+  .profile-bar-row { display:grid;grid-template-columns:18px minmax(0,1fr) 30px;gap:9px;align-items:center; }
+  .profile-bar-rank { color:#7f8ba2;font-size:10px; }
+  .profile-bar-name { color:#dce3ef;font-size:11px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px; }
+  .profile-bar-track { height:5px;border-radius:999px;background:rgba(255,255,255,.055);overflow:hidden; }
+  .profile-bar-fill { height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--bar-color),color-mix(in srgb,var(--bar-color) 62%,#fff)); }
+  .profile-bar-count { color:#8994a9;font-size:10px;text-align:right; }
+  .profile-artist-list { padding:3px 16px 16px;display:flex;gap:11px;justify-content:space-between; }
+  .profile-artist-item { flex:1;min-width:0;text-align:center;position:relative; }
+  .profile-artist-avatar { width:50px;height:50px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 8px;border:2px solid rgba(215,228,255,.15);background:#18202e; }
+  .profile-artist-rank { position:absolute;left:calc(50% - 29px);top:-3px;min-width:18px;height:18px;padding:3px 5px;border-radius:999px;background:#1d2636;border:1px solid rgba(255,255,255,.15);color:#cbd6e8;font-size:9px; }
+  .profile-artist-name { color:#e8edf5;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block; }
+  .profile-artist-count { color:#7e8aa0;font-size:9px;margin-top:3px;display:block; }
+  .profile-tier-panel { margin:0!important;padding:14px 16px 16px!important;background:transparent!important;border:0!important;border-radius:0!important; }
+  #profile-tier-dist { gap:8px!important; }
+  .profile-tier-panel .profile-panel-head { padding:0 0 8px;min-height:auto; }
+  .profile-tier-panel .tier-dist-row { display:grid;grid-template-columns:26px minmax(0,1fr) 22px;gap:8px;align-items:center; }
+  .profile-tier-panel .tier-dist-label { font-size:10px; }
+  .profile-tier-panel .tier-dist-track { height:5px;background:rgba(255,255,255,.055);border-radius:999px;overflow:hidden; }
+  .profile-tier-panel .tier-dist-fill { height:100%;border-radius:inherit; }
+  .profile-tier-panel .tier-dist-count { text-align:right;font-size:10px;color:#8994a9; }
+  .profile-activity-list { padding:2px 16px 15px;display:flex;flex-direction:column;gap:10px; }
+  .profile-activity-item { display:grid;grid-template-columns:38px minmax(0,1fr) auto auto;gap:9px;align-items:center; }
+  .profile-activity-cover { width:38px;height:38px;border-radius:8px;object-fit:cover;background:#1a2230; }
+  .profile-activity-title { color:#e7ecf5;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .profile-activity-artist { color:#7c889e;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px; }
+  .profile-activity-score { border:1px solid color-mix(in srgb,var(--score-color) 45%,transparent);color:var(--score-color);border-radius:7px;padding:4px 6px;font-size:10px; }
+  .profile-activity-date { color:#7d889d;font-size:9px;text-align:right;white-space:nowrap; }
+  .profile-editorial { position:relative;margin-top:16px;min-height:130px;border:1px solid var(--profile-border);border-radius:var(--profile-radius);overflow:hidden;background:linear-gradient(105deg,rgba(20,26,37,.9),rgba(14,17,26,.64));padding:24px; }
+  .profile-editorial::after { content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,12,18,.92),rgba(9,12,18,.38)),var(--editorial-bg) center/cover no-repeat;opacity:.72; }
+  .profile-editorial > * { position:relative;z-index:1; }
+  .profile-editorial-quote { color:#f0f4fa;font:24px/1.2 'DM Serif Display',serif;max-width:510px; }
+  .profile-editorial-note { margin-top:12px;color:#8c98ad;font-size:9px;letter-spacing:.12em;text-transform:uppercase; }
+
+  #profile-pinned-section,#profile-shelves-section { margin-top:28px!important; }
+  #profile-pinned-section .profile-album-grid { padding:0 0 10px!important;margin:0!important; }
+  #profile-pinned-section .holo-scene { width:190px!important;min-width:190px!important;max-width:190px!important;aspect-ratio:1/1!important; }
+  #profile-pinned-section .holo-card { border-radius:14px!important; }
+  #profile-pinned-section .holo-title { font-size:20px!important; }
+  #profile-pinned-section .holo-score { font-size:23px!important; }
+  .profile-shelf-wrap { margin-top:28px!important; }
+  @media (max-width:1099px) { .profile-stats-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.profile-dashboard{grid-template-columns:1fr!important}.profile-lower-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.profile-activity-panel{grid-column:1/-1}.profile-artist-list{max-width:430px}.profile-hero-content{width:min(100% - 42px,1440px)} }
+  @media (max-width:720px) { #header-inner{padding:10px 14px;gap:9px}#menu-toggle-btn{display:none}.header-nav{display:none}#header h1{font-size:20px;letter-spacing:3px}#header-search-wrap{flex:1;margin-left:0}#header-search{padding-top:9px;padding-bottom:9px}#user-session-name{display:none}#user-session-chip{padding:3px!important}#profile-banner{height:410px!important}#profile-back-btn{top:15px!important;left:14px!important}#profile-search-wrap{top:15px!important;right:14px!important}#profile-search-input{width:132px!important}#profile-banner-edit-btn{width:36px!important;padding:9px!important;font-size:0!important;justify-content:center}#profile-banner-edit-btn svg{width:15px;height:15px}.profile-hero-content{width:calc(100% - 28px);gap:14px;padding-bottom:27px;align-items:flex-end}.profile-hero-avatar{width:88px;height:88px;border-width:3px}.profile-hero-name{font-size:48px}.profile-hero-bio{font-size:11px;margin-top:8px;-webkit-line-clamp:3}.profile-hero-actions{position:absolute;right:0;bottom:-55px}.profile-content-shell{width:auto!important;padding:66px 14px 58px!important}.profile-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin-top:0!important}.profile-segstat{height:116px!important}.profile-segstat:last-child{grid-column:1/-1}.profile-dashboard,.profile-lower-grid{grid-template-columns:1fr!important;gap:12px;margin-top:12px}.profile-panel{border-radius:15px}.profile-panel-head{padding:15px 14px 9px}#profile-top10-row{display:flex!important;overflow-x:auto!important;gap:11px!important;padding:0 14px 8px!important;scroll-snap-type:x proximity}.profile-top-panel .profile-carousel-shell{display:contents}#profile-top10-row .profile-album-card{flex:0 0 128px!important;width:128px!important;scroll-snap-align:start}.profile-artist-list{padding-left:12px;padding-right:12px}.profile-artist-avatar{width:45px;height:45px}.profile-activity-item{grid-template-columns:38px minmax(0,1fr) auto}.profile-activity-date{display:none}.profile-editorial{margin-top:12px;min-height:120px;padding:19px}.profile-editorial-quote{font-size:20px}#profile-pinned-section .holo-scene{width:73vw!important;min-width:73vw!important;max-width:300px!important;}.profile-carousel-btn{display:none!important;} }
+
 </style>
 </head>
 <body>
@@ -1996,13 +2113,17 @@
 <div id="main-app" style="display:none;">
 <header id="header">
   <div id="header-inner">
-    <button id="menu-toggle-btn" title="Menú" aria-label="Abrir menú">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <button id="menu-toggle-btn" title="Abrir herramientas" aria-label="Abrir herramientas">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
     </button>
     <h1>ALBUM VAULT</h1>
+    <nav class="header-nav" aria-label="Navegación principal">
+      <button type="button" onclick="closeProfileView()">Mi colección</button>
+      <a href="https://rater-page.vercel.app/">Rater</a>
+    </nav>
     <div id="header-search-wrap">
       <span id="header-search-icon">⌕</span>
-      <input type="text" id="header-search" placeholder="Search vault…">
+      <input type="text" id="header-search" placeholder="Buscar álbumes, artistas…">
     </div>
     <div style="flex:1;"></div>
     <div id="user-session-chip" style="display:none;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:20px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.3);cursor:pointer;" onclick="openProfileView()" title="Ver perfil">
@@ -2098,158 +2219,44 @@
 <!-- ── VISTA DE PERFIL ── -->
 <div id="profile-view" style="display:none;">
   <div id="profile-loading-skeleton" aria-hidden="true">
-    <div class="profile-skeleton-banner"></div>
-    <div class="profile-skeleton-shell">
-      <div class="profile-skeleton-identity"><span class="profile-skeleton profile-skeleton-avatar"></span><span class="profile-skeleton profile-skeleton-name"></span></div>
-      <span class="profile-skeleton profile-skeleton-bio"></span>
-      <div class="profile-skeleton-stats"><span class="profile-skeleton"></span><span class="profile-skeleton"></span><span class="profile-skeleton"></span></div>
-      <span class="profile-skeleton profile-skeleton-section"></span>
-      <div class="profile-skeleton-cards"><span class="profile-skeleton"></span><span class="profile-skeleton"></span><span class="profile-skeleton"></span></div>
-      <span class="profile-skeleton profile-skeleton-section"></span>
-      <div class="profile-skeleton-cards"><span class="profile-skeleton"></span><span class="profile-skeleton"></span><span class="profile-skeleton"></span></div>
-    </div>
+    <div class="profile-skeleton-banner"></div><div class="profile-skeleton-shell"><div class="profile-skeleton-identity"><span class="profile-skeleton profile-skeleton-avatar"></span><span class="profile-skeleton profile-skeleton-name"></span></div><span class="profile-skeleton profile-skeleton-bio"></span><div class="profile-skeleton-stats"><span class="profile-skeleton"></span><span class="profile-skeleton"></span><span class="profile-skeleton"></span></div></div>
   </div>
   <div id="profile-banner" style="position:relative;width:100%;background:#15151b;background-size:cover;background-position:center;overflow:hidden;">
-    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.65) 100%);"></div>
     <div id="profile-banner-fade" style="position:absolute;left:0;right:0;bottom:-1px;background:linear-gradient(180deg,rgba(10,10,10,0) 0%,var(--bg,#0a0a0a) 100%);"></div>
-    <button id="profile-back-btn" title="Volver" style="position:absolute;top:14px;left:14px;z-index:5;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-size:16px;cursor:pointer;">←</button>
-    <div id="profile-search-wrap" style="position:absolute;top:14px;right:14px;z-index:5;display:flex;align-items:center;gap:8px;">
-      <input id="profile-search-input" type="text" placeholder="Buscar usuario…" autocomplete="off" style="width:180px;padding:7px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;outline:none;" />
-      <div id="profile-search-results" style="display:none;position:absolute;top:42px;left:0;width:260px;max-height:300px;overflow-y:auto;background:rgba(14,14,17,.97);backdrop-filter:blur(14px);border:1px solid #2d2d36;border-radius:12px;padding:6px;box-shadow:0 16px 40px rgba(0,0,0,.55);"></div>
-      <button id="profile-banner-edit-btn" title="Cambiar banner" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);color:#fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.04em;cursor:pointer;white-space:nowrap;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Banner</button>
-    </div>
+    <button id="profile-back-btn" title="Volver a mi colección">←</button>
+    <div id="profile-search-wrap"><input id="profile-search-input" type="text" placeholder="Buscar usuario…" autocomplete="off" /><div id="profile-search-results"></div><button id="profile-banner-edit-btn" title="Cambiar banner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Banner</button></div>
     <input type="file" id="profile-banner-file" accept="image/*" style="display:none;" />
+    <div class="profile-hero-content">
+      <img id="profile-avatar-img" class="profile-hero-avatar" src="" alt="" />
+      <div class="profile-hero-meta"><span class="profile-eyebrow">Perfil musical</span><div id="profile-username" class="profile-hero-name"></div><p id="profile-hero-bio" class="profile-hero-bio"></p></div>
+      <div class="profile-hero-actions"><button id="profile-bio-edit-btn">Editar perfil</button></div>
+    </div>
   </div>
-
   <div class="profile-content-shell">
-    <div class="profile-identity-row">
-      <img id="profile-avatar-img" src="" alt="" style="width:96px;height:96px;border-radius:50%;object-fit:cover;border:4px solid var(--bg,#0d0d0f);background:#1a1a2a;" />
-      <div style="flex:1;padding-bottom:6px;">
-        <div id="profile-username" style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:0.03em;color:#fff;"></div>
-      </div>
-      <button id="profile-bio-edit-btn" style="margin-bottom:6px;padding:7px 16px;border-radius:6px;border:1px solid var(--accent-dim);background:var(--accent-wash);color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">Editar perfil</button>
-    </div>
-
-    <p id="profile-bio-display" style="margin:18px 0 0;color:#aaa;font-size:13px;line-height:1.6;font-family:'DM Mono',monospace;white-space:pre-wrap;"></p>
-
-    <!-- Now Listening (Last.fm) -->
-    <div id="profile-now-listening" style="display:none;margin-top:16px;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;background:#15151b;border:1px solid #22222a;">
-      <img id="nl-cover" src="" alt="" style="width:44px;height:44px;border-radius:6px;object-fit:cover;background:#1a1a2a;flex-shrink:0;" />
-      <div style="min-width:0;flex:1;">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span id="nl-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:nlPulse 1.4s ease-in-out infinite;"></span>
-          <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#777;text-transform:uppercase;">Escuchando ahora</span>
-        </div>
-        <div id="nl-track" style="font-family:'DM Mono',monospace;font-size:12px;color:#eee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;">—</div>
-        <div id="nl-artist" style="font-family:'DM Mono',monospace;font-size:10px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</div>
-      </div>
-    </div>
-
-    <!-- Editor de bio (oculto hasta tocar "Editar perfil") -->
-    <div id="profile-bio-editor" style="display:none;margin-top:18px;flex-direction:column;gap:10px;">
-      <textarea id="profile-bio-input" maxlength="280" placeholder="Escribí algo sobre vos y tu gusto musical…" style="width:100%;box-sizing:border-box;min-height:90px;background:#15151b;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;padding:12px;resize:vertical;"></textarea>
-      <div>
-        <label style="font-size:10px;color:#777;font-family:'DM Mono',monospace;letter-spacing:0.05em;display:block;margin-bottom:6px;">USUARIO DE LAST.FM (para "Escuchando ahora")</label>
-        <input id="profile-lastfm-input" type="text" placeholder="ej: kyujin_music" style="width:100%;box-sizing:border-box;padding:10px 12px;background:#15151b;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:12px;outline:none;" />
-      </div>
-      <div>
-        <label style="font-size:10px;color:#777;font-family:'DM Mono',monospace;letter-spacing:0.05em;display:block;margin-bottom:6px;">COLOR DE ACENTO</label>
-        <div id="profile-accent-picker" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;">
-        <button id="profile-bio-cancel-btn" style="padding:8px 16px;border-radius:6px;border:1px solid #333;background:none;color:#999;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">Cancelar</button>
-        <button id="profile-bio-save-btn" style="padding:8px 16px;border-radius:6px;border:none;background:var(--accent);color:#0d0d0f;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;">Guardar</button>
-      </div>
-    </div>
-
-    <!-- Estadísticas: segmentos apilados, cada uno a todo el ancho -->
+    <div id="profile-content-old-identity"></div><p id="profile-bio-display"></p>
+    <div id="profile-now-listening"><img id="nl-cover" src="" alt="" /><div style="min-width:0;flex:1;"><div style="display:flex;align-items:center;gap:6px;"><span id="nl-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:nlPulse 1.4s ease-in-out infinite;"></span><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#777;text-transform:uppercase;">Escuchando ahora</span></div><div id="nl-track">—</div><div id="nl-artist">—</div></div></div>
+    <div id="profile-bio-editor" style="display:none;flex-direction:column;gap:10px;"><textarea id="profile-bio-input" maxlength="280" placeholder="Escribí algo sobre vos y tu gusto musical…"></textarea><div><label>USUARIO DE LAST.FM (para "Escuchando ahora")</label><input id="profile-lastfm-input" type="text" placeholder="ej: kyujin_music" /></div><div><label>COLOR DE ACENTO</label><div id="profile-accent-picker"></div></div><div style="display:flex;gap:8px;justify-content:flex-end;"><button id="profile-bio-cancel-btn">Cancelar</button><button id="profile-bio-save-btn">Guardar</button></div></div>
     <div class="profile-stats-grid">
-      <div class="profile-segstat" id="stat-card-total">
-        <div class="profile-segstat-bg"></div>
-        <div class="profile-segstat-fade"></div>
-        <div class="profile-segstat-text">
-          <div id="profile-stat-total" class="profile-segstat-value">0</div>
-          <div class="profile-segstat-label">ÁLBUMES</div>
-        </div>
-      </div>
-      <div class="profile-segstat" id="stat-card-avg">
-        <div class="profile-segstat-bg"></div>
-        <div class="profile-segstat-fade"></div>
-        <div class="profile-segstat-text">
-          <div id="profile-stat-avg" class="profile-segstat-value">–</div>
-          <div class="profile-segstat-label">PROMEDIO</div>
-        </div>
-      </div>
-      <div class="profile-segstat" id="stat-card-genre">
-        <div class="profile-segstat-bg"></div>
-        <div class="profile-segstat-fade"></div>
-        <div class="profile-segstat-text">
-          <div id="profile-stat-genre" class="profile-segstat-value profile-segstat-value-sm">–</div>
-          <div class="profile-segstat-label">GÉNERO FAVORITO</div>
-        </div>
-      </div>
-      <div class="profile-segstat" id="stat-card-artist">
-        <div class="profile-segstat-bg"></div>
-        <div class="profile-segstat-fade"></div>
-        <div class="profile-segstat-text">
-          <div id="profile-stat-artist" class="profile-segstat-value profile-segstat-value-sm">–</div>
-          <div class="profile-segstat-label">ARTISTA MÁS RATEADO</div>
-        </div>
-      </div>
-      <div class="profile-segstat" id="stat-card-streak">
-        <div class="profile-segstat-bg"></div>
-        <div class="profile-segstat-fade"></div>
-        <div class="profile-segstat-text">
-          <div id="profile-stat-streak" class="profile-segstat-value">0</div>
-          <div class="profile-segstat-label">DÍAS SEGUIDOS RATEANDO</div>
-        </div>
-      </div>
+      <div class="profile-segstat" id="stat-card-total" data-icon="◫"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-total" class="profile-segstat-value">0</div><div class="profile-segstat-label">ÁLBUMES</div></div></div>
+      <div class="profile-segstat" id="stat-card-avg" data-icon="★"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-avg" class="profile-segstat-value">–</div><div class="profile-segstat-label">PROMEDIO</div></div></div>
+      <div class="profile-segstat" id="stat-card-genre" data-icon="◌"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-genre" class="profile-segstat-value profile-segstat-value-sm">–</div><div class="profile-segstat-label">GÉNERO FAVORITO</div></div></div>
+      <div class="profile-segstat" id="stat-card-artist" data-icon="♬"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-artist" class="profile-segstat-value profile-segstat-value-sm">–</div><div class="profile-segstat-label">ARTISTA MÁS RATEADO</div></div></div>
+      <div class="profile-segstat" id="stat-card-streak" data-icon="✦"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-streak" class="profile-segstat-value">0</div><div class="profile-segstat-label">DÍAS SEGUIDOS</div></div></div>
     </div>
-
-    <!-- Distribución por tier -->
-    <div class="profile-tier-panel">
-      <div style="font-family:'DM Mono',monospace;font-size:9px;color:#777;letter-spacing:0.08em;margin-bottom:10px;">DISTRIBUCIÓN POR TIER</div>
-      <div id="profile-tier-dist" style="display:flex;flex-direction:column;gap:6px;"></div>
+    <div class="profile-dashboard">
+      <section class="profile-panel profile-top-panel"><div class="profile-panel-head"><div><span class="profile-panel-title">♬ Top álbumes</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">Mejor puntuados</span></div></div><div id="profile-top10-row" class="profile-album-grid"></div></section>
+      <section class="profile-panel"><div class="profile-panel-head"><span class="profile-panel-title">Géneros favoritos</span><span class="profile-panel-kicker">por colección</span></div><div id="profile-genre-dist" class="profile-bar-list"></div></section>
     </div>
-
-    <!-- Favoritos (elegidos a mano) -->
-    <div style="margin-top:36px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:0.05em;color:#fff;margin:0;">Favoritos</h3>
-        <button id="profile-edit-pinned-btn" style="padding:6px 14px;border-radius:6px;border:1px solid #333;background:none;color:#999;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.03em;cursor:pointer;">Editar</button>
-      </div>
-      <div id="profile-pinned-row" class="profile-album-grid" style="margin-top:14px;padding-top:14px;padding-bottom:18px;margin-bottom:-14px;"></div>
-      <p id="profile-pinned-empty" style="display:none;color:#666;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no elegiste favoritos. Tocá "Editar" para elegir hasta 10.</p>
+    <div class="profile-lower-grid">
+      <section class="profile-panel"><div class="profile-panel-head"><span class="profile-panel-title">Artistas más rateados</span></div><div id="profile-artist-list" class="profile-artist-list"></div></section>
+      <section class="profile-panel"><div class="profile-tier-panel"><div class="profile-panel-head"><span class="profile-panel-title">Distribución por tier</span></div><div id="profile-tier-dist"></div></div></section>
+      <section class="profile-panel profile-activity-panel"><div class="profile-panel-head"><span class="profile-panel-title">Actividad reciente</span><span class="profile-panel-kicker">fechas reales</span></div><div id="profile-recent-row" class="profile-activity-list"></div></section>
     </div>
-
-    <!-- Estanterías propias -->
-    <div id="profile-shelves-section" style="margin-top:36px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:0.05em;color:#fff;margin:0;">Estanterías</h3>
-        <button id="profile-new-shelf-btn" style="padding:6px 14px;border-radius:6px;border:1px solid #333;background:none;color:#999;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.03em;cursor:pointer;">+ Nueva</button>
-      </div>
-      <div id="profile-shelves-list" style="margin-top:14px;display:flex;flex-direction:column;gap:28px;"></div>
-      <p id="profile-shelves-empty" style="display:none;color:#666;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no creaste ninguna estantería. Tocá "+ Nueva" para armar la primera.</p>
-    </div>
-
-    <!-- Top 10 mejor rateados -->
-    <div style="margin-top:36px;">
-      <h3 style="font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:0.05em;color:#fff;margin:0 0 14px;">Top 10 mejor rateados</h3>
-      <div id="profile-top10-row" class="profile-album-grid"></div>
-    </div>
-
-    <!-- Últimos rateados -->
-    <div style="margin-top:36px;">
-      <h3 style="font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:0.05em;color:#fff;margin:0 0 14px;">Últimos rateados</h3>
-      <div id="profile-recent-row" class="profile-album-grid"></div>
-    </div>
-
-    <div id="profile-own-footer" style="margin-top:44px;text-align:center;">
-      <span onclick="logoutVaultAuth()" style="color:#e05050;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">Cerrar sesión</span>
-    </div>
-    <div id="profile-foreign-footer" style="display:none;margin-top:44px;text-align:center;">
-      <span onclick="exitForeignProfile()" style="color:#777;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">← Volver a mi perfil</span>
-    </div>
+    <section id="profile-editorial" class="profile-editorial" hidden><div class="profile-editorial-quote" id="profile-editorial-copy"></div><div class="profile-editorial-note">Desde el perfil de <span id="profile-editorial-user"></span></div></section>
+    <section id="profile-pinned-section" style="margin-top:36px;"><div class="profile-panel-head" style="padding-left:0;padding-right:0;"><div><span class="profile-panel-title">Favoritos personales</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">seleccionados por vos</span></div><button id="profile-edit-pinned-btn" class="profile-panel-action">Editar</button></div><div id="profile-pinned-row" class="profile-album-grid"></div><p id="profile-pinned-empty" style="display:none;color:#788399;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no elegiste favoritos. Tocá “Editar” para elegir hasta 10.</p></section>
+    <section id="profile-shelves-section" class="profile-shelf-wrap"><div class="profile-panel-head" style="padding-left:0;padding-right:0;"><span class="profile-panel-title">Estanterías</span><button id="profile-new-shelf-btn" class="profile-panel-action">+ Nueva</button></div><div id="profile-shelves-list" style="margin-top:14px;display:flex;flex-direction:column;gap:28px;"></div><p id="profile-shelves-empty" style="display:none;color:#788399;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no creaste ninguna estantería.</p></section>
+    <div id="profile-own-footer" style="margin-top:44px;text-align:center;"><span onclick="logoutVaultAuth()" style="color:#e05050;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">Cerrar sesión</span></div>
+    <div id="profile-foreign-footer" style="display:none;margin-top:44px;text-align:center;"><span onclick="exitForeignProfile()" style="color:#777;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">← Volver a mi perfil</span></div>
   </div>
 </div>
 
@@ -2962,6 +2969,10 @@ function renderOwnProfile() {
   document.getElementById('profile-username').textContent = localStorage.getItem('discord_user_id') || '';
   document.getElementById('profile-banner').style.backgroundImage = vaultProfile.banner ? `url(${vaultProfile.banner})` : '';
   document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripción todavía.';
+  document.getElementById('profile-hero-bio').textContent = vaultProfile.bio || 'Tu archivo personal de música.';
+  document.getElementById('profile-editorial-copy').textContent = vaultProfile.bio || '';
+  document.getElementById('profile-editorial-user').textContent = localStorage.getItem('discord_user_id') || '';
+  document.getElementById('profile-editorial').hidden = !(vaultProfile.bio || '').trim();
   renderProfileStats(albums, vaultProfile);
   renderProfileAlbumRows(albums, vaultProfile, false);
   renderProfileShelves(albums, vaultProfile, false);
@@ -2996,6 +3007,10 @@ async function openForeignProfile(discordUsername) {
     document.getElementById('profile-username').textContent = data.discord_username || discordUsername;
     document.getElementById('profile-banner').style.backgroundImage = fProfile.banner ? `url(${fProfile.banner})` : '';
     document.getElementById('profile-bio-display').textContent = fProfile.bio || 'Sin descripción todavía.';
+    document.getElementById('profile-hero-bio').textContent = fProfile.bio || 'Perfil musical de la comunidad.';
+    document.getElementById('profile-editorial-copy').textContent = fProfile.bio || '';
+    document.getElementById('profile-editorial-user').textContent = data.discord_username || discordUsername;
+    document.getElementById('profile-editorial').hidden = !(fProfile.bio || '').trim();
     document.getElementById('profile-bio-editor').style.display = 'none';
     document.getElementById('profile-bio-display').style.display = 'block';
     renderProfileStats(fAlbums, fProfile);
@@ -3373,30 +3388,64 @@ function stopNowListeningPolling() {
 function renderProfileStats(albumList, profile) {
   const total = albumList.length;
   document.getElementById('profile-stat-total').textContent = total;
-  setStatCardBg('stat-card-total', pickRandomAlbum(albumList));
+  const avg = total ? albumList.reduce((sum, album) => sum + (Number(album.score) || 0), 0) / total : null;
+  document.getElementById('profile-stat-avg').textContent = avg === null ? '–' : avg.toFixed(2);
 
-  const avg = total ? (albumList.reduce((s, a) => s + (Number(a.score) || 0), 0) / total) : null;
-  document.getElementById('profile-stat-avg').textContent = avg !== null ? avg.toFixed(2) : '–';
-  setStatCardBg('stat-card-avg', avg !== null ? pickClosestToAverage(albumList, avg) : null);
-
-  const genreCounts = {};
-  albumList.forEach(a => (a.genres || []).forEach(g => { genreCounts[g] = (genreCounts[g] || 0) + 1; }));
-  const topGenre = Object.entries(genreCounts).sort((a, b) => b[1] - a[1])[0];
+  const genreCounts = countBy(albumList, album => (album.genres || []).filter(Boolean));
+  const artistCounts = countBy(albumList, album => album.artist ? [album.artist] : []);
+  const topGenre = sortedCounts(genreCounts)[0];
+  const topArtist = sortedCounts(artistCounts)[0];
   document.getElementById('profile-stat-genre').textContent = topGenre ? topGenre[0] : '–';
-  setStatCardBg('stat-card-genre', topGenre ? pickRandomAlbum(albumList.filter(a => (a.genres||[]).includes(topGenre[0]))) : null);
-
-  const artistCounts = {};
-  albumList.forEach(a => { if (a.artist) artistCounts[a.artist] = (artistCounts[a.artist] || 0) + 1; });
-  const topArtist = Object.entries(artistCounts).sort((a, b) => b[1] - a[1])[0];
   document.getElementById('profile-stat-artist').textContent = topArtist ? `${topArtist[0]} (${topArtist[1]})` : '–';
-  setStatCardBg('stat-card-artist', topArtist ? pickRandomAlbum(albumList.filter(a => a.artist === topArtist[0])) : null);
-
   document.getElementById('profile-stat-streak').textContent = computeActivityStreak(albumList);
-  setStatCardBg('stat-card-streak', pickMostRecentlyListened(albumList));
 
+  renderProfileBarList('profile-genre-dist', sortedCounts(genreCounts).slice(0, 6), '#d987ff');
+  renderProfileArtists(albumList, sortedCounts(artistCounts).slice(0, 5));
   renderTierDistribution(albumList);
 }
-
+function countBy(albumList, extractor) {
+  const counts = {};
+  albumList.forEach(album => extractor(album).forEach(value => { counts[value] = (counts[value] || 0) + 1; }));
+  return counts;
+}
+function sortedCounts(counts) { return Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])); }
+function renderProfileBarList(id, entries, fallbackColor) {
+  const wrap = document.getElementById(id); if (!wrap) return;
+  wrap.innerHTML = '';
+  const max = entries[0]?.[1] || 1;
+  if (!entries.length) { wrap.innerHTML = '<span class="profile-panel-kicker">Aún no hay datos suficientes.</span>'; return; }
+  entries.forEach(([name, count], index) => {
+    const hue = [ '#ec79ad', '#b377e5', '#778ff5', '#56bde8', '#3dcbb8', '#91cf71' ][index] || fallbackColor;
+    const row = document.createElement('div'); row.className = 'profile-bar-row';
+    row.innerHTML = `<span class="profile-bar-rank">${index + 1}</span><div><span class="profile-bar-name"></span><div class="profile-bar-track"><div class="profile-bar-fill" style="--bar-color:${hue};width:${Math.max(8,Math.round(count / max * 100))}%"></div></div></div><span class="profile-bar-count">${count}</span>`;
+    row.querySelector('.profile-bar-name').textContent = name; wrap.appendChild(row);
+  });
+}
+function renderProfileArtists(albumList, entries) {
+  const wrap = document.getElementById('profile-artist-list'); if (!wrap) return;
+  wrap.innerHTML = '';
+  if (!entries.length) { wrap.innerHTML = '<span class="profile-panel-kicker">Aún no hay artistas rateados.</span>'; return; }
+  entries.forEach(([name, count], index) => {
+    const representative = albumList.find(album => album.artist === name && album.coverUrl) || albumList.find(album => album.artist === name);
+    const item = document.createElement('button'); item.type = 'button'; item.className = 'profile-artist-item';
+    item.style.cssText = 'background:none;border:0;padding:0;cursor:pointer;font:inherit;';
+    item.innerHTML = `<span class="profile-artist-rank">${index + 1}</span><img class="profile-artist-avatar" alt="" /><span class="profile-artist-name"></span><span class="profile-artist-count">${count} álbum${count === 1 ? '' : 'es'}</span>`;
+    const avatar = item.querySelector('img'); avatar.src = representative?.coverUrl || ''; avatar.onerror = () => { avatar.style.visibility = 'hidden'; };
+    item.querySelector('.profile-artist-name').textContent = name;
+    item.onclick = () => { const input = document.getElementById('header-search'); if (input) { input.value = name; input.dispatchEvent(new Event('input', { bubbles:true })); closeProfileView(); } };
+    wrap.appendChild(item);
+  });
+}
+function renderTierDistribution(albumList) {
+  const wrap = document.getElementById('profile-tier-dist'); wrap.innerHTML = '';
+  const total = albumList.length || 1;
+  TIERS.forEach(tier => {
+    const count = albumList.filter(album => getTier(album.score)?.id === tier.id).length; if (!count) return;
+    const row = document.createElement('div'); row.className = 'tier-dist-row';
+    row.innerHTML = `<span class="tier-dist-label" style="color:${tier.color}">${tier.label}</span><div class="tier-dist-track"><div class="tier-dist-fill" style="width:${Math.max(5,Math.round(count / total * 100))}%;background:${tier.color}"></div></div><span class="tier-dist-count">${count}</span>`;
+    wrap.appendChild(row);
+  });
+}
 // Elige un álbum al azar de la lista dada (estable dentro del mismo render, pero
 // varía entre renders — así cada visita al perfil puede mostrar una carátula distinta).
 function pickRandomAlbum(list) {
@@ -3762,36 +3811,40 @@ function enhanceProfileCarousels() {
   document.querySelectorAll('#profile-view .profile-album-grid').forEach(setupProfileCarousel);
 }
 
+function profileTopAlbumCard(album, readOnly, rank) {
+  const card = albumMiniCard(album, readOnly);
+  const tier = getTier(album.score);
+  const rankEl = document.createElement('span'); rankEl.className = 'profile-rank'; rankEl.textContent = rank;
+  const artist = document.createElement('div'); artist.className = 'profile-album-artist'; artist.textContent = album.artist || '—';
+  card.prepend(rankEl); card.querySelector('.profile-album-card-overlay').appendChild(artist);
+  return card;
+}
+function relativeProfileDate(album) {
+  const raw = album.listenDate || (album.addedAt ? new Date(album.addedAt).toISOString().slice(0,10) : '');
+  if (!raw || !/^\d{4}-\d{2}-\d{2}/.test(raw)) return '';
+  const days = Math.max(0, Math.floor((Date.now() - new Date(raw + 'T00:00:00').getTime()) / 86400000));
+  if (days === 0) return 'hoy'; if (days === 1) return 'ayer'; if (days < 7) return `hace ${days} días`; if (days < 30) return `hace ${Math.floor(days / 7)} sem.`; return raw.slice(0,10);
+}
+function profileActivityItem(album, readOnly) {
+  const tier = getTier(album.score); const item = document.createElement('button'); item.type = 'button'; item.className='profile-activity-item'; item.style.cssText='background:transparent;border:0;padding:0;width:100%;text-align:left;cursor:pointer;font:inherit;';
+  item.innerHTML = `<img class="profile-activity-cover" alt="" /><div style="min-width:0"><div class="profile-activity-title"></div><div class="profile-activity-artist"></div></div><span class="profile-activity-score" style="--score-color:${tier?.color || '#d9e2f0'}">${Number(album.score).toFixed(1)}</span><span class="profile-activity-date"></span>`;
+  const img=item.querySelector('img'); img.src=album.coverUrl||''; img.onerror=()=>{img.style.visibility='hidden';};
+  item.querySelector('.profile-activity-title').textContent=album.title||'Álbum'; item.querySelector('.profile-activity-artist').textContent=album.artist||'';
+  item.querySelector('.profile-activity-date').textContent=relativeProfileDate(album);
+  item.onclick=()=>openDetail(album,item,readOnly); return item;
+}
 function renderProfileAlbumRows(albumList, profile, readOnly) {
-  // Top 10
-  const top10Row = document.getElementById('profile-top10-row');
-  top10Row.innerHTML = '';
-  [...albumList].sort((a, b) => b.score - a.score).slice(0, 10).forEach(a => top10Row.appendChild(albumMiniCard(a, readOnly)));
-
-  // Últimos rateados (por listenDate si existe, si no por orden de creación/id)
-  const recentRow = document.getElementById('profile-recent-row');
-  recentRow.innerHTML = '';
-  [...albumList].sort((a, b) => {
-    const da = a.listenDate ? new Date(a.listenDate).getTime() : 0;
-    const db = b.listenDate ? new Date(b.listenDate).getTime() : 0;
-    return db - da;
-  }).slice(0, 10).forEach(a => recentRow.appendChild(albumMiniCard(a, readOnly)));
-
-  // Favoritos elegidos a mano (con efecto de carta holográfica)
-  const pinnedRow   = document.getElementById('profile-pinned-row');
-  const pinnedEmpty = document.getElementById('profile-pinned-empty');
-  pinnedRow.innerHTML = '';
-  const pinnedAlbums = (profile.pinned || []).map(id => albumList.find(a => String(a.id) === String(id))).filter(Boolean);
-  if (pinnedAlbums.length) {
-    pinnedEmpty.style.display = 'none';
-    pinnedAlbums.forEach(a => pinnedRow.appendChild(albumHoloCard(a, readOnly)));
-  } else {
-    pinnedEmpty.style.display = 'block';
-  }
-
+  const top10Row = document.getElementById('profile-top10-row'); top10Row.innerHTML = '';
+  [...albumList].sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0)).slice(0,5).forEach((album,index)=>top10Row.appendChild(profileTopAlbumCard(album, readOnly, index+1)));
+  const recentRow = document.getElementById('profile-recent-row'); recentRow.innerHTML='';
+  const dated = albumList.filter(album => album.listenDate || album.addedAt).sort((a,b) => new Date(b.listenDate || b.addedAt).getTime() - new Date(a.listenDate || a.addedAt).getTime()).slice(0,5);
+  if (dated.length) dated.forEach(album=>recentRow.appendChild(profileActivityItem(album,readOnly)));
+  else recentRow.innerHTML='<span class="profile-panel-kicker">Aún no hay actividad fechada.</span>';
+  const pinnedRow=document.getElementById('profile-pinned-row'), pinnedEmpty=document.getElementById('profile-pinned-empty'); pinnedRow.innerHTML='';
+  const pinned=(profile.pinned||[]).map(id=>albumList.find(album=>String(album.id)===String(id))).filter(Boolean);
+  if(pinned.length){pinnedEmpty.style.display='none';pinned.forEach(album=>pinnedRow.appendChild(albumHoloCard(album,readOnly)));}else{pinnedEmpty.style.display=readOnly?'none':'block';}
   enhanceProfileCarousels();
 }
-
 // ══════════════════ ESTANTERÍAS PROPIAS ══════════════════
 // vaultProfile.shelves = [{ id, title, albumIds: [id, id, ...] }]  (máx. 5, orden de albumIds = orden manual)
 
