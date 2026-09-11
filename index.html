@@ -2073,6 +2073,15 @@
   .profile-activity-artist { color:#7c889e;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px; }
   .profile-activity-score { border:1px solid color-mix(in srgb,var(--score-color) 45%,transparent);color:var(--score-color);border-radius:7px;padding:4px 6px;font-size:10px; }
   .profile-activity-date { color:#7d889d;font-size:9px;text-align:right;white-space:nowrap; }
+  .profile-rescore-panel { grid-column:1/-1; }
+  .profile-rescore-list { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:2px 16px 16px; }
+  .profile-rescore-item { display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;padding:9px;border:1px solid rgba(205,222,255,.09);border-radius:11px;background:rgba(5,9,16,.32);color:inherit;text-align:left;cursor:pointer;font:inherit;transition:border-color .18s,background .18s,transform .18s; }
+  .profile-rescore-item:hover { transform:translateY(-2px);border-color:rgba(205,222,255,.24);background:rgba(255,255,255,.045); }
+  .profile-rescore-cover { width:42px;height:42px;border-radius:8px;object-fit:cover;background:#151b26; }
+  .profile-rescore-title { color:#edf2fa;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .profile-rescore-artist,.profile-rescore-date { color:#7e8aa0;font-size:9px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .profile-rescore-scores { display:flex;align-items:center;gap:4px;font:500 11px 'DM Mono',monospace;white-space:nowrap; }
+  .profile-rescore-arrow { color:#6e7b90; }.profile-rescore-delta { margin-top:4px;text-align:right;font-size:10px;font-weight:700; }.profile-rescore-delta.up { color:#72e4aa; }.profile-rescore-delta.down { color:#ff8699; }
   .profile-editorial { position:relative;margin-top:16px;min-height:130px;border:1px solid var(--profile-border);border-radius:var(--profile-radius);overflow:hidden;background:linear-gradient(105deg,rgba(20,26,37,.9),rgba(14,17,26,.64));padding:24px; }
   .profile-editorial::after { content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,12,18,.92),rgba(9,12,18,.38)),var(--editorial-bg) center/cover no-repeat;opacity:.72; }
   .profile-editorial > * { position:relative;z-index:1; }
@@ -2214,6 +2223,7 @@
     #profile-banner > .profile-stats-grid .profile-segstat::before { width:22px!important;height:22px!important;left:10px!important;top:9px!important;font-size:11px!important;border-radius:8px!important; }
     #profile-bio-editor .profile-editor-actions { flex-wrap:wrap!important; }
     #profile-bio-editor #profile-banner-edit-btn { width:auto!important;padding:10px 13px!important;font-size:10px!important;display:inline-block!important; }
+    .profile-rescore-list { grid-template-columns:1fr!important;padding:2px 12px 14px!important; }
   }
 
   #vault-home-btn { cursor:pointer; }
@@ -2436,6 +2446,7 @@
       <section class="profile-panel"><div class="profile-panel-head"><span class="profile-panel-title">Artistas más rateados</span></div><div id="profile-artist-list" class="profile-artist-list"></div></section>
       <section class="profile-panel"><div class="profile-tier-panel"><div class="profile-panel-head"><span class="profile-panel-title">Distribución por tier</span></div><div id="profile-tier-dist"></div></div></section>
       <section class="profile-panel profile-activity-panel"><div class="profile-panel-head"><span class="profile-panel-title">Actividad reciente</span><span class="profile-panel-kicker">fechas reales</span></div><div id="profile-recent-row" class="profile-activity-list"></div></section>
+      <section class="profile-panel profile-rescore-panel"><div class="profile-panel-head"><div><span class="profile-panel-title">↻ Re-scores recientes</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">cambios de puntuación</span></div></div><div id="profile-rescore-row" class="profile-rescore-list"></div></section>
     </div>
     <section id="profile-pinned-section" style="margin-top:36px;"><div class="profile-panel-head" style="padding-left:0;padding-right:0;"><div><span class="profile-panel-title">Favoritos personales</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">seleccionados por vos</span></div><button id="profile-edit-pinned-btn" class="profile-panel-action">Editar</button></div><div id="profile-pinned-row" class="profile-album-grid"></div><p id="profile-pinned-empty" style="display:none;color:#788399;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no elegiste favoritos. Tocá “Editar” para elegir hasta 10.</p></section>
     <section id="profile-shelves-section" class="profile-shelf-wrap"><div class="profile-panel-head" style="padding-left:0;padding-right:0;"><span class="profile-panel-title">Estanterías</span><button id="profile-new-shelf-btn" class="profile-panel-action">+ Nueva</button></div><div id="profile-shelves-list" style="margin-top:14px;display:flex;flex-direction:column;gap:28px;"></div><p id="profile-shelves-empty" style="display:none;color:#788399;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no creaste ninguna estantería.</p></section>
@@ -4054,6 +4065,22 @@ function profileActivityItem(album, readOnly) {
   item.querySelector('.profile-activity-date').textContent=relativeProfileDate(album);
   item.onclick=()=>openDetail(album,item,readOnly); return item;
 }
+function profileRescoreItem(album, readOnly) {
+  const history = Array.isArray(album.scoreHistory) ? album.scoreHistory.filter(entry => Number.isFinite(Number(entry?.score))) : [];
+  if (history.length < 2) return null;
+  const previous = history[history.length - 2], current = history[history.length - 1];
+  const before = Number(previous.score), after = Number(current.score), delta = after - before;
+  const item = document.createElement('button'); item.type = 'button'; item.className = 'profile-rescore-item';
+  const cover = document.createElement('img'); cover.className = 'profile-rescore-cover'; cover.src = album.coverUrl || ''; cover.alt = ''; cover.onerror = () => { cover.style.visibility = 'hidden'; };
+  const copy = document.createElement('div'); copy.style.minWidth = '0';
+  const title = document.createElement('div'); title.className = 'profile-rescore-title'; title.textContent = album.title || 'Álbum';
+  const artist = document.createElement('div'); artist.className = 'profile-rescore-artist'; artist.textContent = album.artist || '—';
+  const date = document.createElement('div'); date.className = 'profile-rescore-date'; date.textContent = current.date ? relativeProfileDate({ listenDate: current.date }) : 'Re-score reciente';
+  copy.append(title, artist, date);
+  const scoreWrap = document.createElement('div'); const scores = document.createElement('div'); scores.className = 'profile-rescore-scores'; scores.innerHTML = `<span>${before.toFixed(1)}</span><span class="profile-rescore-arrow">→</span><span>${after.toFixed(1)}</span>`;
+  const deltaEl = document.createElement('div'); deltaEl.className = `profile-rescore-delta ${delta >= 0 ? 'up' : 'down'}`; deltaEl.textContent = `${delta > 0 ? '+' : ''}${delta.toFixed(1)}`;
+  scoreWrap.append(scores, deltaEl); item.append(cover, copy, scoreWrap); item.onclick = () => openDetail(album, item, readOnly); return { item, date: current.date || 0 };
+}
 function renderProfileAlbumRows(albumList, profile, readOnly) {
   const top10Row = document.getElementById('profile-top10-row'); top10Row.innerHTML = '';
   [...albumList].sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0)).slice(0,5).forEach((album,index)=>top10Row.appendChild(profileTopAlbumCard(album, readOnly, index+1)));
@@ -4061,6 +4088,10 @@ function renderProfileAlbumRows(albumList, profile, readOnly) {
   const dated = albumList.filter(album => album.listenDate || album.addedAt).sort((a,b) => new Date(b.listenDate || b.addedAt).getTime() - new Date(a.listenDate || a.addedAt).getTime()).slice(0,5);
   if (dated.length) dated.forEach(album=>recentRow.appendChild(profileActivityItem(album,readOnly)));
   else recentRow.innerHTML='<span class="profile-panel-kicker">Aún no hay actividad fechada.</span>';
+  const rescoreRow = document.getElementById('profile-rescore-row'); rescoreRow.innerHTML = '';
+  const rescored = albumList.map(album => ({ album, result: profileRescoreItem(album, readOnly) })).filter(entry => entry.result).sort((a,b) => new Date(b.result.date || 0).getTime() - new Date(a.result.date || 0).getTime()).slice(0,6);
+  if (rescored.length) rescored.forEach(entry => rescoreRow.appendChild(entry.result.item));
+  else rescoreRow.innerHTML = '<span class="profile-panel-kicker">Todavía no hay cambios de puntuación.</span>';
   const pinnedRow=document.getElementById('profile-pinned-row'), pinnedEmpty=document.getElementById('profile-pinned-empty'); pinnedRow.innerHTML='';
   const pinned=(profile.pinned||[]).map(id=>albumList.find(album=>String(album.id)===String(id))).filter(Boolean);
   if(pinned.length){pinnedEmpty.style.display='none';pinned.forEach(album=>pinnedRow.appendChild(albumHoloCard(album,readOnly)));}else{pinnedEmpty.style.display=readOnly?'none':'block';}
