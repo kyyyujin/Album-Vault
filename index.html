@@ -2408,7 +2408,6 @@
   </div>
   <div id="profile-banner" style="position:relative;width:100%;background:#15151b;background-size:cover;background-position:center;overflow:hidden;">
     <div id="profile-banner-fade" style="position:absolute;left:0;right:0;bottom:-1px;background:linear-gradient(180deg,rgba(10,10,10,0) 0%,var(--bg,#0a0a0a) 100%);"></div>
-    <button id="profile-back-btn" title="Volver a mi colección">←</button>
     <div id="profile-search-wrap"><input id="profile-search-input" type="text" placeholder="Buscar usuario…" autocomplete="off" /><div id="profile-search-results"></div></div>
     <input type="file" id="profile-banner-file" accept="image/*" style="display:none;" />
     <div class="profile-hero-content">
@@ -3359,7 +3358,6 @@ function closeProfileView() {
   stopNowListeningPolling();
 }
 
-document.getElementById('profile-back-btn').addEventListener('click', closeProfileView);
 document.getElementById('vault-home-btn').addEventListener('click', closeProfileView);
 document.getElementById('vault-home-btn').addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); closeProfileView(); }
