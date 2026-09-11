@@ -1979,10 +1979,11 @@
   #profile-banner::before { content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,8,14,.9) 0%,rgba(5,8,14,.48) 48%,rgba(5,8,14,.72) 100%),linear-gradient(0deg,#090c14 0%,transparent 58%);z-index:0; }
   #profile-banner > div[style*="linear-gradient"] { display:none; }
   #profile-banner-fade { height:112px!important;z-index:1!important;background:linear-gradient(180deg,transparent 0%,#090c14 100%)!important; }
-  #profile-back-btn { top:22px!important;left:28px!important;width:38px!important;height:38px!important;border-radius:12px!important;border-color:rgba(255,255,255,.14)!important;background:rgba(5,8,14,.54)!important; }
-  #profile-search-wrap { top:22px!important;right:28px!important;gap:9px!important; }
-  #profile-search-input { width:230px!important;padding:10px 15px!important;border-radius:11px!important;border-color:rgba(255,255,255,.14)!important;background:rgba(5,8,14,.52)!important; }
-  #profile-banner-edit-btn { border-radius:11px!important;border-color:rgba(255,255,255,.14)!important;background:rgba(5,8,14,.52)!important;padding:10px 13px!important; }
+  #profile-back-btn { position:absolute!important;z-index:4!important;top:22px!important;left:28px!important;width:38px!important;height:38px!important;border-radius:12px!important;border-color:rgba(255,255,255,.14)!important;background:rgba(5,8,14,.54)!important; }
+  #profile-search-wrap { position:absolute!important;z-index:4!important;display:flex!important;top:22px!important;right:28px!important;gap:9px!important; }
+  #profile-search-input { width:230px!important;padding:10px 15px!important;border-radius:11px!important;border:1px solid rgba(255,255,255,.16)!important;background:rgba(5,8,14,.7)!important;color:#f4f7fc!important;box-shadow:0 8px 22px rgba(0,0,0,.18); }
+  #profile-search-input::placeholder { color:rgba(227,235,248,.54)!important; }
+  #profile-search-results { z-index:8!important; }
   .profile-hero-content { position:absolute;z-index:2;left:0;right:0;bottom:0;width:min(1440px,calc(100% - 56px));margin:auto;display:flex;align-items:flex-end;gap:24px;padding-bottom:38px; }
   .profile-hero-avatar { width:132px;height:132px;border-radius:50%;object-fit:cover;border:4px solid rgba(213,228,255,.9);background:#171c28;box-shadow:0 14px 42px rgba(0,0,0,.45);flex:0 0 auto; }
   .profile-hero-meta { min-width:0;flex:1;padding-bottom:3px; }
@@ -1997,7 +1998,18 @@
   #profile-now-listening #nl-cover { width:64px!important;height:64px!important;flex:0 0 64px!important;object-fit:cover!important;border-radius:11px!important;background:#141b27; }
   #profile-now-listening #nl-track { margin-top:4px;font:500 15px/1.2 'DM Mono',monospace;color:#eff3fa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
   #profile-now-listening #nl-artist { margin-top:4px;font:11px/1.2 'DM Mono',monospace;color:#8994aa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-  #profile-bio-editor { padding:18px;border:1px solid var(--profile-border);border-radius:var(--profile-radius);background:var(--profile-panel); }
+  #profile-bio-editor { padding:18px;border:1px solid var(--profile-border);border-radius:var(--profile-radius);background:linear-gradient(145deg,rgba(20,27,39,.9),rgba(11,15,24,.9));box-shadow:inset 0 1px 0 rgba(255,255,255,.035); }
+  #profile-bio-editor label { display:block;margin:0 0 7px;color:#98a5bb;font:9px 'DM Mono',monospace;letter-spacing:.12em; }
+  #profile-bio-editor textarea,#profile-bio-editor input { width:100%;border:1px solid rgba(205,222,255,.15);border-radius:10px;background:rgba(5,9,16,.56);color:#f1f5fb;font:12px/1.5 'DM Mono',monospace;outline:none;transition:border-color .18s,background .18s,box-shadow .18s; }
+  #profile-bio-editor textarea { min-height:106px;padding:12px 13px;resize:vertical; }
+  #profile-bio-editor input { padding:11px 13px; }
+  #profile-bio-editor textarea::placeholder,#profile-bio-editor input::placeholder { color:#718097; }
+  #profile-bio-editor textarea:focus,#profile-bio-editor input:focus { border-color:rgba(200,240,96,.65);background:rgba(8,13,20,.82);box-shadow:0 0 0 3px rgba(200,240,96,.1); }
+  .profile-editor-actions { display:flex;align-items:center;gap:8px;margin-top:4px; }
+  .profile-editor-actions-spacer { flex:1; }
+  #profile-banner-edit-btn,#profile-bio-cancel-btn,#profile-bio-save-btn { border:1px solid rgba(205,222,255,.17);border-radius:9px;padding:10px 13px;background:rgba(255,255,255,.055);color:#eaf0fa;font:10px 'DM Mono',monospace;cursor:pointer; }
+  #profile-banner-edit-btn:hover,#profile-bio-cancel-btn:hover { background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.32); }
+  #profile-bio-save-btn { background:var(--accent);border-color:var(--accent);color:#0a0d13;font-weight:700; }
 
   .profile-stats-grid { grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px!important;margin-top:22px!important; }
   .profile-segstat { height:126px!important;border-radius:var(--profile-radius)!important;background:linear-gradient(145deg,rgba(25,32,45,.82),rgba(12,16,24,.8))!important;border-color:var(--profile-border)!important;overflow:hidden!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.025); }
@@ -2200,6 +2212,8 @@
     #profile-banner > .profile-stats-grid .profile-segstat-value-sm { font-size:12px!important;line-height:1.05!important; }
     #profile-banner > .profile-stats-grid .profile-segstat-label { margin-top:3px!important;font-size:7px!important;letter-spacing:.1em!important; }
     #profile-banner > .profile-stats-grid .profile-segstat::before { width:22px!important;height:22px!important;left:10px!important;top:9px!important;font-size:11px!important;border-radius:8px!important; }
+    #profile-bio-editor .profile-editor-actions { flex-wrap:wrap!important; }
+    #profile-bio-editor #profile-banner-edit-btn { width:auto!important;padding:10px 13px!important;font-size:10px!important;display:inline-block!important; }
   }
 
   #vault-home-btn { cursor:pointer; }
@@ -2395,7 +2409,7 @@
   <div id="profile-banner" style="position:relative;width:100%;background:#15151b;background-size:cover;background-position:center;overflow:hidden;">
     <div id="profile-banner-fade" style="position:absolute;left:0;right:0;bottom:-1px;background:linear-gradient(180deg,rgba(10,10,10,0) 0%,var(--bg,#0a0a0a) 100%);"></div>
     <button id="profile-back-btn" title="Volver a mi colección">←</button>
-    <div id="profile-search-wrap"><input id="profile-search-input" type="text" placeholder="Buscar usuario…" autocomplete="off" /><div id="profile-search-results"></div><button id="profile-banner-edit-btn" title="Cambiar banner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Banner</button></div>
+    <div id="profile-search-wrap"><input id="profile-search-input" type="text" placeholder="Buscar usuario…" autocomplete="off" /><div id="profile-search-results"></div></div>
     <input type="file" id="profile-banner-file" accept="image/*" style="display:none;" />
     <div class="profile-hero-content">
       <img id="profile-avatar-img" class="profile-hero-avatar" src="" alt="" />
@@ -2414,7 +2428,7 @@
   <div class="profile-content-shell">
     <div id="profile-content-old-identity"></div><p id="profile-bio-display"></p>
     <div id="profile-now-listening"><img id="nl-cover" src="" alt="" /><div style="min-width:0;flex:1;"><div style="display:flex;align-items:center;gap:6px;"><span id="nl-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:nlPulse 1.4s ease-in-out infinite;"></span><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#777;text-transform:uppercase;">Escuchando ahora</span></div><div id="nl-track">—</div><div id="nl-artist">—</div></div></div>
-    <div id="profile-bio-editor" style="display:none;flex-direction:column;gap:10px;"><textarea id="profile-bio-input" maxlength="280" placeholder="Escribí algo sobre vos y tu gusto musical…"></textarea><div><label>USUARIO DE LAST.FM (para "Escuchando ahora")</label><input id="profile-lastfm-input" type="text" placeholder="ej: kyujin_music" /></div><div><label>COLOR DE ACENTO</label><div id="profile-accent-picker"></div></div><div style="display:flex;gap:8px;justify-content:flex-end;"><button id="profile-bio-cancel-btn">Cancelar</button><button id="profile-bio-save-btn">Guardar</button></div></div>
+    <div id="profile-bio-editor" style="display:none;flex-direction:column;gap:10px;"><textarea id="profile-bio-input" maxlength="280" placeholder="Escribí algo sobre vos y tu gusto musical…"></textarea><div><label>USUARIO DE LAST.FM (para "Escuchando ahora")</label><input id="profile-lastfm-input" type="text" placeholder="ej: kyujin_music" /></div><div><label>COLOR DE ACENTO</label><div id="profile-accent-picker"></div></div><div class="profile-editor-actions"><button id="profile-banner-edit-btn" type="button" title="Cambiar imagen del banner">Cambiar banner</button><span class="profile-editor-actions-spacer"></span><button id="profile-bio-cancel-btn">Cancelar</button><button id="profile-bio-save-btn">Guardar</button></div></div>
     <div class="profile-dashboard">
       <section class="profile-panel profile-top-panel"><div class="profile-panel-head"><div><span class="profile-panel-title">♬ Top álbumes</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">Mejor puntuados</span></div></div><div id="profile-top10-row" class="profile-album-grid"></div></section>
       <section class="profile-panel"><div class="profile-panel-head"><span class="profile-panel-title">Géneros favoritos</span><span class="profile-panel-kicker">por colección</span></div><div id="profile-genre-dist" class="profile-bar-list"></div></section>
