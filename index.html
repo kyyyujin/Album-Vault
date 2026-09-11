@@ -2082,6 +2082,13 @@
   .profile-rescore-artist,.profile-rescore-date { color:#7e8aa0;font-size:9px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
   .profile-rescore-scores { display:flex;align-items:center;gap:4px;font:500 11px 'DM Mono',monospace;white-space:nowrap; }
   .profile-rescore-arrow { color:#6e7b90; }.profile-rescore-delta { margin-top:4px;text-align:right;font-size:10px;font-weight:700; }.profile-rescore-delta.up { color:#72e4aa; }.profile-rescore-delta.down { color:#ff8699; }
+  @media (min-width:1100px) {
+    .profile-lower-grid { grid-template-columns:1.12fr .82fr 1.06fr!important;grid-template-areas:'artists tiers activity' 'rescores rescores activity'!important;align-items:start!important; }
+    .profile-lower-grid > section:nth-child(1) { grid-area:artists; }
+    .profile-lower-grid > section:nth-child(2) { grid-area:tiers; }
+    .profile-lower-grid > .profile-activity-panel { grid-area:activity; }
+    .profile-lower-grid > .profile-rescore-panel { grid-area:rescores;grid-column:auto!important;margin-top:0!important; }
+  }
   .profile-editorial { position:relative;margin-top:16px;min-height:130px;border:1px solid var(--profile-border);border-radius:var(--profile-radius);overflow:hidden;background:linear-gradient(105deg,rgba(20,26,37,.9),rgba(14,17,26,.64));padding:24px; }
   .profile-editorial::after { content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,12,18,.92),rgba(9,12,18,.38)),var(--editorial-bg) center/cover no-repeat;opacity:.72; }
   .profile-editorial > * { position:relative;z-index:1; }
