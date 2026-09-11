@@ -2083,6 +2083,7 @@
   .profile-rescore-artist,.profile-rescore-date { color:#7e8aa0;font-size:9px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
   .profile-rescore-scores { display:flex;align-items:center;gap:4px;font:500 11px 'DM Mono',monospace;white-space:nowrap; }
   .profile-rescore-arrow { color:#6e7b90; }.profile-rescore-delta { margin-top:4px;text-align:right;font-size:10px;font-weight:700; }.profile-rescore-delta.up { color:#72e4aa; }.profile-rescore-delta.down { color:#ff8699; }
+  .profile-eleven-score { color:#f5dd78;font:700 14px 'DM Mono',monospace;text-shadow:0 0 16px rgba(245,221,120,.18);white-space:nowrap; }
   @media (min-width:1100px) {
     .profile-lower-grid { grid-template-columns:minmax(0,1.94fr) minmax(320px,1.06fr)!important;align-items:start!important; }
     .profile-insights-stack { display:grid!important;grid-template-columns:1.12fr .82fr;gap:16px;align-content:start; }
@@ -2458,6 +2459,7 @@
       <section class="profile-panel"><div class="profile-panel-head"><span class="profile-panel-title">Artistas más rateados</span></div><div id="profile-artist-list" class="profile-artist-list"></div></section>
       <section class="profile-panel"><div class="profile-tier-panel"><div class="profile-panel-head"><span class="profile-panel-title">Distribución por tier</span></div><div id="profile-tier-dist"></div></div></section>
       <section class="profile-panel profile-rescore-panel"><div class="profile-panel-head"><div><span class="profile-panel-title">↻ Re-scores recientes</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">cambios de puntuación</span></div></div><div id="profile-rescore-row" class="profile-rescore-list"></div></section>
+      <section class="profile-panel profile-rescore-panel"><div class="profile-panel-head"><div><span class="profile-panel-title">✦ 11/10 Club</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">canciones que rompieron la escala</span></div></div><div id="profile-eleven-row" class="profile-rescore-list"></div></section>
       </div>
       <section class="profile-panel profile-activity-panel"><div class="profile-panel-head"><span class="profile-panel-title">Actividad reciente</span><span class="profile-panel-kicker">fechas reales</span></div><div id="profile-recent-row" class="profile-activity-list"></div></section>
     </div>
@@ -4094,6 +4096,17 @@ function profileRescoreItem(album, readOnly) {
   const deltaEl = document.createElement('div'); deltaEl.className = `profile-rescore-delta ${delta >= 0 ? 'up' : 'down'}`; deltaEl.textContent = `${delta > 0 ? '+' : ''}${delta.toFixed(1)}`;
   scoreWrap.append(scores, deltaEl); item.append(cover, copy, scoreWrap); item.onclick = () => openDetail(album, item, readOnly); return { item, date: current.date || 0 };
 }
+function profileElevenTrackItem(album, trackName, readOnly) {
+  const item = document.createElement('button'); item.type = 'button'; item.className = 'profile-rescore-item';
+  const cover = document.createElement('img'); cover.className = 'profile-rescore-cover'; cover.src = album.coverUrl || ''; cover.alt = ''; cover.onerror = () => { cover.style.visibility = 'hidden'; };
+  const copy = document.createElement('div'); copy.style.minWidth = '0';
+  const title = document.createElement('div'); title.className = 'profile-rescore-title'; title.textContent = trackName;
+  const albumLine = document.createElement('div'); albumLine.className = 'profile-rescore-artist'; albumLine.textContent = album.title || 'Álbum';
+  const artist = document.createElement('div'); artist.className = 'profile-rescore-date'; artist.textContent = album.artist || '—';
+  copy.append(title, albumLine, artist);
+  const score = document.createElement('div'); score.className = 'profile-eleven-score'; score.textContent = '11.0';
+  item.append(cover, copy, score); item.onclick = () => openDetail(album, item, readOnly); return item;
+}
 function renderProfileAlbumRows(albumList, profile, readOnly) {
   const top10Row = document.getElementById('profile-top10-row'); top10Row.innerHTML = '';
   [...albumList].sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0)).slice(0,5).forEach((album,index)=>top10Row.appendChild(profileTopAlbumCard(album, readOnly, index+1)));
@@ -4105,6 +4118,10 @@ function renderProfileAlbumRows(albumList, profile, readOnly) {
   const rescored = albumList.map(album => ({ album, result: profileRescoreItem(album, readOnly) })).filter(entry => entry.result).sort((a,b) => new Date(b.result.date || 0).getTime() - new Date(a.result.date || 0).getTime()).slice(0,6);
   if (rescored.length) rescored.forEach(entry => rescoreRow.appendChild(entry.result.item));
   else rescoreRow.innerHTML = '<span class="profile-panel-kicker">Todavía no hay cambios de puntuación.</span>';
+  const elevenRow = document.getElementById('profile-eleven-row'); elevenRow.innerHTML = '';
+  const elevenTracks = albumList.flatMap(album => Object.entries(album.trackScores || {}).filter(([,score]) => Number(score) === 11).map(([track]) => ({ album, track }))).slice(0,6);
+  if (elevenTracks.length) elevenTracks.forEach(({album,track}) => elevenRow.appendChild(profileElevenTrackItem(album, track, readOnly)));
+  else elevenRow.innerHTML = '<span class="profile-panel-kicker">Todavía ninguna canción alcanzó 11.0.</span>';
   const pinnedRow=document.getElementById('profile-pinned-row'), pinnedEmpty=document.getElementById('profile-pinned-empty'); pinnedRow.innerHTML='';
   const pinned=(profile.pinned||[]).map(id=>albumList.find(album=>String(album.id)===String(id))).filter(Boolean);
   if(pinned.length){pinnedEmpty.style.display='none';pinned.forEach(album=>pinnedRow.appendChild(albumHoloCard(album,readOnly)));}else{pinnedEmpty.style.display=readOnly?'none':'block';}
