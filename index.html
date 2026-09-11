@@ -4652,7 +4652,7 @@ function refreshGenreFilter() {
   const all = new Set();
   albums.forEach(a => cleanGenres(a.genres).forEach(g => all.add(g)));
   const sel = document.getElementById('genre-filter');
-  const cur = sel.value;
+  const cur = normalizeGenreName(sel.value);
   sel.innerHTML = '<option value="">All genres</option>';
   [...all].sort().forEach(g => {
     const o = document.createElement('option');
@@ -5992,7 +5992,7 @@ document.getElementById('header-search').addEventListener('input', e => {
   buildTiersWithReveal();
 });
 document.getElementById('genre-filter').addEventListener('change', e => {
-  filterGenre = e.target.value;
+  filterGenre = normalizeGenreName(e.target.value);
   buildTiersWithReveal();
 });
 document.getElementById('status-filter').addEventListener('change', e => {
