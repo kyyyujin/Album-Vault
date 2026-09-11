@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TIERS — Album Vault</title>
+<title>TIERS â Album Vault</title>
 <link rel="icon" type="image/png" href="https://cdn.discordapp.com/attachments/875147002583875607/1501420613947097118/resized.force.c3b1a76e.png?ex=69fc0269&is=69fab0e9&hm=080862a5c03a70b7e486309346e81a22f5355d3f56b06ae2ad6b18d7daf27f92&">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -23,7 +23,7 @@
   html { scroll-behavior:smooth; }
   body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; overflow-x:hidden; cursor:default; }
 
-  /* ── HEADER HIDE/SHOW ON SCROLL ── */
+  /* ââ HEADER HIDE/SHOW ON SCROLL ââ */
   #header {
     position:fixed; top:0; left:0; right:0; z-index:100;
     display:flex; align-items:center;
@@ -57,7 +57,7 @@
     #header-search:focus { width:170px; }
   }
 
-  /* ── Drawer lateral (reemplaza los controles que antes vivían en el header) ── */
+  /* ââ Drawer lateral (reemplaza los controles que antes vivÃ­an en el header) ââ */
   #menu-drawer-backdrop {
     position:fixed; inset:0; z-index:200;
     background:rgba(0,0,0,0.6);
@@ -155,7 +155,7 @@
   #load-db-btn:hover { border-color:#3ab870; background:rgba(58,184,112,0.08); }
   #load-db-btn.loading { opacity:0.6; cursor:wait; }
 
-  /* ── DB SYNC MODAL ── */
+  /* ââ DB SYNC MODAL ââ */
   #dbsync-backdrop {
     position:fixed; inset:0; background:rgba(0,0,0,.92); backdrop-filter:blur(14px);
     z-index:400; display:none; align-items:center; justify-content:center; padding:30px;
@@ -238,7 +238,7 @@
   #dbsync-update-scores-btn:disabled { opacity:0.4; cursor:not-allowed; }
   #dbsync-count { font-size:11px; color:var(--muted); margin-left:auto; }
 
-  /* ── DB SYNC MODAL — MOBILE ── */
+  /* ââ DB SYNC MODAL â MOBILE ââ */
   @media (max-width:600px) {
     #dbsync-backdrop { padding:0; align-items:flex-end; }
     #dbsync-modal {
@@ -275,7 +275,7 @@
   }
   #add-btn:hover { opacity:.8; }
 
-  /* ── NOW PLAYING BAR ── */
+  /* ââ NOW PLAYING BAR ââ */
   #now-playing-bar {
     position:fixed; top:57px; left:0; right:0; z-index:99;
     background:linear-gradient(90deg,#0d1a14,#0a0a0a);
@@ -295,7 +295,7 @@
   #np-clear { background:none; border:none; color:var(--muted); font-size:16px; cursor:pointer; padding:4px 8px; transition:color .2s; }
   #np-clear:hover { color:var(--text); }
 
-  /* ── TIER ROWS ── */
+  /* ââ TIER ROWS ââ */
   #tiers-container { padding-top:57px; overflow-x:hidden; }
 
   .tier-row {
@@ -349,7 +349,7 @@
     flex-direction:column; align-items:stretch; gap:0; padding:0;
     overflow-x:hidden; overflow-y:visible;
   }
-  /* En vista lista, una fila de álbum marca también la altura del tier. */
+  /* En vista lista, una fila de Ã¡lbum marca tambiÃ©n la altura del tier. */
   .tier-row.list-tier .tier-label { padding:8px 12px; }
   .tier-row.list-tier .tier-letter { font-size:56px; }
   .tier-row.list-tier .tier-range { margin-top:0; font-size:8px; line-height:1.2; }
@@ -357,7 +357,7 @@
   .tier-albums.list-view::-webkit-scrollbar { height: 3px; }
   .tier-albums.list-view::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
 
-  /* ── ALBUM CARD (grid) ── */
+  /* ââ ALBUM CARD (grid) ââ */
   .album-card {
     position:relative; cursor:pointer;
     transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
@@ -399,7 +399,7 @@
   body.compare-mode .album-card .compare-check { display:flex; }
   .album-card.selected-compare .compare-check { background:var(--bp); border-color:var(--bp); color:#fff; }
 
-  /* ── LIST ROW ── */
+  /* ââ LIST ROW ââ */
   .album-list-row {
     display:flex; align-items:center; gap:20px;
     padding:14px 40px; border-bottom:1px solid rgba(255,255,255,0.05);
@@ -428,7 +428,7 @@
     box-shadow: inset 3px 0 0 #3ab870;
   }
   .album-list-row.now-playing .album-list-title::before {
-    content: '▶ '; color: #3ab870; font-size: 9px;
+    content: 'â¶ '; color: #3ab870; font-size: 9px;
   }
   .album-list-thumb {
     width:68px; height:68px; object-fit:cover; flex-shrink:0;
@@ -450,7 +450,7 @@
 
   .tier-empty { color:var(--muted); font-size:11px; letter-spacing:2px; align-self:center; text-transform:uppercase; opacity:.5; }
 
-  /* ── STATS MODAL ── */
+  /* ââ STATS MODAL ââ */
   #stats-backdrop {
     position:fixed; inset:0; background:rgba(0,0,0,.88); backdrop-filter:blur(10px);
     z-index:400; display:none; align-items:center; justify-content:center; padding:30px;
@@ -490,7 +490,7 @@
   #stats-close { position:absolute; top:14px; right:16px; background:none; border:none; color:var(--muted); font-size:22px; cursor:pointer; padding:4px 8px; line-height:1; }
   #stats-close:hover { color:var(--text); }
 
-  /* ── COMPARE MODAL ── */
+  /* ââ COMPARE MODAL ââ */
   #compare-backdrop {
     position:fixed; inset:0; background:rgba(0,0,0,.88); backdrop-filter:blur(10px);
     z-index:400; display:none; align-items:center; justify-content:center; padding:30px;
@@ -513,7 +513,7 @@
   #compare-close { position:absolute; top:14px; right:16px; background:none; border:none; color:var(--muted); font-size:22px; cursor:pointer; padding:4px 8px; line-height:1; }
   #compare-close:hover { color:var(--text); }
 
-  /* ── MODAL EXPAND ANIMATION ── */
+  /* ââ MODAL EXPAND ANIMATION ââ */
   #modal-backdrop {
     position:fixed; inset:0; background:rgba(0,0,0,0); backdrop-filter:blur(0px);
     z-index:200; display:none; align-items:center; justify-content:center; padding:30px;
@@ -587,9 +587,9 @@
     #profile-banner { height: 660px; }
     #profile-banner-fade { height: 250px; }
   }
-  /* ── PROFILE RESPONSIVE LAYOUT ──
-     El perfil aprovecha el ancho de escritorio sin perder la lectura cómoda
-     ni el apilado natural de la versión móvil. */
+  /* ââ PROFILE RESPONSIVE LAYOUT ââ
+     El perfil aprovecha el ancho de escritorio sin perder la lectura cÃ³moda
+     ni el apilado natural de la versiÃ³n mÃ³vil. */
   .profile-content-shell {
     width: min(1440px, calc(100% - 48px));
     margin: 0 auto;
@@ -704,7 +704,7 @@
   .shelf-order-row.dragging { opacity: 0.4; }
   .shelf-order-handle { color: #555; font-size: 14px; flex-shrink: 0; }
 
-  /* ══════════════ Segmentos de estadística del perfil (ancho completo) ══════════════ */
+  /* ââââââââââââââ Segmentos de estadÃ­stica del perfil (ancho completo) ââââââââââââââ */
   .profile-segstat {
     position: relative;
     border-radius: 12px;
@@ -722,7 +722,7 @@
     background-position: center;
   }
   /* Degradado de derecha a izquierda: oscuro donde va el texto (derecha),
-     dejando asomar la carátula del lado izquierdo. */
+     dejando asomar la carÃ¡tula del lado izquierdo. */
   .profile-segstat-fade {
     position: absolute; inset: 0;
     background: linear-gradient(90deg, rgba(10,10,10,0.1) 0%, rgba(10,10,10,0.7) 40%, rgba(10,10,10,0.94) 75%);
@@ -765,7 +765,7 @@
     text-shadow: 0 1px 3px rgba(0,0,0,0.6);
   }
 
-  /* ══════════════ Efecto de carta holográfica (solo Favoritos) ══════════════ */
+  /* ââââââââââââââ Efecto de carta hologrÃ¡fica (solo Favoritos) ââââââââââââââ */
   .holo-scene {
     flex: 0 0 auto;
     width: 31%;
@@ -774,8 +774,8 @@
     scroll-snap-align: start;
     aspect-ratio: 2 / 3;
     perspective: 900px;
-    /* Evita el menú nativo de "guardar/copiar imagen" al mantener presionado en
-       móvil, y bloquea selección de texto/imagen accidental durante el gesto. */
+    /* Evita el menÃº nativo de "guardar/copiar imagen" al mantener presionado en
+       mÃ³vil, y bloquea selecciÃ³n de texto/imagen accidental durante el gesto. */
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
@@ -856,7 +856,7 @@
   .holo-scene:not(.holo-active) .holo-card {
     transition: transform .5s cubic-bezier(.23,1,.32,1), box-shadow .5s ease-out;
   }
-  /* Flotación cuando nadie la está tocando: una oscilación continua marcada
+  /* FlotaciÃ³n cuando nadie la estÃ¡ tocando: una oscilaciÃ³n continua marcada
      en vez del tilt quieto de --rx/--ry en 0. Se corta apenas se toca la carta
      (holo-active la pausa) para no competir con el tilt real del dedo/mouse. */
   .holo-scene.holo-idle:not(.holo-active) .holo-card {
@@ -876,7 +876,7 @@
     object-fit: cover;
     display: block;
   }
-  /* Franja inferior difuminada, misma técnica que el resto de las tarjetas del perfil */
+  /* Franja inferior difuminada, misma tÃ©cnica que el resto de las tarjetas del perfil */
   .holo-card-bg {
     position: absolute;
     left: 0; right: 0; bottom: 0; height: 55%;
@@ -907,7 +907,7 @@
     transition: opacity .25s ease-out;
     pointer-events: none;
   }
-  /* Franjas de color estilo holográfico, también siguiendo al puntero */
+  /* Franjas de color estilo hologrÃ¡fico, tambiÃ©n siguiendo al puntero */
   .holo-rainbow {
     position: absolute; inset: 0;
     background: linear-gradient(
@@ -930,7 +930,7 @@
   .holo-scene.holo-active .holo-rainbow {
     opacity: var(--holo-intensity, 0.9);
   }
-  /* Brillo ambiental marcado que recorre la carta solo, cuando no se está tocando */
+  /* Brillo ambiental marcado que recorre la carta solo, cuando no se estÃ¡ tocando */
   .holo-scene.holo-idle:not(.holo-active) .holo-shine {
     opacity: 0.65;
     animation: holoIdleShine 5.5s ease-in-out infinite;
@@ -967,7 +967,7 @@
     position: relative;
   }
 
-  /* Favoritos: reposo totalmente limpio. El tratamiento holográfico aparece solo
+  /* Favoritos: reposo totalmente limpio. El tratamiento hologrÃ¡fico aparece solo
      cuando se pasa el cursor por encima de una carta. */
   .holo-scene.holo-idle:not(.holo-active) .holo-card,
   .holo-scene.holo-idle:not(.holo-active) .holo-shine,
@@ -1110,8 +1110,8 @@
     object-fit: cover;
     display: block;
   }
-  /* Fondo difuminado de la propia carátula detrás del overlay, misma técnica que
-     usa la exportación de imagen del Rater: no lee píxeles (no depende de CORS),
+  /* Fondo difuminado de la propia carÃ¡tula detrÃ¡s del overlay, misma tÃ©cnica que
+     usa la exportaciÃ³n de imagen del Rater: no lee pÃ­xeles (no depende de CORS),
      solo renderiza la imagen agrandada con un filtro de blur. */
   .profile-card-bg {
     position: absolute;
@@ -1149,7 +1149,7 @@
   }
 
   /* Favoritos conserva su carrusel, pero cada pieza ocupa media franja
-     para darle a la selección un peso mucho más protagonista en escritorio. */
+     para darle a la selecciÃ³n un peso mucho mÃ¡s protagonista en escritorio. */
   @media (min-width: 900px) {
     .favorites-carousel-shell {
       width: 100%;
@@ -1169,7 +1169,7 @@
     }
   }
 
-  /* En móvil el carrusel se mueve con el dedo: mantenemos los fades como pista visual,
+  /* En mÃ³vil el carrusel se mueve con el dedo: mantenemos los fades como pista visual,
      pero quitamos las flechas que tapaban las portadas. */
   @media (max-width: 899px) {
     .profile-carousel-btn { display: none; }
@@ -1237,7 +1237,7 @@
   .pending-mark-btn:hover { border-color:#3ab870; color:#3ab870; }
   #pending-empty { font-size:11px; color:var(--muted); text-align:center; padding:40px 0; letter-spacing:2px; }
 
-  /* ── SCORE HISTORY MODAL ── */
+  /* ââ SCORE HISTORY MODAL ââ */
   #scorehistory-backdrop {
     position:fixed; inset:0; background:rgba(0,0,0,.92); backdrop-filter:blur(14px);
     z-index:500; display:none; align-items:center; justify-content:center; padding:30px;
@@ -1340,7 +1340,7 @@
   #btn-now-playing { font-size:9px; letter-spacing:1.5px; padding:3px 10px; border:1px solid #3ab870; color:#3ab870; background:none; cursor:pointer; transition:all .2s; }
   #btn-now-playing:hover, #btn-now-playing.active { background:#3ab870; color:#0a0a0a; }
 
-  /* Reseña dentro de los datos del álbum: compacta por defecto y expandible. */
+  /* ReseÃ±a dentro de los datos del Ã¡lbum: compacta por defecto y expandible. */
   #modal-review-overlay {
     width:100%; box-sizing:border-box; overflow:hidden; border:1px solid rgba(255,255,255,.09);
     padding:13px 14px 12px; margin:0 0 16px; background:rgba(255,255,255,.035);
@@ -1412,8 +1412,8 @@
   #btn-delete-album { background:transparent; border-color:#3a1a1a; color:#e05252; }
   #btn-delete-album:hover { background:#e05252; color:#fff; border-color:#e05252; }
 
-  /* ── IMMERSIVE ALBUM DETAIL ──
-     La portada deja de ser una miniatura dentro de un diálogo: es el espacio
+  /* ââ IMMERSIVE ALBUM DETAIL ââ
+     La portada deja de ser una miniatura dentro de un diÃ¡logo: es el espacio
      al que entra el usuario, con su color y textura extendidos por la pantalla. */
   #modal-backdrop { padding:0; }
   #modal {
@@ -1459,8 +1459,8 @@
   #modal > #modal-close:active { transform:scale(.94); }
   #modal > #modal-close:focus-visible { outline:2px solid var(--accent,#c8f060); outline-offset:3px; }
 
-  /* En escritorio la carátula es una columna cuadrada propia: determina su
-     espacio y comparte exactamente la altura del panel de información. */
+  /* En escritorio la carÃ¡tula es una columna cuadrada propia: determina su
+     espacio y comparte exactamente la altura del panel de informaciÃ³n. */
   @media (min-width:900px) {
     #modal {
       --modal-dominant-rgb: 200 240 96;
@@ -1489,14 +1489,14 @@
       flex:1 1 auto;
       width:auto;
       height:100%;
-      /* Panel sólido, sin capa ni degradado sobre la portada. */
+      /* Panel sÃ³lido, sin capa ni degradado sobre la portada. */
       background:#0a0a0d;
       box-shadow:none;
     }
   }
 
-  /* El score funciona como un sello de colección: conserva el color del tier y
-     deja claro que es la pieza central del álbum. */
+  /* El score funciona como un sello de colecciÃ³n: conserva el color del tier y
+     deja claro que es la pieza central del Ã¡lbum. */
   #modal-score {
     position:relative; display:flex; align-items:center; justify-content:center;
     width:112px; height:112px; margin:14px 0 18px; padding:17px 8px 0;
@@ -1519,7 +1519,7 @@
   #modal-score::before { z-index:1; }
   @media (max-width:600px) { #modal-score { width:98px; height:98px; margin:12px 0 16px; font-size:34px; } }
 
-  /* ── TIER CLIMATE ── */
+  /* ââ TIER CLIMATE ââ */
   @keyframes tierClimateDrift {
     0%,100% { transform:translateY(-50%) scale(1); }
     50% { transform:translateY(-54%) scale(1.16); }
@@ -1533,7 +1533,7 @@
   }
   @media (prefers-reduced-motion:reduce) { .tier-row::before { animation:none; } }
 
-  /* ── RATING CEREMONY ── */
+  /* ââ RATING CEREMONY ââ */
   #rating-ceremony {
     position:fixed; inset:0; z-index:1200; display:none; align-items:center; justify-content:center;
     overflow:hidden; background:rgba(4,4,6,.96); isolation:isolate;
@@ -1574,7 +1574,7 @@
     #rating-ceremony.playing .ceremony-cover,#rating-ceremony.playing .ceremony-seal,#rating-ceremony.playing .ceremony-tier,#rating-ceremony.leaving .ceremony-stage { animation:none; opacity:1; transform:none; }
   }
 
-  /* ── ADD MODAL ── */
+  /* ââ ADD MODAL ââ */
   #add-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.88); backdrop-filter:blur(10px); z-index:300; display:none; align-items:center; justify-content:center; padding:30px; }
   #add-backdrop.open { display:flex; }
   #add-modal { background:#111; border:1px solid #222; width:100%; max-width:600px; max-height:90vh; overflow-y:auto; padding:36px; animation:modalIn .3s cubic-bezier(.34,1.4,.64,1); position:relative; }
@@ -1621,7 +1621,7 @@
   .modal-divider { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; gap:12px; margin-bottom:18px; }
   .modal-divider::before,.modal-divider::after { content:''; flex:1; height:1px; background:#222; }
 
-  /* ── SCROLL HINT ── */
+  /* ââ SCROLL HINT ââ */
   #scroll-hint { position:fixed; bottom:28px; right:32px; z-index:50; display:flex; flex-direction:column; align-items:center; gap:6px; opacity:.35; transition:opacity .5s; pointer-events:none; }
   #scroll-hint.hidden { opacity:0; }
   .clock-ring { width:36px; height:36px; border-radius:50%; border:1px solid var(--muted); position:relative; }
@@ -1635,7 +1635,7 @@
   ::-webkit-scrollbar-track { background:transparent; }
   ::-webkit-scrollbar-thumb { background:#2a2a2a; border-radius:2px; }
 
-  /* ── HEADER NOISE TEXTURE ── */
+  /* ââ HEADER NOISE TEXTURE ââ */
   #header::after {
     content:''; position:absolute; inset:0; pointer-events:none; z-index:1;
     opacity:.025;
@@ -1644,19 +1644,19 @@
   }
   #header-inner { position:relative; z-index:2; }
 
-  /* ── SCROLL REVEAL ── */
+  /* ââ SCROLL REVEAL ââ */
   .album-card, .album-list-row {
     opacity:0; transform:translateY(18px);
     transition:opacity .45s ease, transform .45s cubic-bezier(.34,1.2,.64,1);
   }
   .album-card.revealed, .album-list-row.revealed { opacity:1; transform:none; }
 
-  /* ── LEFT BORDER ACCENT ON LIST ROWS ── */
+  /* ââ LEFT BORDER ACCENT ON LIST ROWS ââ */
   .album-list-row { border-left:3px solid transparent; transition:background .15s, border-left-color .2s; }
   .album-list-row:hover { border-left-color:var(--tier-color,#333); }
   .album-list-row.now-playing { border-left-color:#3ab870; }
 
-  /* ── WAVEFORM IN NOW PLAYING BAR ── */
+  /* ââ WAVEFORM IN NOW PLAYING BAR ââ */
   .np-waveform { display:flex; align-items:center; gap:2px; height:20px; flex-shrink:0; }
   .np-waveform span { display:block; width:2px; border-radius:2px; background:#3ab870; animation:wave-bar 1s ease-in-out infinite; }
   .np-waveform span:nth-child(1){height:8px;animation-delay:0s}
@@ -1668,7 +1668,7 @@
   .np-waveform span:nth-child(7){height:6px;animation-delay:.05s}
   @keyframes wave-bar { 0%,100%{transform:scaleY(1);opacity:.7} 50%{transform:scaleY(.35);opacity:1} }
 
-  /* ── STATUS FILTER ── */
+  /* ââ STATUS FILTER ââ */
   #status-filter {
     background:#161616; border:1px solid #2a2a2a; color:var(--text);
     padding:8px 12px; font-family:'DM Mono',monospace; font-size:11px;
@@ -1676,7 +1676,7 @@
   }
   #status-filter:focus { border-color:#444; }
 
-  /* ── LEGENDARY BORDER (track score 11) ── */
+  /* ââ LEGENDARY BORDER (track score 11) ââ */
   @keyframes legendaryGlow {
     0%,100% { box-shadow: 0 0 0 3px #c9a84c, 0 0 12px 2px rgba(201,168,76,0.5); }
     50%     { box-shadow: 0 0 0 3px #ffe066, 0 0 22px 6px rgba(255,224,102,0.7); }
@@ -1703,7 +1703,7 @@
     animation: legendaryGlow 2s ease-in-out infinite;
   }
 
-  /* ── TOP 10 MODAL ── */
+  /* ââ TOP 10 MODAL ââ */
   #top10-backdrop {
     position:fixed; inset:0; background:rgba(0,0,0,.92); backdrop-filter:blur(14px);
     z-index:400; display:none; align-items:center; justify-content:center; padding:30px;
@@ -1745,7 +1745,7 @@
   #top10-btn { background:none; border:1px solid #2a2a2a; color:var(--muted); padding:8px 14px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all .2s; }
   #top10-btn:hover { border-color:#444; color:var(--text); }
 
-  /* ── EXPORT/IMPORT ── */
+  /* ââ EXPORT/IMPORT ââ */
   #export-btn, #import-btn {
     background:none; border:1px solid #2a2a2a; color:var(--muted);
     padding:8px 12px; font-family:'DM Mono',monospace; font-size:10px;
@@ -1755,7 +1755,7 @@
   #export-btn:hover, #import-btn:hover { border-color:#444; color:var(--text); }
   #import-file { display:none; }
 
-  /* ── TRACK FAV TOGGLE ── */
+  /* ââ TRACK FAV TOGGLE ââ */
   .track-item { cursor:pointer; transition:background .15s; }
   .track-item:hover { background:#141414; }
   .track-fav-btn {
@@ -1766,7 +1766,7 @@
   .track-fav-btn.is-fav { opacity:1; }
   .track-fav-btn:hover { transform:scale(1.3); opacity:.8; }
 
-  /* ── CUSTOM SELECT (status + engine) ── */
+  /* ââ CUSTOM SELECT (status + engine) ââ */
   .custom-select-wrap { position:relative; }
   .custom-select-btn {
     width:100%; background:#161616; border:1px solid #2a2a2a; color:var(--text);
@@ -1802,10 +1802,10 @@
   .csl-opt:last-child { border-bottom:none; }
   .csl-opt:hover { background:#1a1a1a; }
   .csl-opt.selected { color:var(--text); background:#161616; }
-  .csl-opt.selected::after { content:'✓'; margin-left:auto; font-size:10px; color:var(--bp); }
+  .csl-opt.selected::after { content:'â'; margin-left:auto; font-size:10px; color:var(--bp); }
   .csl-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
 
-  /* engine dropdown — compact, inline */
+  /* engine dropdown â compact, inline */
   .engine-select-wrap { position:relative; display:inline-block; }
   .engine-select-btn {
     background:#161616; border:1px solid #2a2a2a; color:var(--muted);
@@ -1834,10 +1834,10 @@
   .esl-opt:last-child { border-bottom:none; }
   .esl-opt:hover { background:#1a1a1a; }
   .esl-opt.selected { color:var(--text); }
-  .esl-opt.selected::after { content:' ✓'; }
+  .esl-opt.selected::after { content:' â'; }
   .artist-avg { font-family:'Bebas Neue',sans-serif; font-size:15px; margin-left:8px; }
 
-  /* ── SCORE MODE TOGGLE ── */
+  /* ââ SCORE MODE TOGGLE ââ */
   #score-mode-toggle {
     background: none; border: 1px solid #2a2a2a; color: var(--muted);
     font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px;
@@ -1847,7 +1847,7 @@
   #score-mode-toggle:hover { border-color: #555; color: var(--text); }
   #score-mode-toggle.tier-mode { border-color: var(--ap); color: var(--ap); }
 
-  /* ── CUSTOM TIER DROPDOWN ── */
+  /* ââ CUSTOM TIER DROPDOWN ââ */
   #tier-input-wrap { position: relative; }
   #tier-dropdown-btn {
     width: 100%; background: #161616; border: 1px solid #2a2a2a; color: var(--muted);
@@ -1899,7 +1899,7 @@
   .tier-opt-check { font-size: 11px; color: var(--bp); opacity: 0; }
   .tier-opt.selected .tier-opt-check { opacity: 1; }
 
-  /* ── IMAGE EXPORT ── */
+  /* ââ IMAGE EXPORT ââ */
   #img-export-btn {
     background: none; border: 1px solid #2a2a2a; color: var(--muted);
     padding: 8px 12px; font-family: 'DM Mono', monospace; font-size: 10px;
@@ -1954,11 +1954,11 @@
     .top10-legendary-badge { font-size:7px; padding:2px 5px; }
   }
 
-  /* ═══════════════════════════════════════════════════════════════════
-     PROFILE V3 — editorial musical dashboard
+  /* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+     PROFILE V3 â editorial musical dashboard
      La funcionalidad existente conserva sus mismos IDs; este bloque solo cambia
-     la composición visual y aprovecha los datos que ya están en memoria.
-  ═══════════════════════════════════════════════════════════════════ */
+     la composiciÃ³n visual y aprovecha los datos que ya estÃ¡n en memoria.
+  âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
   :root { --vault-panel:rgba(16,20,29,.74); --vault-panel-strong:rgba(13,16,24,.9); --vault-line:rgba(205,222,255,.105); --vault-radius:18px; }
   body { background:#07090f; background-image:radial-gradient(90rem 46rem at 92% -15%,rgba(43,77,133,.16),transparent 58%),radial-gradient(62rem 40rem at -12% 26%,rgba(72,41,89,.12),transparent 60%); }
   #header { background:rgba(7,10,16,.78); border-color:rgba(205,222,255,.08); backdrop-filter:blur(20px) saturate(1.25); -webkit-backdrop-filter:blur(20px) saturate(1.25); }
@@ -1978,7 +1978,7 @@
   #profile-banner { height:clamp(350px,40vw,520px)!important; border-bottom:1px solid rgba(207,224,255,.07); background-position:center 32%!important; }
   #profile-banner::before { content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,8,14,.9) 0%,rgba(5,8,14,.48) 48%,rgba(5,8,14,.72) 100%),linear-gradient(0deg,#090c14 0%,transparent 58%);z-index:0; }
   #profile-banner > div[style*="linear-gradient"] { display:none; }
-  #profile-banner-fade { height:170px!important;z-index:1!important;background:linear-gradient(180deg,transparent 0%,#090c14 100%)!important; }
+  #profile-banner-fade { height:132px!important;z-index:1!important;background:linear-gradient(180deg,transparent 0%,#090c14 100%)!important; }
   #profile-back-btn { top:22px!important;left:28px!important;width:38px!important;height:38px!important;border-radius:12px!important;border-color:rgba(255,255,255,.14)!important;background:rgba(5,8,14,.54)!important; }
   #profile-search-wrap { top:22px!important;right:28px!important;gap:9px!important; }
   #profile-search-input { width:230px!important;padding:10px 15px!important;border-radius:11px!important;border-color:rgba(255,255,255,.14)!important;background:rgba(5,8,14,.52)!important; }
@@ -2017,8 +2017,8 @@
   .profile-panel-kicker { color:#7e8aa0;font-size:9px;letter-spacing:.12em;text-transform:uppercase; }
   .profile-panel-action { background:transparent;border:1px solid rgba(205,222,255,.13);border-radius:8px;color:#aeb8ca;padding:6px 10px;font:10px 'DM Mono',monospace;cursor:pointer; }
   .profile-panel-action:hover { border-color:rgba(255,255,255,.3);color:#fff; }
-  /* Top álbumes conserva una franja de aire real bajo los textos y las notas.
-     Así las cards no quedan recortadas ni obligan a buscar la puntuación. */
+  /* Top Ã¡lbumes conserva una franja de aire real bajo los textos y las notas.
+     AsÃ­ las cards no quedan recortadas ni obligan a buscar la puntuaciÃ³n. */
   .profile-top-panel { padding-bottom:32px; }
   #profile-top10-row { display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px!important;padding:0 16px!important;overflow:visible!important; }
   #profile-top10-row .profile-album-card { width:auto!important;min-width:0!important;max-width:none!important;aspect-ratio:auto!important;height:auto!important;border-radius:12px!important;overflow:visible!important;background:transparent!important;position:relative; }
@@ -2088,14 +2088,14 @@
   @media (max-width:720px) { #header-inner{padding:10px 14px;gap:9px}#menu-toggle-btn{display:none}.header-nav{display:none}#header h1{font-size:20px;letter-spacing:3px}#header-search-wrap{flex:1;margin-left:0}#header-search{padding-top:9px;padding-bottom:9px}#user-session-name{display:none}#user-session-chip{padding:3px!important}#profile-banner{height:410px!important}#profile-back-btn{top:15px!important;left:14px!important}#profile-search-wrap{top:15px!important;right:14px!important}#profile-search-input{width:132px!important}#profile-banner-edit-btn{width:36px!important;padding:9px!important;font-size:0!important;justify-content:center}.profile-hero-content{width:calc(100% - 28px);gap:14px;padding-bottom:27px;align-items:flex-end}.profile-hero-avatar{width:88px;height:88px;border-width:3px}.profile-hero-name{font-size:48px}.profile-hero-bio{font-size:11px;margin-top:8px;-webkit-line-clamp:3}.profile-hero-actions{position:absolute;right:0;bottom:-55px}.profile-content-shell{width:auto!important;padding:66px 14px 58px!important}.profile-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin-top:0!important}.profile-segstat{height:116px!important}.profile-segstat:last-child{grid-column:1/-1}.profile-dashboard,.profile-lower-grid{grid-template-columns:1fr!important;gap:12px;margin-top:12px}.profile-panel{border-radius:15px}.profile-panel-head{padding:15px 14px 9px}#profile-top10-row{display:flex!important;overflow-x:auto!important;gap:12px!important;padding:0 14px 46px!important;scroll-snap-type:x proximity}.profile-top-panel .profile-carousel-shell{display:contents}#profile-top10-row .profile-album-card{flex:0 0 144px!important;width:144px!important;scroll-snap-align:start}.profile-top-panel{padding-bottom:50px}.profile-top-panel #profile-top10-row .profile-album-card-overlay{padding-top:9px!important}.profile-top-panel #profile-top10-row .profile-album-score{margin-top:5px!important}.profile-artist-list{padding-left:12px;padding-right:12px}.profile-artist-avatar{width:45px;height:45px}.profile-activity-item{grid-template-columns:38px minmax(0,1fr) auto}.profile-activity-date{display:none}.profile-editorial{margin-top:12px;min-height:120px;padding:19px}.profile-editorial-quote{font-size:20px}#profile-pinned-section .holo-scene{width:73vw!important;min-width:73vw!important;max-width:300px!important;}.profile-carousel-btn{display:none!important;} }
 
 
-  /* PROFILE V3.1 — estadísticas integradas en el hero */
+  /* PROFILE V3.1 â estadÃ­sticas integradas en el hero */
   #profile-banner { height:clamp(500px,48vw,650px)!important; }
   .profile-hero-content { bottom:174px!important; padding-bottom:0!important; }
   #profile-banner > .profile-stats-grid {
     display:grid!important;
     position:absolute; z-index:3;
     left:50%; bottom:24px;
-    /* En PC se alinea con las secciones inferiores, con cards más horizontales. */
+    /* En PC se alinea con las secciones inferiores, con cards mÃ¡s horizontales. */
     width:min(1440px,calc(100% - 56px));
     margin:0!important;
     transform:translateX(-50%);
@@ -2109,11 +2109,16 @@
     backdrop-filter:blur(17px) saturate(1.1);
     -webkit-backdrop-filter:blur(17px) saturate(1.1);
   }
+  /* En escritorio, los nÃºmeros nunca invaden el icono fijo de la tarjeta. */
+  #profile-banner > .profile-stats-grid .profile-segstat-text { padding:16px 16px 16px 56px!important; }
+  #profile-banner > .profile-stats-grid #profile-stat-total,
+  #profile-banner > .profile-stats-grid #profile-stat-avg { font-size:38px!important; }
   #profile-banner > .profile-stats-grid .profile-segstat::after {
     content:'';position:absolute;inset:0;pointer-events:none;
     background:linear-gradient(130deg,rgba(255,255,255,.035),transparent 48%);
   }
   .profile-content-shell { padding-top:20px!important; }
+  .profile-top-panel { padding-bottom:56px!important; }
   @media (max-width:1099px) {
     #profile-banner { height:600px!important; }
     .profile-hero-content { bottom:292px!important; }
@@ -2156,8 +2161,8 @@
     .profile-content-shell { padding-top:14px!important; }
   }
 
-  /* Perfil móvil compacto: cuatro datos esenciales en dos columnas y dos filas.
-     La racha sigue existiendo en tablet y PC, sin agrandar el banner del teléfono. */
+  /* Perfil mÃ³vil compacto: cuatro datos esenciales en dos columnas y dos filas.
+     La racha sigue existiendo en tablet y PC, sin agrandar el banner del telÃ©fono. */
   @media (max-width:720px) {
     #profile-banner { height:375px!important; }
     #profile-banner-edit-btn svg { width:15px!important;height:15px!important; }
@@ -2198,7 +2203,7 @@
   #vault-home-btn { cursor:pointer; }
   #vault-home-btn:focus-visible { outline:1px solid rgba(255,255,255,.62);outline-offset:5px;border-radius:4px; }
 
-  /* Header móvil: marca, menú, lupa y avatar. La búsqueda se expande al tocar
+  /* Header mÃ³vil: marca, menÃº, lupa y avatar. La bÃºsqueda se expande al tocar
      la lupa, pero en reposo no ocupa sitio ni muestra placeholder. */
   @media (max-width:720px) {
     #header-inner {
@@ -2229,14 +2234,14 @@
     #header-search-wrap:focus-within #header-search-icon { left:10px!important;transform:translateY(-50%)!important; }
   }
 
-  /* Modo invitado: únicamente navegación y visualización. */
+  /* Modo invitado: Ãºnicamente navegaciÃ³n y visualizaciÃ³n. */
   body.guest-mode #profile-search-wrap,body.guest-mode #menu-toggle-btn,body.guest-mode #profile-edit-pinned-btn,body.guest-mode #profile-new-shelf-btn,body.guest-mode #profile-own-footer { display:none!important; }
   body.guest-mode #user-session-chip { cursor:pointer!important; }
 </style>
 </head>
 <body>
 
-<!-- ── AUTH OVERLAY (Discord) ── -->
+<!-- ââ AUTH OVERLAY (Discord) ââ -->
 <div id="auth-overlay" style="position:fixed;inset:0;background:#000000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;">
   <div style="position:relative;z-index:1;width:min(340px,90vw);padding:32px 28px;background:#111116;border:1px solid #26262e;border-radius:16px;">
     <h2 style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:0.05em;text-align:center;color:#c8f060;margin:0 0 4px;line-height:1;">ALBUM<br>VAULT</h2>
@@ -2247,18 +2252,18 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.07.07 0 0 0-.032.027C.533 9.045-.32 13.579.099 18.057a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.927 1.793 8.18 1.793 12.061 0a.073.073 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.128 12.3 12.3 0 0 1-1.873.891.076.076 0 0 0-.04.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.001-3.03.077.077 0 0 0 .032-.055c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.331c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.211 0 2.176 1.096 2.157 2.42 0 1.332-.955 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.332-.946 2.418-2.157 2.418z"/></svg>
         Continuar con Discord
       </button>
-      <button id="guest-mode-btn" onclick="startGuestMode()" type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(200,240,96,.08);color:#c8f060;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.05em;padding:12px;border-radius:8px;border:1px solid rgba(200,240,96,.28);cursor:pointer;">◌ Explorar como invitado</button>
-      <p style="font-size:9px;color:#5e6270;text-align:center;font-family:'DM Mono',monospace;line-height:1.45;margin:-4px 0 0;">Vista de demostración · sin datos reales ni cambios guardados</p>
+      <button id="guest-mode-btn" onclick="startGuestMode()" type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(200,240,96,.08);color:#c8f060;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.05em;padding:12px;border-radius:8px;border:1px solid rgba(200,240,96,.28);cursor:pointer;">â Explorar como invitado</button>
+      <p style="font-size:9px;color:#5e6270;text-align:center;font-family:'DM Mono',monospace;line-height:1.45;margin:-4px 0 0;">Vista de demostraciÃ³n Â· sin datos reales ni cambios guardados</p>
       <p style="font-size:10px;color:#666;text-align:center;font-family:'DM Mono',monospace;line-height:1.5;margin:0;">
-        Iniciá sesión con tu cuenta de Discord.<br>Se usará tu nombre y foto de perfil.
+        IniciÃ¡ sesiÃ³n con tu cuenta de Discord.<br>Se usarÃ¡ tu nombre y foto de perfil.
       </p>
     </div>
 
-    <!-- Formulario de vinculación: se muestra solo cuando el nombre de Discord no coincide con ninguna cuenta vieja -->
+    <!-- Formulario de vinculaciÃ³n: se muestra solo cuando el nombre de Discord no coincide con ninguna cuenta vieja -->
     <div id="discord-link-form" style="display:none;flex-direction:column;gap:12px;margin-top:20px;padding-top:20px;border-top:1px solid #2a2a2a;">
       <p style="font-size:12px;color:#ccc;text-align:center;font-family:'DM Mono',monospace;line-height:1.5;margin:0;">
         No encontramos una cuenta con tu nombre de Discord (<span id="discord-link-username" style="color:#c8f060;"></span>).<br>
-        Si ya tenías cuenta con otro nombre, escribila para conservar tus datos:
+        Si ya tenÃ­as cuenta con otro nombre, escribila para conservar tus datos:
       </p>
       <input id="discord-link-legacy-username" type="text" placeholder="Tu username anterior (opcional)" autocomplete="off"
         style="background:#1a1a2a;border:1px solid #2a2a3a;color:#fff;font-family:'DM Mono',monospace;font-size:13px;padding:12px 14px;border-radius:8px;outline:none;width:100%;box-sizing:border-box;" />
@@ -2268,7 +2273,7 @@
       </button>
       <button onclick="submitDiscordLink(true)" type="button"
         style="background:none;color:#888;font-family:'DM Mono',monospace;font-size:11px;padding:8px;border-radius:8px;border:1px solid #2a2a3a;cursor:pointer;">
-        No tenía cuenta antes — crear una nueva
+        No tenÃ­a cuenta antes â crear una nueva
       </button>
     </div>
   </div>
@@ -2280,14 +2285,14 @@
     <button id="menu-toggle-btn" title="Abrir herramientas" aria-label="Abrir herramientas">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
     </button>
-    <h1 id="vault-home-btn" role="button" tabindex="0" title="Ir a mi colección">ALBUM VAULT</h1>
-    <nav class="header-nav" aria-label="Navegación principal">
-      <button type="button" onclick="closeProfileView()">Mi colección</button>
+    <h1 id="vault-home-btn" role="button" tabindex="0" title="Ir a mi colecciÃ³n">ALBUM VAULT</h1>
+    <nav class="header-nav" aria-label="NavegaciÃ³n principal">
+      <button type="button" onclick="closeProfileView()">Mi colecciÃ³n</button>
       <a href="https://rater-page.vercel.app/">Rater</a>
     </nav>
     <div id="header-search-wrap">
-      <span id="header-search-icon">⌕</span>
-      <input type="text" id="header-search" placeholder="Buscar álbumes, artistas…">
+      <span id="header-search-icon">â</span>
+      <input type="text" id="header-search" placeholder="Buscar Ã¡lbumes, artistasâ¦">
     </div>
     <div style="flex:1;"></div>
     <div id="user-session-chip" style="display:none;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:20px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.3);cursor:pointer;" onclick="openProfileView()" title="Ver perfil">
@@ -2297,17 +2302,17 @@
   </div>
 </header>
 
-<!-- Drawer lateral: contiene todos los controles que antes vivían en el header -->
+<!-- Drawer lateral: contiene todos los controles que antes vivÃ­an en el header -->
 <div id="menu-drawer-backdrop">
   <aside id="menu-drawer">
     <div id="menu-drawer-header">
-      <span>MENÚ</span>
-      <button id="menu-drawer-close-btn" title="Cerrar" aria-label="Cerrar menú">×</button>
+      <span>MENÃ</span>
+      <button id="menu-drawer-close-btn" title="Cerrar" aria-label="Cerrar menÃº">Ã</button>
     </div>
     <div id="menu-drawer-body">
 
       <div class="drawer-section">
-        <div class="drawer-label">Navegación</div>
+        <div class="drawer-label">NavegaciÃ³n</div>
         <a href="https://rater-page.vercel.app/" class="drawer-link">Ir al Rater</a>
       </div>
 
@@ -2321,31 +2326,31 @@
           <option value="pending">Pendiente</option>
         </select>
         <select id="sort-select">
-          <option value="score-desc">Score ↓</option>
-          <option value="score-asc">Score ↑</option>
+          <option value="score-desc">Score â</option>
+          <option value="score-asc">Score â</option>
           <option value="added-desc">Recent first</option>
           <option value="added-asc">Oldest first</option>
           <option value="listened-desc">Last listened</option>
-          <option value="artist-asc">Artist A–Z</option>
-          <option value="year-desc">Year ↓</option>
+          <option value="artist-asc">Artist AâZ</option>
+          <option value="year-desc">Year â</option>
         </select>
       </div>
 
       <div class="drawer-section">
         <div class="drawer-label">Vista</div>
         <div class="view-toggle">
-          <button class="view-btn" id="btn-grid" title="Grid view">⊞ Grid</button>
-          <button class="view-btn active" id="btn-list" title="List view">☰ List</button>
+          <button class="view-btn" id="btn-grid" title="Grid view">â Grid</button>
+          <button class="view-btn active" id="btn-list" title="List view">â° List</button>
         </div>
       </div>
 
       <div class="drawer-section">
-        <div class="drawer-label">Colección</div>
+        <div class="drawer-label">ColecciÃ³n</div>
         <button id="stats-btn" class="drawer-btn">Stats</button>
         <button id="top10-btn" class="drawer-btn">Top 10</button>
         <button id="pending-btn" class="drawer-btn" style="display:none;">Pending</button>
         <button id="compare-btn" class="drawer-btn" style="display:none;">Compare</button>
-        <button id="load-db-btn" class="drawer-btn" title="Cargar álbumes desde la base de datos del Album Rater">Load from DB</button>
+        <button id="load-db-btn" class="drawer-btn" title="Cargar Ã¡lbumes desde la base de datos del Album Rater">Load from DB</button>
       </div>
 
       <div class="drawer-section">
@@ -2360,7 +2365,7 @@
 
     </div>
     <div id="menu-drawer-footer">
-      <!-- Flujo manual preservado en el código, oculto por ahora: la entrada principal es Load from DB. -->
+      <!-- Flujo manual preservado en el cÃ³digo, oculto por ahora: la entrada principal es Load from DB. -->
       <button id="add-btn" style="display:none;">+ ADD</button>
     </div>
   </aside>
@@ -2374,21 +2379,21 @@
     <div id="np-title"></div>
     <div id="np-sub">NOW PLAYING</div>
   </div>
-  <button id="np-clear" title="Clear now playing">×</button>
+  <button id="np-clear" title="Clear now playing">Ã</button>
 </div>
 
 
 <div id="tiers-container"></div>
 
-<!-- ── VISTA DE PERFIL ── -->
+<!-- ââ VISTA DE PERFIL ââ -->
 <div id="profile-view" style="display:none;">
   <div id="profile-loading-skeleton" aria-hidden="true">
     <div class="profile-skeleton-banner"></div><div class="profile-skeleton-shell"><div class="profile-skeleton-identity"><span class="profile-skeleton profile-skeleton-avatar"></span><span class="profile-skeleton profile-skeleton-name"></span></div><span class="profile-skeleton profile-skeleton-bio"></span><div class="profile-skeleton-stats"><span class="profile-skeleton"></span><span class="profile-skeleton"></span><span class="profile-skeleton"></span></div></div>
   </div>
   <div id="profile-banner" style="position:relative;width:100%;background:#15151b;background-size:cover;background-position:center;overflow:hidden;">
     <div id="profile-banner-fade" style="position:absolute;left:0;right:0;bottom:-1px;background:linear-gradient(180deg,rgba(10,10,10,0) 0%,var(--bg,#0a0a0a) 100%);"></div>
-    <button id="profile-back-btn" title="Volver a mi colección">←</button>
-    <div id="profile-search-wrap"><input id="profile-search-input" type="text" placeholder="Buscar usuario…" autocomplete="off" /><div id="profile-search-results"></div><button id="profile-banner-edit-btn" title="Cambiar banner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Banner</button></div>
+    <button id="profile-back-btn" title="Volver a mi colecciÃ³n">â</button>
+    <div id="profile-search-wrap"><input id="profile-search-input" type="text" placeholder="Buscar usuarioâ¦" autocomplete="off" /><div id="profile-search-results"></div><button id="profile-banner-edit-btn" title="Cambiar banner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Banner</button></div>
     <input type="file" id="profile-banner-file" accept="image/*" style="display:none;" />
     <div class="profile-hero-content">
       <img id="profile-avatar-img" class="profile-hero-avatar" src="" alt="" />
@@ -2397,43 +2402,43 @@
     </div>
     <!-- Resumen del perfil integrado dentro del banner -->
     <div class="profile-stats-grid">
-      <div class="profile-segstat" id="stat-card-total" data-icon="◫"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-total" class="profile-segstat-value">0</div><div class="profile-segstat-label">ÁLBUMES</div></div></div>
-      <div class="profile-segstat" id="stat-card-avg" data-icon="★"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-avg" class="profile-segstat-value">–</div><div class="profile-segstat-label">PROMEDIO</div></div></div>
-      <div class="profile-segstat" id="stat-card-genre" data-icon="◌"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-genre" class="profile-segstat-value profile-segstat-value-sm">–</div><div class="profile-segstat-label">GÉNERO FAVORITO</div></div></div>
-      <div class="profile-segstat" id="stat-card-artist" data-icon="♬"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-artist" class="profile-segstat-value profile-segstat-value-sm">–</div><div class="profile-segstat-label">ARTISTA MÁS RATEADO</div></div></div>
-      <div class="profile-segstat" id="stat-card-streak" data-icon="✦"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-streak" class="profile-segstat-value">0</div><div class="profile-segstat-label">DÍAS SEGUIDOS</div></div></div>
+      <div class="profile-segstat" id="stat-card-total" data-icon="â«"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-total" class="profile-segstat-value">0</div><div class="profile-segstat-label">ÃLBUMES</div></div></div>
+      <div class="profile-segstat" id="stat-card-avg" data-icon="â"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-avg" class="profile-segstat-value">â</div><div class="profile-segstat-label">PROMEDIO</div></div></div>
+      <div class="profile-segstat" id="stat-card-genre" data-icon="â"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-genre" class="profile-segstat-value profile-segstat-value-sm">â</div><div class="profile-segstat-label">GÃNERO FAVORITO</div></div></div>
+      <div class="profile-segstat" id="stat-card-artist" data-icon="â¬"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-artist" class="profile-segstat-value profile-segstat-value-sm">â</div><div class="profile-segstat-label">ARTISTA MÃS RATEADO</div></div></div>
+      <div class="profile-segstat" id="stat-card-streak" data-icon="â¦"><div class="profile-segstat-bg"></div><div class="profile-segstat-fade"></div><div class="profile-segstat-text"><div id="profile-stat-streak" class="profile-segstat-value">0</div><div class="profile-segstat-label">DÃAS SEGUIDOS</div></div></div>
     </div>
   </div>
   <div class="profile-content-shell">
     <div id="profile-content-old-identity"></div><p id="profile-bio-display"></p>
-    <div id="profile-now-listening"><img id="nl-cover" src="" alt="" /><div style="min-width:0;flex:1;"><div style="display:flex;align-items:center;gap:6px;"><span id="nl-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:nlPulse 1.4s ease-in-out infinite;"></span><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#777;text-transform:uppercase;">Escuchando ahora</span></div><div id="nl-track">—</div><div id="nl-artist">—</div></div></div>
-    <div id="profile-bio-editor" style="display:none;flex-direction:column;gap:10px;"><textarea id="profile-bio-input" maxlength="280" placeholder="Escribí algo sobre vos y tu gusto musical…"></textarea><div><label>USUARIO DE LAST.FM (para "Escuchando ahora")</label><input id="profile-lastfm-input" type="text" placeholder="ej: kyujin_music" /></div><div><label>COLOR DE ACENTO</label><div id="profile-accent-picker"></div></div><div style="display:flex;gap:8px;justify-content:flex-end;"><button id="profile-bio-cancel-btn">Cancelar</button><button id="profile-bio-save-btn">Guardar</button></div></div>
+    <div id="profile-now-listening"><img id="nl-cover" src="" alt="" /><div style="min-width:0;flex:1;"><div style="display:flex;align-items:center;gap:6px;"><span id="nl-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:nlPulse 1.4s ease-in-out infinite;"></span><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#777;text-transform:uppercase;">Escuchando ahora</span></div><div id="nl-track">â</div><div id="nl-artist">â</div></div></div>
+    <div id="profile-bio-editor" style="display:none;flex-direction:column;gap:10px;"><textarea id="profile-bio-input" maxlength="280" placeholder="EscribÃ­ algo sobre vos y tu gusto musicalâ¦"></textarea><div><label>USUARIO DE LAST.FM (para "Escuchando ahora")</label><input id="profile-lastfm-input" type="text" placeholder="ej: kyujin_music" /></div><div><label>COLOR DE ACENTO</label><div id="profile-accent-picker"></div></div><div style="display:flex;gap:8px;justify-content:flex-end;"><button id="profile-bio-cancel-btn">Cancelar</button><button id="profile-bio-save-btn">Guardar</button></div></div>
     <div class="profile-dashboard">
-      <section class="profile-panel profile-top-panel"><div class="profile-panel-head"><div><span class="profile-panel-title">♬ Top álbumes</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">Mejor puntuados</span></div></div><div id="profile-top10-row" class="profile-album-grid"></div></section>
-      <section class="profile-panel"><div class="profile-panel-head"><span class="profile-panel-title">Géneros favoritos</span><span class="profile-panel-kicker">por colección</span></div><div id="profile-genre-dist" class="profile-bar-list"></div></section>
+      <section class="profile-panel profile-top-panel"><div class="profile-panel-head"><div><span class="profile-panel-title">â¬ Top Ã¡lbumes</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">Mejor puntuados</span></div></div><div id="profile-top10-row" class="profile-album-grid"></div></section>
+      <section class="profile-panel"><div class="profile-panel-head"><span class="profile-panel-title">GÃ©neros favoritos</span><span class="profile-panel-kicker">por colecciÃ³n</span></div><div id="profile-genre-dist" class="profile-bar-list"></div></section>
     </div>
     <div class="profile-lower-grid">
-      <section class="profile-panel"><div class="profile-panel-head"><span class="profile-panel-title">Artistas más rateados</span></div><div id="profile-artist-list" class="profile-artist-list"></div></section>
-      <section class="profile-panel"><div class="profile-tier-panel"><div class="profile-panel-head"><span class="profile-panel-title">Distribución por tier</span></div><div id="profile-tier-dist"></div></div></section>
+      <section class="profile-panel"><div class="profile-panel-head"><span class="profile-panel-title">Artistas mÃ¡s rateados</span></div><div id="profile-artist-list" class="profile-artist-list"></div></section>
+      <section class="profile-panel"><div class="profile-tier-panel"><div class="profile-panel-head"><span class="profile-panel-title">DistribuciÃ³n por tier</span></div><div id="profile-tier-dist"></div></div></section>
       <section class="profile-panel profile-activity-panel"><div class="profile-panel-head"><span class="profile-panel-title">Actividad reciente</span><span class="profile-panel-kicker">fechas reales</span></div><div id="profile-recent-row" class="profile-activity-list"></div></section>
     </div>
     <section id="profile-editorial" class="profile-editorial" hidden><div class="profile-editorial-quote" id="profile-editorial-copy"></div><div class="profile-editorial-note">Desde el perfil de <span id="profile-editorial-user"></span></div></section>
-    <section id="profile-pinned-section" style="margin-top:36px;"><div class="profile-panel-head" style="padding-left:0;padding-right:0;"><div><span class="profile-panel-title">Favoritos personales</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">seleccionados por vos</span></div><button id="profile-edit-pinned-btn" class="profile-panel-action">Editar</button></div><div id="profile-pinned-row" class="profile-album-grid"></div><p id="profile-pinned-empty" style="display:none;color:#788399;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no elegiste favoritos. Tocá “Editar” para elegir hasta 10.</p></section>
-    <section id="profile-shelves-section" class="profile-shelf-wrap"><div class="profile-panel-head" style="padding-left:0;padding-right:0;"><span class="profile-panel-title">Estanterías</span><button id="profile-new-shelf-btn" class="profile-panel-action">+ Nueva</button></div><div id="profile-shelves-list" style="margin-top:14px;display:flex;flex-direction:column;gap:28px;"></div><p id="profile-shelves-empty" style="display:none;color:#788399;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no creaste ninguna estantería.</p></section>
-    <div id="profile-own-footer" style="margin-top:44px;text-align:center;"><span onclick="logoutVaultAuth()" style="color:#e05050;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">Cerrar sesión</span></div>
-    <div id="profile-foreign-footer" style="display:none;margin-top:44px;text-align:center;"><span onclick="exitForeignProfile()" style="color:#777;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">← Volver a mi perfil</span></div>
+    <section id="profile-pinned-section" style="margin-top:36px;"><div class="profile-panel-head" style="padding-left:0;padding-right:0;"><div><span class="profile-panel-title">Favoritos personales</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">seleccionados por vos</span></div><button id="profile-edit-pinned-btn" class="profile-panel-action">Editar</button></div><div id="profile-pinned-row" class="profile-album-grid"></div><p id="profile-pinned-empty" style="display:none;color:#788399;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">TodavÃ­a no elegiste favoritos. TocÃ¡ âEditarâ para elegir hasta 10.</p></section>
+    <section id="profile-shelves-section" class="profile-shelf-wrap"><div class="profile-panel-head" style="padding-left:0;padding-right:0;"><span class="profile-panel-title">EstanterÃ­as</span><button id="profile-new-shelf-btn" class="profile-panel-action">+ Nueva</button></div><div id="profile-shelves-list" style="margin-top:14px;display:flex;flex-direction:column;gap:28px;"></div><p id="profile-shelves-empty" style="display:none;color:#788399;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">TodavÃ­a no creaste ninguna estanterÃ­a.</p></section>
+    <div id="profile-own-footer" style="margin-top:44px;text-align:center;"><span onclick="logoutVaultAuth()" style="color:#e05050;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">Cerrar sesiÃ³n</span></div>
+    <div id="profile-foreign-footer" style="display:none;margin-top:44px;text-align:center;"><span onclick="exitForeignProfile()" style="color:#777;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">â Volver a mi perfil</span></div>
   </div>
 </div>
 
-<!-- Modal para elegir favoritos (checklist sobre toda la colección) -->
+<!-- Modal para elegir favoritos (checklist sobre toda la colecciÃ³n) -->
 <div id="pinned-picker-backdrop" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
   <div style="background:#15151b;border:1px solid #2a2a3a;border-radius:12px;max-width:480px;width:100%;max-height:80vh;display:flex;flex-direction:column;">
     <div style="padding:16px 18px;border-bottom:1px solid #22222a;display:flex;align-items:center;justify-content:space-between;">
-      <h3 style="margin:0;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;">Elegir favoritos <span style="color:#666;font-size:12px;font-family:'DM Mono',monospace;">(máx. 10)</span></h3>
-      <button id="pinned-picker-close-btn" style="background:none;border:none;color:#999;font-size:18px;cursor:pointer;">×</button>
+      <h3 style="margin:0;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;">Elegir favoritos <span style="color:#666;font-size:12px;font-family:'DM Mono',monospace;">(mÃ¡x. 10)</span></h3>
+      <button id="pinned-picker-close-btn" style="background:none;border:none;color:#999;font-size:18px;cursor:pointer;">Ã</button>
     </div>
     <div style="padding:12px 18px 0;">
-      <input id="pinned-picker-search" type="search" autocomplete="off" placeholder="Buscar en tu colección…" style="width:100%;box-sizing:border-box;padding:10px 12px;background:#0d0d0f;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:12px;outline:none;" />
+      <input id="pinned-picker-search" type="search" autocomplete="off" placeholder="Buscar en tu colecciÃ³nâ¦" style="width:100%;box-sizing:border-box;padding:10px 12px;background:#0d0d0f;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:12px;outline:none;" />
       <div id="pinned-picker-count" style="margin-top:8px;color:#777;font-family:'DM Mono',monospace;font-size:10px;"></div>
     </div>
     <div id="pinned-picker-list" style="overflow-y:auto;padding:8px 18px 10px;flex:1;"></div>
@@ -2443,11 +2448,11 @@
   </div>
 </div>
 
-<!-- Modal: crear/renombrar estantería -->
+<!-- Modal: crear/renombrar estanterÃ­a -->
 <div id="shelf-name-backdrop" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
   <div style="background:#15151b;border:1px solid #2a2a3a;border-radius:12px;max-width:400px;width:100%;padding:20px;">
-    <h3 id="shelf-name-heading" style="margin:0 0 14px;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;">Nueva estantería</h3>
-    <input id="shelf-name-input" type="text" maxlength="40" placeholder="ej: Para llorar, Verano 2026…" style="width:100%;box-sizing:border-box;padding:10px 12px;background:#0d0d0f;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;outline:none;" />
+    <h3 id="shelf-name-heading" style="margin:0 0 14px;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;">Nueva estanterÃ­a</h3>
+    <input id="shelf-name-input" type="text" maxlength="40" placeholder="ej: Para llorar, Verano 2026â¦" style="width:100%;box-sizing:border-box;padding:10px 12px;background:#0d0d0f;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;outline:none;" />
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
       <button id="shelf-name-cancel-btn" style="padding:8px 16px;border-radius:6px;border:1px solid #333;background:none;color:#999;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">Cancelar</button>
       <button id="shelf-name-save-btn" style="padding:8px 16px;border-radius:6px;border:none;background:var(--accent,#c8f060);color:#0d0d0f;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;">Guardar</button>
@@ -2455,33 +2460,33 @@
   </div>
 </div>
 
-<!-- Modal: elegir + reordenar álbumes de una estantería -->
+<!-- Modal: elegir + reordenar Ã¡lbumes de una estanterÃ­a -->
 <div id="shelf-picker-backdrop" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;padding:20px;">
   <div style="background:#15151b;border:1px solid #2a2a3a;border-radius:12px;max-width:480px;width:100%;max-height:85vh;display:flex;flex-direction:column;">
     <div style="padding:16px 18px;border-bottom:1px solid #22222a;display:flex;align-items:center;justify-content:space-between;gap:10px;">
       <h3 id="shelf-picker-heading" style="margin:0;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></h3>
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
         <button id="shelf-rename-btn" title="Renombrar" style="background:none;border:1px solid #333;border-radius:6px;color:#999;font-size:12px;padding:5px 10px;cursor:pointer;font-family:'DM Mono',monospace;">Renombrar</button>
-        <button id="shelf-picker-close-btn" style="background:none;border:none;color:#999;font-size:18px;cursor:pointer;">×</button>
+        <button id="shelf-picker-close-btn" style="background:none;border:none;color:#999;font-size:18px;cursor:pointer;">Ã</button>
       </div>
     </div>
     <div style="display:flex;border-bottom:1px solid #22222a;">
-      <button id="shelf-tab-albums" class="shelf-tab active" data-tab="albums">Álbumes</button>
+      <button id="shelf-tab-albums" class="shelf-tab active" data-tab="albums">Ãlbumes</button>
       <button id="shelf-tab-order" class="shelf-tab" data-tab="order">Orden</button>
     </div>
     <div id="shelf-picker-list" style="overflow-y:auto;padding:10px 18px;flex:1;">
-      <input id="shelf-picker-search" type="search" autocomplete="off" placeholder="Buscar en tu colección…" style="width:100%;box-sizing:border-box;padding:10px 12px;background:#0d0d0f;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:12px;outline:none;margin-bottom:8px;" />
+      <input id="shelf-picker-search" type="search" autocomplete="off" placeholder="Buscar en tu colecciÃ³nâ¦" style="width:100%;box-sizing:border-box;padding:10px 12px;background:#0d0d0f;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:12px;outline:none;margin-bottom:8px;" />
       <div id="shelf-picker-items"></div>
     </div>
     <div id="shelf-picker-order-list" style="display:none;overflow-y:auto;padding:10px 18px;flex:1;"></div>
     <div style="padding:14px 18px;border-top:1px solid #22222a;display:flex;gap:8px;">
-      <button id="shelf-delete-btn" style="padding:12px 16px;border-radius:8px;border:1px solid rgba(224,80,80,0.3);background:rgba(224,80,80,0.08);color:#e05050;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">Eliminar estantería</button>
+      <button id="shelf-delete-btn" style="padding:12px 16px;border-radius:8px;border:1px solid rgba(224,80,80,0.3);background:rgba(224,80,80,0.08);color:#e05050;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">Eliminar estanterÃ­a</button>
       <button id="shelf-picker-save-btn" style="flex:1;padding:12px;border-radius:8px;border:none;background:var(--accent,#c8f060);color:#0d0d0f;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;">Guardar</button>
     </div>
   </div>
 </div>
 
-<!-- Modal: mini editor de banner (zoom + posición antes de guardar) -->
+<!-- Modal: mini editor de banner (zoom + posiciÃ³n antes de guardar) -->
 <div id="banner-editor-backdrop" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;padding:20px;">
   <div style="background:#15151b;border:1px solid #2a2a3a;border-radius:12px;max-width:560px;width:100%;overflow:hidden;">
     <div style="padding:16px 18px;border-bottom:1px solid #22222a;">
@@ -2495,7 +2500,7 @@
         <span style="font-family:'DM Mono',monospace;font-size:10px;color:#777;letter-spacing:0.05em;flex-shrink:0;">ZOOM</span>
         <input id="banner-editor-zoom" type="range" min="100" max="300" value="100" style="flex:1;accent-color:var(--accent,#c8f060);" />
       </div>
-      <p style="margin:0;color:#666;font-family:'DM Mono',monospace;font-size:10px;">Arrastrá la imagen para moverla dentro del recuadro.</p>
+      <p style="margin:0;color:#666;font-family:'DM Mono',monospace;font-size:10px;">ArrastrÃ¡ la imagen para moverla dentro del recuadro.</p>
       <div style="display:flex;gap:8px;justify-content:flex-end;">
         <button id="banner-editor-cancel-btn" style="padding:9px 16px;border-radius:6px;border:1px solid #333;background:none;color:#999;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;">Cancelar</button>
         <button id="banner-editor-save-btn" style="padding:9px 18px;border-radius:6px;border:none;background:var(--accent,#c8f060);color:#0d0d0f;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;">Guardar banner</button>
@@ -2517,7 +2522,7 @@
 <div id="modal-backdrop">
   <div id="modal">
     <div id="modal-art-bg" aria-hidden="true"></div>
-    <button id="modal-close" aria-label="Cerrar detalle">×</button>
+    <button id="modal-close" aria-label="Cerrar detalle">Ã</button>
     <div id="modal-cover-stage">
       <img id="modal-cover" src="" alt="">
     </div>
@@ -2529,7 +2534,7 @@
       <div id="modal-score"></div>
       <div id="modal-status-row"></div>
       <button id="modal-review-overlay" type="button" hidden aria-expanded="false">
-        <span class="modal-review-kicker">Reseña</span>
+        <span class="modal-review-kicker">ReseÃ±a</span>
         <span id="modal-review-text"></span>
         <span id="modal-review-hint">Tocar para leer completa</span>
       </button>
@@ -2544,16 +2549,16 @@
         <div id="modal-tracks"></div>
       </div>
       <div id="modal-actions">
-        <button class="modal-action-btn" id="btn-edit-album">✎ Edit</button>
-        <button class="modal-action-btn" id="btn-score-history">📈 Score history</button>
-        <button class="modal-action-btn" id="btn-delete-album">✕ Delete</button>
+        <button class="modal-action-btn" id="btn-edit-album">â Edit</button>
+        <button class="modal-action-btn" id="btn-score-history">ð Score history</button>
+        <button class="modal-action-btn" id="btn-delete-album">â Delete</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- RATING CEREMONY -->
-<div id="rating-ceremony" aria-live="polite" aria-label="Álbum guardado">
+<div id="rating-ceremony" aria-live="polite" aria-label="Ãlbum guardado">
   <div class="ceremony-stage">
     <img class="ceremony-cover" id="ceremony-cover" src="" alt="">
     <div class="ceremony-overline">NUEVA PIEZA EN EL VAULT</div>
@@ -2566,7 +2571,7 @@
 <!-- TOP 10 MODAL -->
 <div id="top10-backdrop">
   <div id="top10-modal">
-    <button id="top10-close">×</button>
+    <button id="top10-close">Ã</button>
     <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:4px;">
       <h2 id="top10-heading">TOP 10</h2>
       <div id="top10-mode-toggle" style="display:flex;gap:0;border:1px solid #2a2a2a;overflow:hidden;flex-shrink:0;">
@@ -2582,18 +2587,18 @@
 <!-- PENDING MODAL -->
 <div id="pending-backdrop">
   <div id="pending-modal">
-    <button id="pending-close">×</button>
+    <button id="pending-close">Ã</button>
     <h2>PENDING</h2>
     <div class="pending-subtitle">Albums waiting to be heard</div>
     <div class="pending-list" id="pending-list"></div>
-    <div id="pending-empty" style="display:none">No pending albums — you're all caught up ✓</div>
+    <div id="pending-empty" style="display:none">No pending albums â you're all caught up â</div>
   </div>
 </div>
 
 <!-- SCORE HISTORY MODAL -->
 <div id="scorehistory-backdrop">
   <div id="scorehistory-modal">
-    <button id="scorehistory-close">×</button>
+    <button id="scorehistory-close">Ã</button>
     <h2>SCORE HISTORY</h2>
     <div id="scorehistory-album-name"></div>
     <div class="sh-timeline" id="sh-timeline"></div>
@@ -2607,7 +2612,7 @@
 <!-- STATS MODAL -->
 <div id="stats-backdrop">
   <div id="stats-modal">
-    <button id="stats-close">×</button>
+    <button id="stats-close">Ã</button>
     <h2>VAULT STATS</h2>
     <div class="stats-grid" id="stats-numbers"></div>
     <div class="stats-section">
@@ -2632,7 +2637,7 @@
 <!-- COMPARE MODAL -->
 <div id="compare-backdrop">
   <div id="compare-modal">
-    <button id="compare-close">×</button>
+    <button id="compare-close">Ã</button>
     <h2>COMPARE</h2>
     <div class="compare-cols" id="compare-cols"></div>
   </div>
@@ -2641,7 +2646,7 @@
 <!-- ADD MODAL -->
 <div id="add-backdrop">
   <div id="add-modal">
-    <button id="add-close">×</button>
+    <button id="add-close">Ã</button>
     <h2 id="add-modal-title">ADD ALBUM</h2>
 
     <div class="field">
@@ -2652,7 +2657,7 @@
           <div class="engine-select-wrap">
             <button type="button" class="engine-select-btn" id="engine-select-btn">
               <span id="engine-label">Auto</span>
-              <span class="csb-arrow">▼</span>
+              <span class="csb-arrow">â¼</span>
             </button>
             <div class="engine-select-list" id="engine-select-list">
               <div class="esl-opt selected" data-value="auto">Auto</div>
@@ -2673,7 +2678,7 @@
           <input type="text" id="search-album" placeholder="Album name">
           <input type="text" id="search-artist" placeholder="Artist name">
         </div>
-        <button id="search-btn">🔍</button>
+        <button id="search-btn">ð</button>
       </div>
     </div>
     <div id="search-results"></div>
@@ -2684,7 +2689,7 @@
         <div id="selected-title-text"></div>
         <div id="selected-sub-text"></div>
       </div>
-      <button id="clear-selection">×</button>
+      <button id="clear-selection">Ã</button>
     </div>
 
     <div class="modal-divider">or enter manually</div>
@@ -2706,9 +2711,9 @@
       </div>
       <div class="field" id="score-field-wrap">
         <label style="display:flex;align-items:center;justify-content:space-between;">
-          <span id="score-field-label">Score (0–10)</span>
+          <span id="score-field-label">Score (0â10)</span>
           <button type="button" id="score-mode-toggle" title="Cambiar modo de entrada">
-            🔄 Tier directo
+            ð Tier directo
           </button>
         </label>
         <div id="score-input-wrap">
@@ -2717,8 +2722,8 @@
         <div id="tier-input-wrap" style="display:none;">
           <button type="button" id="tier-dropdown-btn">
             <span class="tdb-swatch"></span>
-            <span class="tdb-label">— Selecciona tier —</span>
-            <span class="tdb-arrow">▼</span>
+            <span class="tdb-label">â Selecciona tier â</span>
+            <span class="tdb-arrow">â¼</span>
           </button>
           <div id="tier-dropdown-list"></div>
         </div>
@@ -2727,7 +2732,7 @@
     </div>
     <div class="form-row">
       <div class="field">
-        <label>Genre(s) — comma separated</label>
+        <label>Genre(s) â comma separated</label>
         <input type="text" id="input-genres" placeholder="e.g. Post-Rock, Electronic">
       </div>
       <div class="field" id="listen-date-field-wrap">
@@ -2741,7 +2746,7 @@
         <button type="button" class="custom-select-btn" id="status-select-btn">
           <span class="csb-dot" id="status-dot"></span>
           <span class="csb-label" id="status-label">Escuchado completo</span>
-          <span class="csb-arrow">▼</span>
+          <span class="csb-arrow">â¼</span>
         </button>
         <div class="custom-select-list" id="status-select-list">
           <div class="csl-opt selected" data-value="listened">
@@ -2777,26 +2782,26 @@
 <!-- DB SYNC MODAL -->
 <div id="dbsync-backdrop">
   <div id="dbsync-modal">
-    <button id="dbsync-close">×</button>
-    <h2>☁ LOAD FROM DB</h2>
-    <div id="dbsync-subtitle">Importar álbumes guardados desde Album Rater</div>
+    <button id="dbsync-close">Ã</button>
+    <h2>â LOAD FROM DB</h2>
+    <div id="dbsync-subtitle">Importar Ã¡lbumes guardados desde Album Rater</div>
     <div id="dbsync-user-row">
       <input type="text" id="dbsync-user-input" placeholder="Tu nombre de usuario (ej: nico)" />
-      <button id="dbsync-fetch-btn">🔍 Buscar</button>
+      <button id="dbsync-fetch-btn">ð Buscar</button>
     </div>
     <div id="dbsync-status"></div>
     <div id="dbsync-list"></div>
     <div id="dbsync-actions" style="display:none">
       <button id="dbsync-select-all">Seleccionar todos</button>
-      <button id="dbsync-import-btn" disabled>⬇ Importar seleccionados</button>
-      <button id="dbsync-update-scores-btn" onclick="updateAllTrackScores()" title="Actualiza solo los scores de tracks de los álbumes ya importados">🔄 Actualizar scores de tracks</button>
+      <button id="dbsync-import-btn" disabled>â¬ Importar seleccionados</button>
+      <button id="dbsync-update-scores-btn" onclick="updateAllTrackScores()" title="Actualiza solo los scores de tracks de los Ã¡lbumes ya importados">ð Actualizar scores de tracks</button>
       <span id="dbsync-count"></span>
     </div>
   </div>
 </div>
 
 <script>
-// ── AUTH (Discord OAuth) — mismo backend y flujo que Album Rater ──
+// ââ AUTH (Discord OAuth) â mismo backend y flujo que Album Rater ââ
 const BOT_SERVER = 'https://album-rater-bot.onrender.com';
 const DISCORD_AVATAR_KEY = 'discord_avatar_url';
 let pendingDiscordToken = null;
@@ -2812,7 +2817,7 @@ function buildGuestAlbums() {
 }
 function startGuestMode() {
   isGuestMode=true; foreignProfileData=null; albums=buildGuestAlbums(); nowPlayingId=null;
-  vaultProfile={banner:guestArtwork('MUSIC ARCHIVE','#273d70'),bio:'Una colección de muestra para explorar el diseño de Album Vault.',pinned:albums.slice(0,5).map(album=>album.id),accentColor:'#c8f060',lastfmUsername:'',shelves:[]};
+  vaultProfile={banner:guestArtwork('MUSIC ARCHIVE','#273d70'),bio:'Una colecciÃ³n de muestra para explorar el diseÃ±o de Album Vault.',pinned:albums.slice(0,5).map(album=>album.id),accentColor:'#c8f060',lastfmUsername:'',shelves:[]};
   vaultProfileSynced=true; vaultProfileSyncPromise=null; document.body.classList.add('guest-mode');
   document.getElementById('auth-overlay').style.display='none'; document.getElementById('main-app').style.display='block';
   const chip=document.getElementById('user-session-chip'); document.getElementById('user-session-avatar').src=guestArtwork('AV','#62c9ff'); document.getElementById('user-session-name').textContent='Invitado'; chip.style.display='flex'; chip.title='Salir del modo invitado'; chip.onclick=exitGuestMode;
@@ -2832,7 +2837,7 @@ async function startDiscordAuth() {
     if (!res.ok || !data.url) throw new Error(data.error || 'No se pudo iniciar Discord');
     location.href = data.url;
   } catch (e) {
-    errEl.textContent = 'No se pudo conectar con Discord. Intentá de nuevo.';
+    errEl.textContent = 'No se pudo conectar con Discord. IntentÃ¡ de nuevo.';
     errEl.style.display = 'block';
     btn.disabled = false;
   }
@@ -2909,7 +2914,7 @@ async function submitDiscordLink(skipLegacy) {
     if (data.discord_avatar) localStorage.setItem(DISCORD_AVATAR_KEY, data.discord_avatar);
     initVaultApp();
   } catch (e) {
-    errEl.textContent = 'Error de conexión';
+    errEl.textContent = 'Error de conexiÃ³n';
     errEl.style.display = 'block';
     submitBtn.disabled = false;
   }
@@ -2936,14 +2941,14 @@ async function checkAuth() {
       body: JSON.stringify({ token })
     }).then(res => res.json()).then(data => {
       if (!data.ok) { localStorage.removeItem('auth_token'); localStorage.removeItem('discord_user_id'); localStorage.removeItem(DISCORD_AVATAR_KEY); location.reload(); }
-    }).catch(() => { /* bot dormido — se mantiene la sesión */ });
+    }).catch(() => { /* bot dormido â se mantiene la sesiÃ³n */ });
     return;
   }
   showAuthOverlay();
 }
 
 async function logoutVaultAuth() {
-  if (!confirm('¿Cerrar sesión?')) return;
+  if (!confirm('Â¿Cerrar sesiÃ³n?')) return;
   const token = localStorage.getItem('auth_token');
   await flushVaultCollectionSync();
   if (token) {
@@ -2973,7 +2978,7 @@ function renderUserSessionChip() {
   chipEl.style.display = 'flex';
 }
 
-// ── Colección del Vault: sincronización con el backend (además de localStorage) ──
+// ââ ColecciÃ³n del Vault: sincronizaciÃ³n con el backend (ademÃ¡s de localStorage) ââ
 let vaultSyncTimer = null;
 function queueVaultCollectionSync() {
   const token = localStorage.getItem('auth_token');
@@ -2993,20 +2998,20 @@ async function flushVaultCollectionSync(collectionOverride) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, collection })
     });
-    // fetch() no lanza excepción por códigos de error HTTP (401, 500, etc.), solo
-    // por fallos de red — sin este chequeo, una sesión inválida/expirada fallaba
-    // en silencio para siempre: la app seguía funcionando con localStorage pero
-    // nunca volvía a sincronizar nada a la nube, sin ningún aviso al usuario.
+    // fetch() no lanza excepciÃ³n por cÃ³digos de error HTTP (401, 500, etc.), solo
+    // por fallos de red â sin este chequeo, una sesiÃ³n invÃ¡lida/expirada fallaba
+    // en silencio para siempre: la app seguÃ­a funcionando con localStorage pero
+    // nunca volvÃ­a a sincronizar nada a la nube, sin ningÃºn aviso al usuario.
     if (res.status === 401) {
-      console.warn('[vault-sync] Sesión inválida o expirada — forzando cierre de sesión para pedir login de nuevo.');
+      console.warn('[vault-sync] SesiÃ³n invÃ¡lida o expirada â forzando cierre de sesiÃ³n para pedir login de nuevo.');
       localStorage.removeItem('auth_token');
       localStorage.removeItem('discord_user_id');
       localStorage.removeItem(DISCORD_AVATAR_KEY);
       showAuthOverlay();
     } else if (!res.ok) {
-      console.warn('[vault-sync] El servidor respondió', res.status, '— la colección solo quedó guardada localmente por ahora.');
+      console.warn('[vault-sync] El servidor respondiÃ³', res.status, 'â la colecciÃ³n solo quedÃ³ guardada localmente por ahora.');
     }
-  } catch (e) { /* backend dormido o sin conexión — localStorage ya lo tiene igual, se reintentará */ }
+  } catch (e) { /* backend dormido o sin conexiÃ³n â localStorage ya lo tiene igual, se reintentarÃ¡ */ }
 }
 
 async function fetchRemoteVaultCollection() {
@@ -3025,9 +3030,9 @@ async function fetchRemoteVaultCollection() {
   }
 }
 
-// El servidor manda siempre al iniciar sesión (mismo criterio que en Rater), así la
-// colección es consistente entre dispositivos y no se queda pegada a una copia vieja
-// de localStorage de una sesión anterior en este mismo navegador.
+// El servidor manda siempre al iniciar sesiÃ³n (mismo criterio que en Rater), asÃ­ la
+// colecciÃ³n es consistente entre dispositivos y no se queda pegada a una copia vieja
+// de localStorage de una sesiÃ³n anterior en este mismo navegador.
 async function syncVaultCollectionFromServer() {
   const remote = await fetchRemoteVaultCollection();
   if (!remote) return;
@@ -3052,9 +3057,9 @@ window.addEventListener('beforeunload', () => {
 
 async function initVaultApp() {
   renderUserSessionChip();
-  // Reflejar en los botones grid/list la preferencia guardada — el HTML estático
-  // siempre marca "List" como activo por defecto, así que hay que corregirlo acá
-  // si viewMode se cargó como 'grid' desde localStorage.
+  // Reflejar en los botones grid/list la preferencia guardada â el HTML estÃ¡tico
+  // siempre marca "List" como activo por defecto, asÃ­ que hay que corregirlo acÃ¡
+  // si viewMode se cargÃ³ como 'grid' desde localStorage.
   document.getElementById('btn-grid').classList.toggle('active', viewMode === 'grid');
   document.getElementById('btn-list').classList.toggle('active', viewMode === 'list');
   await syncVaultCollectionFromServer();
@@ -3062,15 +3067,15 @@ async function initVaultApp() {
   await vaultProfileSyncPromise;
   document.getElementById('profile-avatar-img').src = localStorage.getItem(DISCORD_AVATAR_KEY) || '';
   document.getElementById('profile-username').textContent = localStorage.getItem('discord_user_id') || '';
-  // El padding del header se calcula acá (no en window.load) porque hasta este punto
-  // el header estuvo oculto detrás del overlay de login, y su altura real habría sido 0.
+  // El padding del header se calcula acÃ¡ (no en window.load) porque hasta este punto
+  // el header estuvo oculto detrÃ¡s del overlay de login, y su altura real habrÃ­a sido 0.
   const headerH = document.getElementById('header').getBoundingClientRect().height;
   document.getElementById('tiers-container').style.paddingTop = headerH + 'px';
   if (nowPlayingId) updateNowPlayingBar();
   requestAnimationFrame(() => { observeNewElements(); updateActiveTierLabel(); });
 }
 
-// ══════════════════ PERFIL ══════════════════
+// ââââââââââââââââââ PERFIL ââââââââââââââââââ
 
 let vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', shelves: [] };
 const ACCENT_PRESETS = ['#c8f060', '#e05252', '#4d82e0', '#e87c3e', '#b06de0', '#3ac4b0', '#f5e642'];
@@ -3092,7 +3097,7 @@ async function syncVaultProfileFromServer() {
     });
     const data = await res.json();
     if (res.ok && data.profile) vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', shelves: [], ...data.profile };
-  } catch (e) { /* backend dormido o sin conexión — se usa el default local */ }
+  } catch (e) { /* backend dormido o sin conexiÃ³n â se usa el default local */ }
   vaultProfileSynced = true;
 }
 
@@ -3105,7 +3110,7 @@ async function saveVaultProfile() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, profile: vaultProfile })
     });
-  } catch (e) { /* backend dormido o sin conexión — se reintenta en la próxima edición */ }
+  } catch (e) { /* backend dormido o sin conexiÃ³n â se reintenta en la prÃ³xima ediciÃ³n */ }
 }
 
 function applyAccentColor(color) {
@@ -3122,8 +3127,8 @@ async function openProfileView() {
   document.getElementById('tiers-container').style.display = 'none';
   const profileView = document.getElementById('profile-view');
   profileView.style.display = 'block';
-  // Mismo patrón que tiers-container: el header es fixed y tapa lo que esté debajo,
-  // así que hay que empujar el contenido con el alto real del header.
+  // Mismo patrÃ³n que tiers-container: el header es fixed y tapa lo que estÃ© debajo,
+  // asÃ­ que hay que empujar el contenido con el alto real del header.
   const headerH = document.getElementById('header').getBoundingClientRect().height;
   profileView.style.paddingTop = headerH + 'px';
   foreignProfileData = null;
@@ -3132,7 +3137,7 @@ async function openProfileView() {
 
   if (!vaultProfileSynced && vaultProfileSyncPromise) {
     // Mientras despierta Render o llega el perfil remoto, mostramos una estructura
-    // estable en vez de campos vacíos que cambian de golpe.
+    // estable en vez de campos vacÃ­os que cambian de golpe.
     setProfileLoading(true);
     await vaultProfileSyncPromise;
     setProfileLoading(false);
@@ -3156,10 +3161,10 @@ function renderOwnProfile() {
   applyAccentColor(vaultProfile.accentColor || '#c8f060');
   document.getElementById('profile-avatar-img').src = readOnly ? guestArtwork('AV','#62c9ff') : (localStorage.getItem(DISCORD_AVATAR_KEY) || '');
   document.getElementById('profile-username').textContent = readOnly ? 'INVITADO' : (localStorage.getItem('discord_user_id') || '');
-  document.querySelector('.profile-eyebrow').textContent = readOnly ? 'Modo invitado · solo lectura' : 'Perfil musical';
+  document.querySelector('.profile-eyebrow').textContent = readOnly ? 'Modo invitado Â· solo lectura' : 'Perfil musical';
   document.getElementById('profile-banner').style.backgroundImage = vaultProfile.banner ? `url(${vaultProfile.banner})` : '';
-  document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripción todavía.';
-  document.getElementById('profile-hero-bio').textContent = vaultProfile.bio || 'Tu archivo personal de música.';
+  document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripciÃ³n todavÃ­a.';
+  document.getElementById('profile-hero-bio').textContent = vaultProfile.bio || 'Tu archivo personal de mÃºsica.';
   document.getElementById('profile-editorial-copy').textContent = vaultProfile.bio || '';
   document.getElementById('profile-editorial-user').textContent = readOnly ? 'Album Vault' : (localStorage.getItem('discord_user_id') || '');
   document.getElementById('profile-editorial').hidden = !(vaultProfile.bio || '').trim();
@@ -3173,7 +3178,7 @@ async function openForeignProfile(discordUsername) {
   hideProfileSearchResults();
   const searchInput = document.getElementById('profile-search-input');
   const original = searchInput.placeholder;
-  searchInput.placeholder = 'Buscando…';
+  searchInput.placeholder = 'Buscandoâ¦';
   searchInput.value = '';
   setProfileLoading(true);
   try {
@@ -3197,7 +3202,7 @@ async function openForeignProfile(discordUsername) {
     document.getElementById('profile-avatar-img').src = data.discord_avatar || '';
     document.getElementById('profile-username').textContent = data.discord_username || discordUsername;
     document.getElementById('profile-banner').style.backgroundImage = fProfile.banner ? `url(${fProfile.banner})` : '';
-    document.getElementById('profile-bio-display').textContent = fProfile.bio || 'Sin descripción todavía.';
+    document.getElementById('profile-bio-display').textContent = fProfile.bio || 'Sin descripciÃ³n todavÃ­a.';
     document.getElementById('profile-hero-bio').textContent = fProfile.bio || 'Perfil musical de la comunidad.';
     document.getElementById('profile-editorial-copy').textContent = fProfile.bio || '';
     document.getElementById('profile-editorial-user').textContent = data.discord_username || discordUsername;
@@ -3210,7 +3215,7 @@ async function openForeignProfile(discordUsername) {
     updateNowListening(fProfile.lastfmUsername);
     window.scrollTo(0, 0);
   } catch (e) {
-    alert('No se pudo cargar ese perfil. Puede que el bot esté iniciando — probá de nuevo en unos segundos.');
+    alert('No se pudo cargar ese perfil. Puede que el bot estÃ© iniciando â probÃ¡ de nuevo en unos segundos.');
   } finally {
     setProfileLoading(false);
     searchInput.placeholder = original;
@@ -3240,7 +3245,7 @@ function renderProfileSearchResults(users, query) {
 
   if (!users.length) {
     const empty = document.createElement('div');
-    empty.textContent = `No encontramos usuarios con “${query}”`;
+    empty.textContent = `No encontramos usuarios con â${query}â`;
     empty.style.cssText = 'padding:10px 12px;color:#777;font-family:DM Mono,monospace;font-size:10px;line-height:1.4;';
     profileSearchResults.appendChild(empty);
   } else {
@@ -3351,7 +3356,7 @@ document.getElementById('vault-home-btn').addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); closeProfileView(); }
 });
 
-// ── Banner ──
+// ââ Banner ââ
 document.getElementById('profile-banner-edit-btn').addEventListener('click', () => {
   document.getElementById('profile-banner-file').click();
 });
@@ -3368,8 +3373,8 @@ document.getElementById('profile-banner-file').addEventListener('change', e => {
   e.target.value = '';
 });
 
-// ── Mini editor de banner (zoom + arrastrar antes de guardar) ──
-// El recorte usa el mismo ratio 16:5 que el banner real, así lo que se ve acá
+// ââ Mini editor de banner (zoom + arrastrar antes de guardar) ââ
+// El recorte usa el mismo ratio 16:5 que el banner real, asÃ­ lo que se ve acÃ¡
 // coincide con lo que va a quedar colocado.
 const BANNER_RATIO = 16 / 5;
 let bannerEditorImg = null;
@@ -3395,7 +3400,7 @@ function setupBannerEditorCanvas() {
   canvas.height = rect.height;
 }
 
-// La imagen se dibuja siempre "cover" del viewport en zoom 1, y el zoom la agranda desde ahí.
+// La imagen se dibuja siempre "cover" del viewport en zoom 1, y el zoom la agranda desde ahÃ­.
 function getBannerBaseScale() {
   const canvas = document.getElementById('banner-editor-canvas');
   return Math.max(canvas.width / bannerEditorImg.width, canvas.height / bannerEditorImg.height);
@@ -3414,7 +3419,7 @@ function drawBannerEditor() {
   ctx.drawImage(bannerEditorImg, cx - drawW / 2, cy - drawH / 2, drawW, drawH);
 }
 
-// Límites de arrastre: no dejar que se vea "más allá" del borde de la imagen.
+// LÃ­mites de arrastre: no dejar que se vea "mÃ¡s allÃ¡" del borde de la imagen.
 function clampBannerOffset() {
   const canvas = document.getElementById('banner-editor-canvas');
   const baseScale = getBannerBaseScale();
@@ -3468,8 +3473,8 @@ document.getElementById('banner-editor-cancel-btn').addEventListener('click', ()
 });
 
 document.getElementById('banner-editor-save-btn').addEventListener('click', () => {
-  // Se renderiza a una resolución fija (no la del viewport en pantalla) para que
-  // el resultado sea nítido sin importar el tamaño de ventana del que se editó.
+  // Se renderiza a una resoluciÃ³n fija (no la del viewport en pantalla) para que
+  // el resultado sea nÃ­tido sin importar el tamaÃ±o de ventana del que se editÃ³.
   const outW = 1200;
   const outH = Math.round(outW / BANNER_RATIO);
   const out = document.createElement('canvas');
@@ -3501,7 +3506,7 @@ window.addEventListener('resize', () => {
   }
 });
 
-// ── Bio + Last.fm + Color de acento ──
+// ââ Bio + Last.fm + Color de acento ââ
 document.getElementById('profile-bio-edit-btn').addEventListener('click', () => {
   document.getElementById('profile-bio-input').value = vaultProfile.bio || '';
   document.getElementById('profile-lastfm-input').value = vaultProfile.lastfmUsername || '';
@@ -3516,7 +3521,7 @@ document.getElementById('profile-bio-cancel-btn').addEventListener('click', () =
 document.getElementById('profile-bio-save-btn').addEventListener('click', () => {
   vaultProfile.bio = document.getElementById('profile-bio-input').value.trim();
   vaultProfile.lastfmUsername = document.getElementById('profile-lastfm-input').value.trim();
-  document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripción todavía.';
+  document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripciÃ³n todavÃ­a.';
   document.getElementById('profile-bio-editor').style.display = 'none';
   document.getElementById('profile-bio-display').style.display = 'block';
   applyAccentColor(vaultProfile.accentColor || '#c8f060');
@@ -3542,7 +3547,7 @@ function renderAccentPicker(current) {
   });
 }
 
-// ── Now Listening (Last.fm) ──
+// ââ Now Listening (Last.fm) ââ
 let _nlInterval = null;
 let _nlCurrentUser = null;
 
@@ -3579,19 +3584,19 @@ function stopNowListeningPolling() {
   if (_nlInterval) { clearInterval(_nlInterval); _nlInterval = null; }
 }
 
-// ── Estadísticas ──
+// ââ EstadÃ­sticas ââ
 function renderProfileStats(albumList, profile) {
   const total = albumList.length;
   document.getElementById('profile-stat-total').textContent = total;
   const avg = total ? albumList.reduce((sum, album) => sum + (Number(album.score) || 0), 0) / total : null;
-  document.getElementById('profile-stat-avg').textContent = avg === null ? '–' : avg.toFixed(2);
+  document.getElementById('profile-stat-avg').textContent = avg === null ? 'â' : avg.toFixed(2);
 
   const genreCounts = countBy(albumList, album => cleanGenres(album.genres));
   const artistCounts = countBy(albumList, album => album.artist ? [album.artist] : []);
   const topGenre = sortedCounts(genreCounts)[0];
   const topArtist = sortedCounts(artistCounts)[0];
-  document.getElementById('profile-stat-genre').textContent = topGenre ? topGenre[0] : '–';
-  document.getElementById('profile-stat-artist').textContent = topArtist ? `${topArtist[0]} (${topArtist[1]})` : '–';
+  document.getElementById('profile-stat-genre').textContent = topGenre ? topGenre[0] : 'â';
+  document.getElementById('profile-stat-artist').textContent = topArtist ? `${topArtist[0]} (${topArtist[1]})` : 'â';
   document.getElementById('profile-stat-streak').textContent = computeActivityStreak(albumList);
 
   renderProfileBarList('profile-genre-dist', sortedCounts(genreCounts).slice(0, 6), '#d987ff');
@@ -3608,7 +3613,7 @@ function renderProfileBarList(id, entries, fallbackColor) {
   const wrap = document.getElementById(id); if (!wrap) return;
   wrap.innerHTML = '';
   const max = entries[0]?.[1] || 1;
-  if (!entries.length) { wrap.innerHTML = '<span class="profile-panel-kicker">Aún no hay datos suficientes.</span>'; return; }
+  if (!entries.length) { wrap.innerHTML = '<span class="profile-panel-kicker">AÃºn no hay datos suficientes.</span>'; return; }
   entries.forEach(([name, count], index) => {
     const hue = [ '#ec79ad', '#b377e5', '#778ff5', '#56bde8', '#3dcbb8', '#91cf71' ][index] || fallbackColor;
     const row = document.createElement('div'); row.className = 'profile-bar-row';
@@ -3619,12 +3624,12 @@ function renderProfileBarList(id, entries, fallbackColor) {
 function renderProfileArtists(albumList, entries) {
   const wrap = document.getElementById('profile-artist-list'); if (!wrap) return;
   wrap.innerHTML = '';
-  if (!entries.length) { wrap.innerHTML = '<span class="profile-panel-kicker">Aún no hay artistas rateados.</span>'; return; }
+  if (!entries.length) { wrap.innerHTML = '<span class="profile-panel-kicker">AÃºn no hay artistas rateados.</span>'; return; }
   entries.forEach(([name, count], index) => {
     const representative = albumList.find(album => album.artist === name && album.coverUrl) || albumList.find(album => album.artist === name);
     const item = document.createElement('button'); item.type = 'button'; item.className = 'profile-artist-item';
     item.style.cssText = 'background:none;border:0;padding:0;cursor:pointer;font:inherit;';
-    item.innerHTML = `<span class="profile-artist-rank">${index + 1}</span><img class="profile-artist-avatar" alt="" /><span class="profile-artist-name"></span><span class="profile-artist-count">${count} álbum${count === 1 ? '' : 'es'}</span>`;
+    item.innerHTML = `<span class="profile-artist-rank">${index + 1}</span><img class="profile-artist-avatar" alt="" /><span class="profile-artist-name"></span><span class="profile-artist-count">${count} Ã¡lbum${count === 1 ? '' : 'es'}</span>`;
     const avatar = item.querySelector('img'); avatar.src = representative?.coverUrl || ''; avatar.onerror = () => { avatar.style.visibility = 'hidden'; };
     item.querySelector('.profile-artist-name').textContent = name;
     item.onclick = () => { const input = document.getElementById('header-search'); if (input) { input.value = name; input.dispatchEvent(new Event('input', { bubbles:true })); closeProfileView(); } };
@@ -3641,14 +3646,14 @@ function renderTierDistribution(albumList) {
     wrap.appendChild(row);
   });
 }
-// Elige un álbum al azar de la lista dada (estable dentro del mismo render, pero
-// varía entre renders — así cada visita al perfil puede mostrar una carátula distinta).
+// Elige un Ã¡lbum al azar de la lista dada (estable dentro del mismo render, pero
+// varÃ­a entre renders â asÃ­ cada visita al perfil puede mostrar una carÃ¡tula distinta).
 function pickRandomAlbum(list) {
   if (!list || !list.length) return null;
   return list[Math.floor(Math.random() * list.length)];
 }
 
-// El álbum cuyo score está numéricamente más cerca del promedio calculado.
+// El Ã¡lbum cuyo score estÃ¡ numÃ©ricamente mÃ¡s cerca del promedio calculado.
 function pickClosestToAverage(list, avg) {
   if (!list.length) return null;
   return list.reduce((best, a) => {
@@ -3658,7 +3663,7 @@ function pickClosestToAverage(list, avg) {
   }, list[0]);
 }
 
-// El álbum con el listenDate más reciente (el que más probablemente sostiene la racha actual).
+// El Ã¡lbum con el listenDate mÃ¡s reciente (el que mÃ¡s probablemente sostiene la racha actual).
 function pickMostRecentlyListened(list) {
   if (!list.length) return null;
   return [...list].sort((a, b) => {
@@ -3675,8 +3680,8 @@ function setStatCardBg(cardId, album) {
   bg.style.backgroundImage = (album && album.coverUrl) ? `url(${album.coverUrl})` : 'none';
 }
 
-// Racha de días distintos con actividad registrada (listenDate + fechas de relisten),
-// contando hacia atrás desde el día más reciente con actividad.
+// Racha de dÃ­as distintos con actividad registrada (listenDate + fechas de relisten),
+// contando hacia atrÃ¡s desde el dÃ­a mÃ¡s reciente con actividad.
 function computeActivityStreak(albumList) {
   const days = new Set();
   albumList.forEach(a => {
@@ -3717,11 +3722,11 @@ function renderTierDistribution(albumList) {
   });
 }
 
-// ── Filas de álbumes (favoritos / top10 / recientes) ──
-// ══════════════════ CARTA HOLOGRÁFICA (solo Favoritos) ══════════════════
+// ââ Filas de Ã¡lbumes (favoritos / top10 / recientes) ââ
+// ââââââââââââââââââ CARTA HOLOGRÃFICA (solo Favoritos) ââââââââââââââââââ
 // .holo-scene (perspective) > .holo-card (la que rota en 3D) > imagen + brillo + overlay.
 // El tilt sigue al puntero en tiempo real; al presionar, la carta rota alrededor
-// de la esquina tocada (transform-origin dinámico) para que esa esquina se "hunda"
+// de la esquina tocada (transform-origin dinÃ¡mico) para que esa esquina se "hunda"
 // y el resto se levante, en vez de rotar siempre desde el centro.
 
 function setHoloDominantGlow(scene, coverUrl, fallbackColor) {
@@ -3736,7 +3741,7 @@ function setHoloDominantGlow(scene, coverUrl, fallbackColor) {
   );
   if (!coverUrl) return;
 
-  // Se analiza una copia pequeña. Si el servidor de la portada no permite CORS,
+  // Se analiza una copia pequeÃ±a. Si el servidor de la portada no permite CORS,
   // el color de tier aplicado arriba permanece como respaldo seguro.
   const probe = new Image();
   probe.crossOrigin = 'anonymous';
@@ -3784,7 +3789,7 @@ function albumHoloCard(album, readOnly) {
   const scene = document.createElement('div');
   scene.className = 'holo-scene holo-idle';
   // Delay negativo y aleatorio: arranca cada carta en un punto distinto de su propio
-  // ciclo de animación, así no flotan todas exactamente sincronizadas.
+  // ciclo de animaciÃ³n, asÃ­ no flotan todas exactamente sincronizadas.
   scene.style.setProperty('--holo-idle-delay', `-${(Math.random() * 24).toFixed(2)}s`);
   scene.innerHTML = `
     <div class="holo-card">
@@ -3801,7 +3806,7 @@ function albumHoloCard(album, readOnly) {
   const card = scene.querySelector('.holo-card');
   setHoloDominantGlow(scene, album.coverUrl, tier?.color || '#c8f060');
 
-  // Portada rota → intentar iTunes/Last.fm como respaldo antes de rendirse.
+  // Portada rota â intentar iTunes/Last.fm como respaldo antes de rendirse.
   if (album.coverUrl) {
     const coverImg = card.querySelector('img');
     const coverBg  = card.querySelector('.holo-card-bg');
@@ -3809,14 +3814,14 @@ function albumHoloCard(album, readOnly) {
       coverImg.style.display = 'none';
     });
     coverImg.addEventListener('load', () => {
-      // Si la cascada cambió el src, refleja la misma URL en el fondo blureado.
+      // Si la cascada cambiÃ³ el src, refleja la misma URL en el fondo blureado.
       if (coverBg && coverImg.src !== album.coverUrl) {
         coverBg.style.backgroundImage = `url(${coverImg.src})`;
       }
     });
   }
 
-  const MAX_TILT = 18; // grados — "marcado" según lo pedido
+  const MAX_TILT = 18; // grados â "marcado" segÃºn lo pedido
   let rafId = null;
   let pendingClick = true;
 
@@ -3827,7 +3832,7 @@ function albumHoloCard(album, readOnly) {
     const cx = Math.min(1, Math.max(0, px));
     const cy = Math.min(1, Math.max(0, py));
 
-    // Tilt normal: rota desde el centro, proporcional a qué tan lejos del centro está el puntero.
+    // Tilt normal: rota desde el centro, proporcional a quÃ© tan lejos del centro estÃ¡ el puntero.
     const rotY = (cx - 0.5) * MAX_TILT * 2;
     const rotX = (0.5 - cy) * MAX_TILT * 2;
 
@@ -3838,16 +3843,16 @@ function albumHoloCard(album, readOnly) {
       card.style.setProperty('--mx', (cx * 100).toFixed(1) + '%');
       card.style.setProperty('--my', (cy * 100).toFixed(1) + '%');
       card.style.setProperty('--holo-intensity', '0.9');
-      // Sombra que se aleja del punto de luz, para reforzar la sensación de profundidad.
+      // Sombra que se aleja del punto de luz, para reforzar la sensaciÃ³n de profundidad.
       const shadowX = (cx - 0.5) * -16;
       const shadowY = (cy - 0.5) * -16;
       card.style.setProperty('--holo-glow', `${shadowX.toFixed(1)}px ${shadowY.toFixed(1)}px 24px rgba(0,0,0,0.4)`);
     });
   }
 
-  // Al presionar: la esquina más cercana al punto de contacto pasa a ser el eje de
-  // rotación (transform-origin), y se empuja el tilt hacia esa esquina + un "hundido"
-  // extra (más rotación + leve reducción de escala) para simular que se presiona ahí.
+  // Al presionar: la esquina mÃ¡s cercana al punto de contacto pasa a ser el eje de
+  // rotaciÃ³n (transform-origin), y se empuja el tilt hacia esa esquina + un "hundido"
+  // extra (mÃ¡s rotaciÃ³n + leve reducciÃ³n de escala) para simular que se presiona ahÃ­.
   function pressDown(clientX, clientY) {
     const rect = scene.getBoundingClientRect();
     const px = (clientX - rect.left) / rect.width;
@@ -3875,14 +3880,14 @@ function albumHoloCard(album, readOnly) {
     scene.classList.remove('holo-active');
   }
 
-  // ── Desktop: hover con mouse ──
+  // ââ Desktop: hover con mouse ââ
   scene.addEventListener('mouseenter', () => scene.classList.add('holo-active'));
   scene.addEventListener('mousemove', e => applyTiltFromEvent(e.clientX, e.clientY));
   scene.addEventListener('mouseleave', pressUp);
   scene.addEventListener('mousedown', e => { pendingClick = true; pressDown(e.clientX, e.clientY); });
   scene.addEventListener('mouseup', e => { applyTiltFromEvent(e.clientX, e.clientY); });
 
-  // ── Móvil: seguir el dedo mientras se mantiene presionado ──
+  // ââ MÃ³vil: seguir el dedo mientras se mantiene presionado ââ
   let touchMoved = false;
   let touchStartX = 0;
   let touchStartY = 0;
@@ -3901,7 +3906,7 @@ function albumHoloCard(album, readOnly) {
     const dy = t.clientY - touchStartY;
     if (Math.abs(dx) + Math.abs(dy) > 7) touchMoved = true;
     // El carrusel tiene prioridad al arrastrar lateralmente. Antes se ocultaba
-    // overflow-x durante todo el toque y en móvil ya no se podía deslizar.
+    // overflow-x durante todo el toque y en mÃ³vil ya no se podÃ­a deslizar.
     if (Math.abs(dx) > Math.abs(dy) + 4) {
       isHorizontalSwipe = true;
       pendingClick = false;
@@ -3913,8 +3918,8 @@ function albumHoloCard(album, readOnly) {
   }, { passive: true });
   scene.addEventListener('touchend', () => {
     pressUp();
-    // Evita que un "tap" simple dispare el click justo después del efecto si el
-    // dedo se movió mucho (se trató como gesto, no como toque para abrir el álbum).
+    // Evita que un "tap" simple dispare el click justo despuÃ©s del efecto si el
+    // dedo se moviÃ³ mucho (se tratÃ³ como gesto, no como toque para abrir el Ã¡lbum).
     if (touchMoved || isHorizontalSwipe) pendingClick = false;
     setTimeout(() => { pendingClick = true; }, 50);
   });
@@ -3942,7 +3947,7 @@ function albumMiniCard(album, readOnly) {
       <div class="profile-album-score" style="color:${tier ? tier.color : '#fff'};">${album.score}</div>
     </div>
   `;
-  // Portada rota → intentar iTunes/Last.fm como respaldo antes de rendirse.
+  // Portada rota â intentar iTunes/Last.fm como respaldo antes de rendirse.
   if (album.coverUrl) {
     const coverImg = div.querySelector('img');
     const coverBg  = div.querySelector('.profile-card-bg');
@@ -3977,8 +3982,8 @@ function setupProfileCarousel(grid) {
     prev.type = next.type = 'button';
     prev.className = 'profile-carousel-btn prev';
     next.className = 'profile-carousel-btn next';
-    prev.setAttribute('aria-label', 'Ver álbumes anteriores');
-    next.setAttribute('aria-label', 'Ver más álbumes');
+    prev.setAttribute('aria-label', 'Ver Ã¡lbumes anteriores');
+    next.setAttribute('aria-label', 'Ver mÃ¡s Ã¡lbumes');
     prev.innerHTML = '&#8249;';
     next.innerHTML = '&#8250;';
     shell.append(prev, next);
@@ -4020,7 +4025,7 @@ function profileTopAlbumCard(album, readOnly, rank) {
   const card = albumMiniCard(album, readOnly);
   const tier = getTier(album.score);
   const rankEl = document.createElement('span'); rankEl.className = 'profile-rank'; rankEl.textContent = rank;
-  const artist = document.createElement('div'); artist.className = 'profile-album-artist'; artist.textContent = album.artist || '—';
+  const artist = document.createElement('div'); artist.className = 'profile-album-artist'; artist.textContent = album.artist || 'â';
   card.prepend(rankEl); card.querySelector('.profile-album-card-overlay').appendChild(artist);
   return card;
 }
@@ -4032,13 +4037,13 @@ function relativeProfileDate(album) {
   const raw = album.listenDate ? String(album.listenDate).slice(0, 10) : date.toISOString().slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}/.test(raw)) return '';
   const days = Math.max(0, Math.floor((Date.now() - new Date(raw + 'T00:00:00').getTime()) / 86400000));
-  if (days === 0) return 'hoy'; if (days === 1) return 'ayer'; if (days < 7) return `hace ${days} días`; if (days < 30) return `hace ${Math.floor(days / 7)} sem.`; return raw.slice(0,10);
+  if (days === 0) return 'hoy'; if (days === 1) return 'ayer'; if (days < 7) return `hace ${days} dÃ­as`; if (days < 30) return `hace ${Math.floor(days / 7)} sem.`; return raw.slice(0,10);
 }
 function profileActivityItem(album, readOnly) {
   const tier = getTier(album.score); const item = document.createElement('button'); item.type = 'button'; item.className='profile-activity-item'; item.style.cssText='background:transparent;border:0;padding:0;width:100%;text-align:left;cursor:pointer;font:inherit;';
   item.innerHTML = `<img class="profile-activity-cover" alt="" /><div style="min-width:0"><div class="profile-activity-title"></div><div class="profile-activity-artist"></div></div><span class="profile-activity-score" style="--score-color:${tier?.color || '#d9e2f0'}">${Number(album.score).toFixed(1)}</span><span class="profile-activity-date"></span>`;
   const img=item.querySelector('img'); img.src=album.coverUrl||''; img.onerror=()=>{img.style.visibility='hidden';};
-  item.querySelector('.profile-activity-title').textContent=album.title||'Álbum'; item.querySelector('.profile-activity-artist').textContent=album.artist||'';
+  item.querySelector('.profile-activity-title').textContent=album.title||'Ãlbum'; item.querySelector('.profile-activity-artist').textContent=album.artist||'';
   item.querySelector('.profile-activity-date').textContent=relativeProfileDate(album);
   item.onclick=()=>openDetail(album,item,readOnly); return item;
 }
@@ -4048,18 +4053,18 @@ function renderProfileAlbumRows(albumList, profile, readOnly) {
   const recentRow = document.getElementById('profile-recent-row'); recentRow.innerHTML='';
   const dated = albumList.filter(album => album.listenDate || album.addedAt).sort((a,b) => new Date(b.listenDate || b.addedAt).getTime() - new Date(a.listenDate || a.addedAt).getTime()).slice(0,5);
   if (dated.length) dated.forEach(album=>recentRow.appendChild(profileActivityItem(album,readOnly)));
-  else recentRow.innerHTML='<span class="profile-panel-kicker">Aún no hay actividad fechada.</span>';
+  else recentRow.innerHTML='<span class="profile-panel-kicker">AÃºn no hay actividad fechada.</span>';
   const pinnedRow=document.getElementById('profile-pinned-row'), pinnedEmpty=document.getElementById('profile-pinned-empty'); pinnedRow.innerHTML='';
   const pinned=(profile.pinned||[]).map(id=>albumList.find(album=>String(album.id)===String(id))).filter(Boolean);
   if(pinned.length){pinnedEmpty.style.display='none';pinned.forEach(album=>pinnedRow.appendChild(albumHoloCard(album,readOnly)));}else{pinnedEmpty.style.display=readOnly?'none':'block';}
   enhanceProfileCarousels();
 }
-// ══════════════════ ESTANTERÍAS PROPIAS ══════════════════
-// vaultProfile.shelves = [{ id, title, albumIds: [id, id, ...] }]  (máx. 5, orden de albumIds = orden manual)
+// ââââââââââââââââââ ESTANTERÃAS PROPIAS ââââââââââââââââââ
+// vaultProfile.shelves = [{ id, title, albumIds: [id, id, ...] }]  (mÃ¡x. 5, orden de albumIds = orden manual)
 
 const MAX_SHELVES = 5;
-let editingShelfId = null; // id de la estantería que el modal picker está editando
-let shelfPickerSelection = []; // array de albumIds en orden, mientras el modal está abierto
+let editingShelfId = null; // id de la estanterÃ­a que el modal picker estÃ¡ editando
+let shelfPickerSelection = []; // array de albumIds en orden, mientras el modal estÃ¡ abierto
 
 function renderProfileShelves(albumList, profile, readOnly) {
   const list  = document.getElementById('profile-shelves-list');
@@ -4083,7 +4088,7 @@ function renderProfileShelves(albumList, profile, readOnly) {
         ${editBtnHtml}
       </div>
       <div class="profile-album-grid" style="margin-top:12px;"></div>
-      <p style="display:${shelfAlbums.length ? 'none' : 'block'};color:#666;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Vacía por ahora.</p>
+      <p style="display:${shelfAlbums.length ? 'none' : 'block'};color:#666;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">VacÃ­a por ahora.</p>
     `;
     const grid = section.querySelector('.profile-album-grid');
     shelfAlbums.forEach(a => grid.appendChild(albumMiniCard(a, readOnly)));
@@ -4097,8 +4102,8 @@ function renderProfileShelves(albumList, profile, readOnly) {
 }
 
 document.getElementById('profile-new-shelf-btn').addEventListener('click', () => {
-  if ((vaultProfile.shelves||[]).length >= MAX_SHELVES) { alert(`Máximo ${MAX_SHELVES} estanterías.`); return; }
-  document.getElementById('shelf-name-heading').textContent = 'Nueva estantería';
+  if ((vaultProfile.shelves||[]).length >= MAX_SHELVES) { alert(`MÃ¡ximo ${MAX_SHELVES} estanterÃ­as.`); return; }
+  document.getElementById('shelf-name-heading').textContent = 'Nueva estanterÃ­a';
   document.getElementById('shelf-name-input').value = '';
   document.getElementById('shelf-name-input').dataset.mode = 'create';
   document.getElementById('shelf-name-backdrop').style.display = 'flex';
@@ -4111,14 +4116,14 @@ document.getElementById('shelf-name-cancel-btn').addEventListener('click', () =>
 document.getElementById('shelf-name-save-btn').addEventListener('click', () => {
   const input = document.getElementById('shelf-name-input');
   const title = input.value.trim();
-  if (!title) { alert('Ponele un título a la estantería.'); return; }
+  if (!title) { alert('Ponele un tÃ­tulo a la estanterÃ­a.'); return; }
   vaultProfile.shelves = vaultProfile.shelves || [];
 
   if (input.dataset.mode === 'rename' && editingShelfId) {
     const shelf = vaultProfile.shelves.find(s => s.id === editingShelfId);
     if (shelf) shelf.title = title;
   } else {
-    if (vaultProfile.shelves.length >= MAX_SHELVES) { alert(`Máximo ${MAX_SHELVES} estanterías.`); return; }
+    if (vaultProfile.shelves.length >= MAX_SHELVES) { alert(`MÃ¡ximo ${MAX_SHELVES} estanterÃ­as.`); return; }
     const newShelf = { id: 'shelf_' + Date.now(), title, albumIds: [] };
     vaultProfile.shelves.push(newShelf);
     editingShelfId = newShelf.id;
@@ -4130,7 +4135,7 @@ document.getElementById('shelf-name-save-btn').addEventListener('click', () => {
   if (input.dataset.mode === 'rename') {
     document.getElementById('shelf-picker-heading').textContent = title;
   } else {
-    // Recién creada: abrir directo el picker de álbumes para esa estantería.
+    // ReciÃ©n creada: abrir directo el picker de Ã¡lbumes para esa estanterÃ­a.
     openShelfPicker(editingShelfId);
   }
 });
@@ -4162,7 +4167,7 @@ function renderShelfPickerAlbumsTab() {
     row.innerHTML = `
       <input type="checkbox" data-id="${a.id}" ${current.has(a.id) ? 'checked' : ''} style="width:16px;height:16px;flex-shrink:0;" />
       <img src="${escHtml(a.coverUrl||'')}" style="width:34px;height:34px;border-radius:4px;object-fit:cover;background:#1a1a2a;flex-shrink:0;" />
-      <span style="font-family:'DM Mono',monospace;font-size:12px;color:#ddd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(a.title)} — ${escHtml(a.artist)}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:12px;color:#ddd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(a.title)} â ${escHtml(a.artist)}</span>
     `;
     row.querySelector('input').addEventListener('change', e => {
       if (e.target.checked) shelfPickerSelection.push(a.id);
@@ -4173,14 +4178,14 @@ function renderShelfPickerAlbumsTab() {
   });
 }
 
-// ── Tab de orden manual (drag & drop nativo, sin librerías) ──
+// ââ Tab de orden manual (drag & drop nativo, sin librerÃ­as) ââ
 let _dragFromIndex = null;
 
 function renderShelfPickerOrderTab() {
   const list = document.getElementById('shelf-picker-order-list');
   list.innerHTML = '';
   if (!shelfPickerSelection.length) {
-    list.innerHTML = '<p style="color:#666;font-family:\'DM Mono\',monospace;font-size:11px;">Elegí álbumes en la pestaña "Álbumes" primero.</p>';
+    list.innerHTML = '<p style="color:#666;font-family:\'DM Mono\',monospace;font-size:11px;">ElegÃ­ Ã¡lbumes en la pestaÃ±a "Ãlbumes" primero.</p>';
     return;
   }
   shelfPickerSelection.forEach((id, idx) => {
@@ -4191,9 +4196,9 @@ function renderShelfPickerOrderTab() {
     row.draggable = true;
     row.dataset.index = idx;
     row.innerHTML = `
-      <span class="shelf-order-handle">⋮⋮</span>
+      <span class="shelf-order-handle">â®â®</span>
       <img src="${escHtml(a.coverUrl||'')}" style="width:34px;height:34px;border-radius:4px;object-fit:cover;background:#1a1a2a;flex-shrink:0;" />
-      <span style="font-family:'DM Mono',monospace;font-size:12px;color:#ddd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${escHtml(a.title)} — ${escHtml(a.artist)}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:12px;color:#ddd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${escHtml(a.title)} â ${escHtml(a.artist)}</span>
     `;
     row.addEventListener('dragstart', () => { _dragFromIndex = idx; row.classList.add('dragging'); });
     row.addEventListener('dragend', () => { row.classList.remove('dragging'); });
@@ -4230,7 +4235,7 @@ document.getElementById('shelf-picker-close-btn').addEventListener('click', () =
 document.getElementById('shelf-rename-btn').addEventListener('click', () => {
   const shelf = (vaultProfile.shelves || []).find(s => s.id === editingShelfId);
   if (!shelf) return;
-  document.getElementById('shelf-name-heading').textContent = 'Renombrar estantería';
+  document.getElementById('shelf-name-heading').textContent = 'Renombrar estanterÃ­a';
   document.getElementById('shelf-name-input').value = shelf.title;
   document.getElementById('shelf-name-input').dataset.mode = 'rename';
   document.getElementById('shelf-name-backdrop').style.display = 'flex';
@@ -4245,7 +4250,7 @@ document.getElementById('shelf-picker-save-btn').addEventListener('click', () =>
 });
 
 document.getElementById('shelf-delete-btn').addEventListener('click', () => {
-  if (!confirm('¿Eliminar esta estantería? Esta acción no se puede deshacer.')) return;
+  if (!confirm('Â¿Eliminar esta estanterÃ­a? Esta acciÃ³n no se puede deshacer.')) return;
   vaultProfile.shelves = (vaultProfile.shelves || []).filter(s => s.id !== editingShelfId);
   document.getElementById('shelf-picker-backdrop').style.display = 'none';
   saveVaultProfile();
@@ -4253,7 +4258,7 @@ document.getElementById('shelf-delete-btn').addEventListener('click', () => {
   renderOwnProfile();
 });
 
-// ── Editor de favoritos ──
+// ââ Editor de favoritos ââ
 let pinnedPickerSelection = [];
 let pinnedDragId = null;
 
@@ -4275,7 +4280,7 @@ function renderPinnedPicker() {
     });
 
   list.innerHTML = '';
-  count.textContent = `${pinnedPickerSelection.length}/10 elegidos${pinnedPickerSelection.length ? ' · Arrastrá los seleccionados para ordenarlos' : ''}`;
+  count.textContent = `${pinnedPickerSelection.length}/10 elegidos${pinnedPickerSelection.length ? ' Â· ArrastrÃ¡ los seleccionados para ordenarlos' : ''}`;
   visible.forEach(a => {
     const id = String(a.id);
     const isSelected = selected.has(id);
@@ -4283,14 +4288,14 @@ function renderPinnedPicker() {
     row.draggable = isSelected;
     row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #1e1e24;cursor:pointer;' + (isSelected ? 'background:rgba(200,240,96,.045);' : '');
     row.innerHTML = `
-      <span style="width:13px;color:${isSelected ? 'var(--accent,#c8f060)' : 'transparent'};font-size:15px;cursor:grab;flex-shrink:0;">⋮⋮</span>
+      <span style="width:13px;color:${isSelected ? 'var(--accent,#c8f060)' : 'transparent'};font-size:15px;cursor:grab;flex-shrink:0;">â®â®</span>
       <input type="checkbox" data-id="${escHtml(id)}" ${isSelected ? 'checked' : ''} style="width:16px;height:16px;flex-shrink:0;" />
       <img src="${escHtml(a.coverUrl||'')}" style="width:34px;height:34px;border-radius:4px;object-fit:cover;background:#1a1a2a;flex-shrink:0;" />
-      <span style="font-family:'DM Mono',monospace;font-size:12px;color:#ddd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(a.title)} — ${escHtml(a.artist)}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:12px;color:#ddd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(a.title)} â ${escHtml(a.artist)}</span>
     `;
     row.querySelector('input').addEventListener('change', e => {
       if (e.target.checked) {
-        if (pinnedPickerSelection.length >= 10) { e.target.checked = false; alert('Máximo 10 favoritos.'); return; }
+        if (pinnedPickerSelection.length >= 10) { e.target.checked = false; alert('MÃ¡ximo 10 favoritos.'); return; }
         pinnedPickerSelection.push(id);
       } else {
         pinnedPickerSelection = pinnedPickerSelection.filter(selectedId => selectedId !== id);
@@ -4311,7 +4316,7 @@ function renderPinnedPicker() {
     });
     list.appendChild(row);
   });
-  if (!visible.length) list.innerHTML = '<p style="color:#666;font-family:DM Mono,monospace;font-size:11px;padding:10px 0;">No encontramos álbumes con esa búsqueda.</p>';
+  if (!visible.length) list.innerHTML = '<p style="color:#666;font-family:DM Mono,monospace;font-size:11px;padding:10px 0;">No encontramos Ã¡lbumes con esa bÃºsqueda.</p>';
 }
 
 document.getElementById('profile-edit-pinned-btn').addEventListener('click', () => {
@@ -4331,22 +4336,22 @@ document.getElementById('pinned-picker-save-btn').addEventListener('click', () =
   saveVaultProfile();
 });
 
-// ── TIER CONFIG ──
+// ââ TIER CONFIG ââ
 const TIERS = [
   { id:'SS', label:'SS', range:'10',           min:10,   max:10,   color:'#f5e642' },
-  { id:'SP', label:'S+', range:'9.80 – 9.99', min:9.80, max:9.99, color:'#f0a830' },
-  { id:'S',  label:'S',  range:'9.40 – 9.79', min:9.40, max:9.79, color:'#e87c3e' },
-  { id:'SM', label:'S−', range:'9.00 – 9.39', min:9.00, max:9.39, color:'#e05252' },
-  { id:'AP', label:'A+', range:'8.90 – 8.99', min:8.90, max:8.99, color:'#b06de0' },
-  { id:'A',  label:'A',  range:'8.80 – 8.89', min:8.80, max:8.89, color:'#7b6de0' },
-  { id:'AM', label:'A−', range:'8.70 – 8.79', min:8.70, max:8.79, color:'#4d82e0' },
-  { id:'BP', label:'B+', range:'8.50 – 8.69', min:8.50, max:8.69, color:'#3ac4b0' },
-  { id:'BM', label:'B−', range:'8.00 – 8.49', min:8.00, max:8.49, color:'#3ab870' },
-  { id:'CP', label:'C+', range:'7.50 – 7.99', min:7.50, max:7.99, color:'#8dc454' },
-  { id:'CM', label:'C−', range:'7.00 – 7.49', min:7.00, max:7.49, color:'#b4b4b4' },
+  { id:'SP', label:'S+', range:'9.80 â 9.99', min:9.80, max:9.99, color:'#f0a830' },
+  { id:'S',  label:'S',  range:'9.40 â 9.79', min:9.40, max:9.79, color:'#e87c3e' },
+  { id:'SM', label:'Sâ', range:'9.00 â 9.39', min:9.00, max:9.39, color:'#e05252' },
+  { id:'AP', label:'A+', range:'8.90 â 8.99', min:8.90, max:8.99, color:'#b06de0' },
+  { id:'A',  label:'A',  range:'8.80 â 8.89', min:8.80, max:8.89, color:'#7b6de0' },
+  { id:'AM', label:'Aâ', range:'8.70 â 8.79', min:8.70, max:8.79, color:'#4d82e0' },
+  { id:'BP', label:'B+', range:'8.50 â 8.69', min:8.50, max:8.69, color:'#3ac4b0' },
+  { id:'BM', label:'Bâ', range:'8.00 â 8.49', min:8.00, max:8.49, color:'#3ab870' },
+  { id:'CP', label:'C+', range:'7.50 â 7.99', min:7.50, max:7.99, color:'#8dc454' },
+  { id:'CM', label:'Câ', range:'7.00 â 7.49', min:7.00, max:7.49, color:'#b4b4b4' },
 ];
 
-// ── STATE ──
+// ââ STATE ââ
 let albums = [];
 let selectedRelease = null;
 let editingAlbumId  = null;
@@ -4361,7 +4366,7 @@ let filterGenre     = '';
 let filterStatus    = '';
 let sortMode        = 'score-desc';
 
-// ── STORAGE ──
+// ââ STORAGE ââ
 function loadAlbums() {
   try {
     const saved = localStorage.getItem('album_vault_v3');
@@ -4370,7 +4375,7 @@ function loadAlbums() {
       albums       = data.albums       || [];
       nowPlayingId = data.nowPlayingId || null;
       // Las portadas antiguas de iTunes se guardaban a 600 px. La misma imagen
-      // admite una variante de 1200 px, así que se mejora localmente sin volver a buscar.
+      // admite una variante de 1200 px, asÃ­ que se mejora localmente sin volver a buscar.
       let upgraded = false;
       albums.forEach(album => {
         const nextCover = typeof album.coverUrl === 'string' && /mzstatic\\.com/i.test(album.coverUrl)
@@ -4395,7 +4400,7 @@ function saveAlbums() {
   queueVaultCollectionSync();
 }
 
-// ── MUSICBRAINZ ──
+// ââ MUSICBRAINZ ââ
 const MB_BASE    = 'https://musicbrainz.org/ws/2';
 const CAA_BASE   = 'https://coverartarchive.org';
 const MB_HEADERS = { 'Accept':'application/json', 'User-Agent':'AlbumVault/1.0 (personal-app)' };
@@ -4403,7 +4408,7 @@ const MB_HEADERS = { 'Accept':'application/json', 'User-Agent':'AlbumVault/1.0 (
 const LFM_KEY    = '194ec400973f470ddaccd3248100186f';
 const LFM_BASE   = 'https://ws.audioscrobbler.com/2.0/';
 
-// ── LAST.FM SEARCH (primary) ──
+// ââ LAST.FM SEARCH (primary) ââ
 async function searchLastFm(album, artist) {
   const params = new URLSearchParams({
     method: 'album.search',
@@ -4434,7 +4439,7 @@ async function getLastFmAlbumInfo(artist, album) {
   return data?.album || null;
 }
 
-// ── MUSICBRAINZ (fallback for tracklist + cover when LFM cover missing) ──
+// ââ MUSICBRAINZ (fallback for tracklist + cover when LFM cover missing) ââ
 async function searchMusicBrainz(query) {
   const url = `${MB_BASE}/release/?query=${encodeURIComponent(query)}&limit=5&fmt=json`;
   const res  = await fetch(url, { headers: MB_HEADERS });
@@ -4483,10 +4488,10 @@ function pickLfmImage(images) {
   return images[images.length - 1]?.['#text'] || '';
 }
 
-// Cascada de respaldo cuando la portada guardada de un álbum ya no carga (p. ej.
-// Last.fm eliminó/reindexó esa imagen y ahora da 404). Se intenta primero iTunes
-// (suele ser más estable) y, si no hay coincidencia, Last.fm — sin tocar lo que
-// ya está guardado, solo para mostrar algo mientras tanto.
+// Cascada de respaldo cuando la portada guardada de un Ã¡lbum ya no carga (p. ej.
+// Last.fm eliminÃ³/reindexÃ³ esa imagen y ahora da 404). Se intenta primero iTunes
+// (suele ser mÃ¡s estable) y, si no hay coincidencia, Last.fm â sin tocar lo que
+// ya estÃ¡ guardado, solo para mostrar algo mientras tanto.
 const LASTFM_PLACEHOLDER = '2a96cbd8b46e442fc41c2b86b821562f';
 function findItunesCoverFallback(itunesAlbums, title, artist) {
   if (!itunesAlbums?.length) return null;
@@ -4525,7 +4530,7 @@ async function refetchCoverFallback(title, artist) {
   return null;
 }
 // Conecta un <img> de portada a la cascada de respaldo: al fallar la carga, busca
-// una alternativa una sola vez (evita bucles si la alternativa también falla) y,
+// una alternativa una sola vez (evita bucles si la alternativa tambiÃ©n falla) y,
 // si tampoco hay nada, ejecuta el callback de "sin portada" que le pasen.
 function attachCoverFallback(imgEl, title, artist, onGiveUp) {
   let tried = false;
@@ -4539,9 +4544,9 @@ function attachCoverFallback(imgEl, title, artist, onGiveUp) {
 }
 
 // Vault y Rater comparten la misma base de datos (tabla `ratings`). Cuando una
-// portada en Vault quedó rota y ya se corrigió desde el Rater (con su propio
-// botón de guardado), esto simplemente vuelve a leer el cover_url actual desde
-// esa DB — sin re-buscar en iTunes/Last.fm, sin escribir nada, solo releer.
+// portada en Vault quedÃ³ rota y ya se corrigiÃ³ desde el Rater (con su propio
+// botÃ³n de guardado), esto simplemente vuelve a leer el cover_url actual desde
+// esa DB â sin re-buscar en iTunes/Last.fm, sin escribir nada, solo releer.
 async function refetchCoverFromRaterDb(album) {
   const userId = localStorage.getItem('discord_user_id');
   if (!userId || !album?.title) return false;
@@ -4567,7 +4572,7 @@ async function refetchCoverFromRaterDb(album) {
 }
 
 // Comprueba en segundo plano si una URL de imagen carga o no (sin insertarla al
-// DOM), para saber si una portada está realmente rota antes de reemplazarla.
+// DOM), para saber si una portada estÃ¡ realmente rota antes de reemplazarla.
 function checkImageLoads(url) {
   return new Promise(resolve => {
     if (!url) { resolve(false); return; }
@@ -4578,11 +4583,11 @@ function checkImageLoads(url) {
   });
 }
 
-// Auto-arreglo silencioso al cargar la app: recorre la colección de Vault, detecta
-// qué portadas están rotas de verdad (no solo "distintas" — evita pisar una portada
-// buena por otra igual de válida), y para esas consulta UNA sola vez el historial
-// del Rater (misma DB) para traer el cover_url ya corregido ahí, si existe. Así el
-// usuario no tiene que repetir manualmente en Vault lo que ya arregló en Rater.
+// Auto-arreglo silencioso al cargar la app: recorre la colecciÃ³n de Vault, detecta
+// quÃ© portadas estÃ¡n rotas de verdad (no solo "distintas" â evita pisar una portada
+// buena por otra igual de vÃ¡lida), y para esas consulta UNA sola vez el historial
+// del Rater (misma DB) para traer el cover_url ya corregido ahÃ­, si existe. AsÃ­ el
+// usuario no tiene que repetir manualmente en Vault lo que ya arreglÃ³ en Rater.
 async function autoRefreshBrokenCovers() {
   const userId = localStorage.getItem('discord_user_id');
   if (!userId || !albums.length) return;
@@ -4600,7 +4605,7 @@ async function autoRefreshBrokenCovers() {
     rows = await res.json();
     if (!Array.isArray(rows)) return;
   } catch {
-    return; // backend dormido o sin conexión — se reintentará en la próxima carga
+    return; // backend dormido o sin conexiÃ³n â se reintentarÃ¡ en la prÃ³xima carga
   }
 
   const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -4623,7 +4628,7 @@ async function autoRefreshBrokenCovers() {
   }
 }
 
-// ── UTILS ──
+// ââ UTILS ââ
 function getTier(score) {
   if (score === 10) return TIERS[0];
   return TIERS.find(t => score >= t.min && score <= t.max) || TIERS[TIERS.length-1];
@@ -4650,7 +4655,7 @@ function buildSearchUrl(title, artist, service) {
   return '#';
 }
 
-// ── FILTERED + SORTED ALBUMS ──
+// ââ FILTERED + SORTED ALBUMS ââ
 function getVisibleAlbums() {
   let list = [...albums].filter(a => (a.status || 'listened') !== 'pending'); // pending solo en su apartado
   if (filterQuery) {
@@ -4685,7 +4690,7 @@ function getLastListened(album) {
   return Math.max(...r.map(d => new Date(d).getTime()));
 }
 
-// ── GENRE FILTER ──
+// ââ GENRE FILTER ââ
 function refreshGenreFilter() {
   const all = new Set();
   albums.forEach(a => cleanGenres(a.genres).forEach(g => all.add(g)));
@@ -4700,7 +4705,7 @@ function refreshGenreFilter() {
   });
 }
 
-// ── NOW PLAYING BAR ──
+// ââ NOW PLAYING BAR ââ
 function updateNowPlayingBar() {
   const bar = document.getElementById('now-playing-bar');
   const container = document.getElementById('tiers-container');
@@ -4714,7 +4719,7 @@ function updateNowPlayingBar() {
   const album = albums.find(a => a.id === nowPlayingId);
   if (!album) { nowPlayingId = null; bar.classList.remove('visible'); container.classList.remove('has-np'); return; }
   document.getElementById('np-thumb').src = album.coverUrl || '';
-  document.getElementById('np-title').textContent = `${album.title} — ${album.artist}`;
+  document.getElementById('np-title').textContent = `${album.title} â ${album.artist}`;
   bar.classList.add('visible');
   container.classList.add('has-np');
   // Dynamically set top to match actual header height
@@ -4734,7 +4739,7 @@ document.getElementById('np-clear').addEventListener('click', () => {
   saveAlbums(); updateNowPlayingBar(); buildTiers();
 });
 
-// ── RENDER TIERS ──
+// ââ RENDER TIERS ââ
 function buildTiers() {
   const container = document.getElementById('tiers-container');
   container.innerHTML = '';
@@ -4757,7 +4762,7 @@ function buildTiers() {
         <div class="tier-count">${tierAlbums.length > 0 ? tierAlbums.length + ' album' + (tierAlbums.length>1?'s':'') : ''}</div>
       </div>
       <div class="tier-albums${viewMode==='list'?' list-view':''}" id="albums-${tier.id}">
-        ${tierAlbums.length === 0 ? '<span class="tier-empty">— no albums yet —</span>' : ''}
+        ${tierAlbums.length === 0 ? '<span class="tier-empty">â no albums yet â</span>' : ''}
       </div>`;
     container.appendChild(row);
 
@@ -4772,7 +4777,7 @@ function buildTiers() {
   });
 }
 
-// ── SCROLL REVEAL OBSERVER ──
+// ââ SCROLL REVEAL OBSERVER ââ
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -4782,7 +4787,7 @@ const revealObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 
-// ── TIER LABEL ACTIVE (scroll-based) ──
+// ââ TIER LABEL ACTIVE (scroll-based) ââ
 function updateActiveTierLabel() {
   const rows = document.querySelectorAll('.tier-row');
   if (!rows.length) return;
@@ -4845,7 +4850,7 @@ function buildCard(album, tier, i) {
     <div class="album-overlay">
       <div class="album-overlay-title">${escHtml(album.title)}<br><span style="color:${tier.color}">${album.score}</span><br>${statusStr}</div>
     </div>
-    <div class="compare-check">✓</div>`;
+    <div class="compare-check">â</div>`;
   card.addEventListener('click', () => {
     if (compareMode) { toggleCompare(album.id); return; }
     openDetail(album, card);
@@ -4881,7 +4886,7 @@ function buildListRow(album, tier) {
   info.className = 'album-list-info';
   info.innerHTML = `
     <div class="album-list-title">${escHtml(album.title)}</div>
-    <div class="album-list-sub">${escHtml(album.artist)}${album.year ? ' · '+album.year : ''}${genres ? ' · '+escHtml(genres) : ''}</div>`;
+    <div class="album-list-sub">${escHtml(album.artist)}${album.year ? ' Â· '+album.year : ''}${genres ? ' Â· '+escHtml(genres) : ''}</div>`;
 
   const score = document.createElement('div');
   score.className = 'album-list-score';
@@ -4903,7 +4908,7 @@ function buildListRow(album, tier) {
   return row;
 }
 
-// ── COMPARE ──
+// ââ COMPARE ââ
 function toggleCompare(id) {
   if (compareSelected.includes(id)) {
     compareSelected = compareSelected.filter(x => x !== id);
@@ -4928,12 +4933,12 @@ function openCompareModal() {
         <div class="compare-artist">${escHtml(a.artist)}</div>
         <div class="compare-score" style="color:${tier.color}">${a.score}</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;color:${tier.color};border:1px solid ${tier.color};display:inline-block;padding:2px 8px;margin-bottom:8px">${tier.label}</div>
-        <div class="compare-field"><div class="compare-field-label">Year</div>${a.year||'—'}</div>
-        <div class="compare-field"><div class="compare-field-label">Genres</div>${(a.genres||[]).join(', ')||'—'}</div>
-        <div class="compare-field"><div class="compare-field-label">Tracks</div>${(a.tracks||[]).length||'—'}</div>
-        <div class="compare-field"><div class="compare-field-label">Fav tracks</div>${favs||'—'}</div>
+        <div class="compare-field"><div class="compare-field-label">Year</div>${a.year||'â'}</div>
+        <div class="compare-field"><div class="compare-field-label">Genres</div>${(a.genres||[]).join(', ')||'â'}</div>
+        <div class="compare-field"><div class="compare-field-label">Tracks</div>${(a.tracks||[]).length||'â'}</div>
+        <div class="compare-field"><div class="compare-field-label">Fav tracks</div>${favs||'â'}</div>
         <div class="compare-field"><div class="compare-field-label">Listens</div>${(a.replays||[]).length + (a.listenDate?1:0)}</div>
-        <div class="compare-field"><div class="compare-field-label">Status</div>${statusLabel(a.status)||'—'}</div>
+        <div class="compare-field"><div class="compare-field-label">Status</div>${statusLabel(a.status)||'â'}</div>
       </div>`;
   }).join('');
   document.getElementById('compare-backdrop').classList.add('open');
@@ -4955,7 +4960,7 @@ document.getElementById('compare-backdrop').addEventListener('click', e => {
   }
 });
 
-// ── DETAIL MODAL ──
+// ââ DETAIL MODAL ââ
 let detailCloseTimer = null;
 
 function setModalDominantColor(coverUrl, fallbackColor) {
@@ -5015,7 +5020,7 @@ function openDetail(album, originEl, readOnly = false) {
     modalArtBg.style.backgroundImage = '';
   };
 
-  document.getElementById('modal-tier-badge').textContent  = tier.label + ' · ' + album.score;
+  document.getElementById('modal-tier-badge').textContent  = tier.label + ' Â· ' + album.score;
   document.getElementById('modal-tier-badge').style.color  = tier.color;
   document.getElementById('modal-tier-badge').style.borderColor = tier.color;
   document.getElementById('modal-title').textContent   = album.title;
@@ -5036,32 +5041,32 @@ function openDetail(album, originEl, readOnly = false) {
   reviewOverlay.setAttribute('aria-expanded', 'false');
   reviewHint.textContent = reviewIsLong ? 'Tocar para leer completa' : '';
 
-  // Botón discreto para releer el cover_url desde la DB compartida con Rater —
-  // útil cuando la portada guardada quedó rota y ya se corrigió desde el Rater.
+  // BotÃ³n discreto para releer el cover_url desde la DB compartida con Rater â
+  // Ãºtil cuando la portada guardada quedÃ³ rota y ya se corrigiÃ³ desde el Rater.
   const oldRefreshBtn = document.getElementById('modal-cover-refresh');
   if (oldRefreshBtn) oldRefreshBtn.remove();
   const refreshBtn = document.createElement('button');
   refreshBtn.id = 'modal-cover-refresh';
   refreshBtn.title = 'Releer portada desde la base de datos';
-  refreshBtn.textContent = '🔄';
+  refreshBtn.textContent = 'ð';
   refreshBtn.style.cssText = 'background:none;border:none;color:#666;font-size:11px;cursor:pointer;'
     + 'padding:2px 4px;opacity:0.6;float:right;';
-  // Se conserva la acción para mantenimiento, pero no se expone en el detalle por ahora.
+  // Se conserva la acciÃ³n para mantenimiento, pero no se expone en el detalle por ahora.
   refreshBtn.style.display = 'none';
   refreshBtn.onclick = async (e) => {
     e.stopPropagation();
     refreshBtn.disabled = true;
-    refreshBtn.textContent = '⏳';
+    refreshBtn.textContent = 'â³';
     const updated = await refetchCoverFromRaterDb(album);
     if (updated) {
       coverEl.src = album.coverUrl;
-      refreshBtn.textContent = '✓';
+      refreshBtn.textContent = 'â';
     } else {
-      refreshBtn.textContent = '·';
+      refreshBtn.textContent = 'Â·';
     }
     setTimeout(() => {
       refreshBtn.disabled = false;
-      refreshBtn.textContent = '🔄';
+      refreshBtn.textContent = 'ð';
       refreshBtn.style.opacity = '0.6';
     }, 1500);
   };
@@ -5069,9 +5074,9 @@ function openDetail(album, originEl, readOnly = false) {
 
   // meta row
   const metaParts = [];
-  if (album.year)        metaParts.push(`<span class="meta-tag">📅 ${album.year}</span>`);
-  if (album.listenDate)  metaParts.push(`<span class="meta-tag">🎧 First listen: ${fmtDate(album.listenDate)}</span>`);
-  if ((album.genres||[]).length) metaParts.push(`<span class="meta-tag">🏷 ${album.genres.join(', ')}</span>`);
+  if (album.year)        metaParts.push(`<span class="meta-tag">ð ${album.year}</span>`);
+  if (album.listenDate)  metaParts.push(`<span class="meta-tag">ð§ First listen: ${fmtDate(album.listenDate)}</span>`);
+  if ((album.genres||[]).length) metaParts.push(`<span class="meta-tag">ð· ${album.genres.join(', ')}</span>`);
   document.getElementById('modal-meta').innerHTML = metaParts.join('');
 
   // status pills + now playing btn
@@ -5093,7 +5098,7 @@ function openDetail(album, originEl, readOnly = false) {
   });
   const npBtn = document.createElement('button');
   npBtn.id = 'btn-now-playing';
-  npBtn.textContent = nowPlayingId === album.id ? '▶ Playing' : '▶ Now playing';
+  npBtn.textContent = nowPlayingId === album.id ? 'â¶ Playing' : 'â¶ Now playing';
   npBtn.className = nowPlayingId === album.id ? 'active' : '';
   npBtn.addEventListener('click', () => {
     nowPlayingId = nowPlayingId === album.id ? null : album.id;
@@ -5105,9 +5110,9 @@ function openDetail(album, originEl, readOnly = false) {
   // external links
   const linksDiv = document.getElementById('modal-links');
   linksDiv.innerHTML = `
-    <a class="ext-link" href="${buildSearchUrl(album.title,album.artist,'spotify')}" target="_blank" rel="noopener">▶ Spotify</a>
-    <a class="ext-link" href="${buildSearchUrl(album.title,album.artist,'apple')}"   target="_blank" rel="noopener">♫ Apple Music</a>
-    <a class="ext-link" href="${buildSearchUrl(album.title,album.artist,'rym')}"    target="_blank" rel="noopener">★ RateYourMusic</a>`;
+    <a class="ext-link" href="${buildSearchUrl(album.title,album.artist,'spotify')}" target="_blank" rel="noopener">â¶ Spotify</a>
+    <a class="ext-link" href="${buildSearchUrl(album.title,album.artist,'apple')}"   target="_blank" rel="noopener">â« Apple Music</a>
+    <a class="ext-link" href="${buildSearchUrl(album.title,album.artist,'rym')}"    target="_blank" rel="noopener">â RateYourMusic</a>`;
 
   // replay history
   const replayList = document.getElementById('modal-replay-list');
@@ -5126,8 +5131,8 @@ function openDetail(album, originEl, readOnly = false) {
         <span style="display:flex;align-items:center;gap:6px">
           <span class="replay-date">${fmtDate(currentDetailAlbum.listenDate)}</span>
           <span class="replay-actions">
-            <button class="replay-edit-btn" title="Edit date">✎</button>
-            <button class="replay-del-btn" title="Remove">✕</button>
+            <button class="replay-edit-btn" title="Edit date">â</button>
+            <button class="replay-del-btn" title="Remove">â</button>
           </span>
         </span>`;
       row.querySelector('.replay-edit-btn').addEventListener('click', () => {
@@ -5163,8 +5168,8 @@ function openDetail(album, originEl, readOnly = false) {
         <span style="display:flex;align-items:center;gap:6px">
           <span class="replay-date">${fmtDate(d)}</span>
           <span class="replay-actions">
-            <button class="replay-edit-btn" title="Edit date">✎</button>
-            <button class="replay-del-btn" title="Remove">✕</button>
+            <button class="replay-edit-btn" title="Edit date">â</button>
+            <button class="replay-del-btn" title="Remove">â</button>
           </span>
         </span>`;
       row.querySelector('.replay-edit-btn').addEventListener('click', () => {
@@ -5213,10 +5218,10 @@ function openDetail(album, originEl, readOnly = false) {
         : '';
       item.innerHTML = `
         <span class="track-num">${String(i+1).padStart(2,'0')}</span>
-        <span class="track-name" style="${isLegendary ? 'color:#ffd700;font-weight:600' : ''}">${isLegendary ? '⚡ ' : ''}${escHtml(name)}</span>
+        <span class="track-name" style="${isLegendary ? 'color:#ffd700;font-weight:600' : ''}">${isLegendary ? 'â¡ ' : ''}${escHtml(name)}</span>
         ${scoreHtml}
-        <button class="track-legendary-btn" title="${isLegendary ? 'Quitar 11' : 'Marcar como 11 legendario'}" style="background:none;border:none;cursor:pointer;font-size:12px;padding:2px 6px;opacity:${isLegendary ? '1' : '0.2'};transition:opacity .2s">⚡</button>
-        <button class="track-fav-btn${isFav ? ' is-fav' : ''}" title="${isFav ? 'Remove fav' : 'Mark as fav'}">★</button>`;
+        <button class="track-legendary-btn" title="${isLegendary ? 'Quitar 11' : 'Marcar como 11 legendario'}" style="background:none;border:none;cursor:pointer;font-size:12px;padding:2px 6px;opacity:${isLegendary ? '1' : '0.2'};transition:opacity .2s">â¡</button>
+        <button class="track-fav-btn${isFav ? ' is-fav' : ''}" title="${isFav ? 'Remove fav' : 'Mark as fav'}">â</button>`;
       item.querySelector('.track-legendary-btn').addEventListener('click', e => {
         e.stopPropagation();
         const cur = album.tracks[i];
@@ -5312,7 +5317,7 @@ document.getElementById('modal-backdrop').addEventListener('click', e => {
   if (e.target === document.getElementById('modal-backdrop')) closeDetailModal();
 });
 
-// ── EDIT ALBUM ──
+// ââ EDIT ALBUM ââ
 document.getElementById('btn-edit-album').addEventListener('click', () => {
   if (!currentDetailAlbum) return;
   const album = currentDetailAlbum;
@@ -5331,8 +5336,8 @@ document.getElementById('btn-edit-album').addEventListener('click', () => {
     scoreModeIsTier = false;
     document.getElementById('score-input-wrap').style.display = 'block';
     document.getElementById('tier-input-wrap').style.display  = 'none';
-    document.getElementById('score-field-label').textContent  = 'Score (0–10)';
-    document.getElementById('score-mode-toggle').textContent  = '🔄 Tier directo';
+    document.getElementById('score-field-label').textContent  = 'Score (0â10)';
+    document.getElementById('score-mode-toggle').textContent  = 'ð Tier directo';
     document.getElementById('score-mode-toggle').classList.remove('tier-mode');
   }
   document.getElementById('input-genres').value      = (album.genres||[]).join(', ');
@@ -5348,7 +5353,7 @@ document.getElementById('btn-edit-album').addEventListener('click', () => {
   if (album.coverUrl) {
     document.getElementById('selected-cover-thumb').src = album.coverUrl;
     document.getElementById('selected-title-text').textContent = album.title;
-    document.getElementById('selected-sub-text').textContent   = `${album.artist}${album.year?' · '+album.year:''}`;
+    document.getElementById('selected-sub-text').textContent   = `${album.artist}${album.year?' Â· '+album.year:''}`;
     document.getElementById('selected-preview').classList.add('visible');
     selectedRelease = { coverUrl: album.coverUrl };
   }
@@ -5359,7 +5364,7 @@ document.getElementById('btn-edit-album').addEventListener('click', () => {
   document.body.style.overflow = 'hidden';
 });
 
-// ── DELETE ALBUM ──
+// ââ DELETE ALBUM ââ
 document.getElementById('btn-delete-album').addEventListener('click', () => {
   if (!currentDetailAlbum) return;
   if (!confirm(`Delete "${currentDetailAlbum.title}" by ${currentDetailAlbum.artist}?\nThis cannot be undone.`)) return;
@@ -5372,7 +5377,7 @@ document.getElementById('btn-delete-album').addEventListener('click', () => {
   buildTiers(); updateNowPlayingBar(); refreshGenreFilter();
 });
 
-// ── Drawer lateral (menú) ──
+// ââ Drawer lateral (menÃº) ââ
 function openMenuDrawer() {
   document.getElementById('menu-drawer-backdrop').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -5386,14 +5391,14 @@ document.getElementById('menu-drawer-close-btn').addEventListener('click', close
 document.getElementById('menu-drawer-backdrop').addEventListener('click', e => {
   if (e.target.id === 'menu-drawer-backdrop') closeMenuDrawer();
 });
-// Cerrar el drawer al elegir una acción, para no taparle al usuario el resultado
+// Cerrar el drawer al elegir una acciÃ³n, para no taparle al usuario el resultado
 // (stats, top10, add, load from db, etc. abren su propio modal encima).
 ['stats-btn','top10-btn','pending-btn','compare-btn','load-db-btn','add-btn','export-btn','img-export-btn','import-btn','rater-import-btn'].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('click', closeMenuDrawer);
 });
 
-// ── ADD MODAL ──
+// ââ ADD MODAL ââ
 document.getElementById('add-btn').addEventListener('click', () => {
   document.getElementById('add-backdrop').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -5423,15 +5428,15 @@ function closeAddModal() {
     scoreModeIsTier = false;
     document.getElementById('score-input-wrap').style.display = 'block';
     document.getElementById('tier-input-wrap').style.display  = 'none';
-    document.getElementById('score-field-label').textContent  = 'Score (0–10)';
-    document.getElementById('score-mode-toggle').textContent  = '🔄 Tier directo';
+    document.getElementById('score-field-label').textContent  = 'Score (0â10)';
+    document.getElementById('score-mode-toggle').textContent  = 'ð Tier directo';
     document.getElementById('score-mode-toggle').classList.remove('tier-mode');
   }
   // reset custom dropdown
   selectedTierId = null;
   const tdb2 = document.getElementById('tier-dropdown-btn');
   if (tdb2) {
-    tdb2.querySelector('.tdb-label').textContent = '— Selecciona tier —';
+    tdb2.querySelector('.tdb-label').textContent = 'â Selecciona tier â';
     tdb2.querySelector('.tdb-label').style.color = '';
     tdb2.querySelector('.tdb-swatch').style.background = '';
     tdb2.classList.remove('has-value');
@@ -5445,14 +5450,14 @@ document.getElementById('input-score').addEventListener('input', e => {
   const preview = document.getElementById('score-tier-preview');
   if (!isNaN(v) && v >= 0 && v <= 10) {
     const tier = getTier(v);
-    preview.textContent = '→ ' + tier.label;
+    preview.textContent = 'â ' + tier.label;
     preview.style.color = tier.color;
     preview.style.borderColor = tier.color;
     preview.style.opacity = '1';
   } else { preview.style.opacity = '0'; }
 });
 
-// ── CUSTOM STATUS DROPDOWN ──
+// ââ CUSTOM STATUS DROPDOWN ââ
 (function() {
   const btn  = document.getElementById('status-select-btn');
   const list = document.getElementById('status-select-list');
@@ -5496,7 +5501,7 @@ document.getElementById('input-score').addEventListener('input', e => {
   setStatus('listened');
 })();
 
-// ── CUSTOM ENGINE DROPDOWN ──
+// ââ CUSTOM ENGINE DROPDOWN ââ
 (function() {
   const btn  = document.getElementById('engine-select-btn');
   const list = document.getElementById('engine-select-list');
@@ -5537,11 +5542,11 @@ document.addEventListener('click', () => {
   ['status-select-btn','engine-select-btn'].forEach(id => document.getElementById(id).classList.remove('open'));
 });
 
-// ── SCORE MODE TOGGLE (score vs tier-directo) ──
+// ââ SCORE MODE TOGGLE (score vs tier-directo) ââ
 let scoreModeIsTier = false;
 let selectedTierId = null; // tracks selected tier in custom dropdown
 
-// ── CUSTOM TIER DROPDOWN ──
+// ââ CUSTOM TIER DROPDOWN ââ
 (function buildTierDropdown() {
   const list = document.getElementById('tier-dropdown-list');
   const btn  = document.getElementById('tier-dropdown-btn');
@@ -5554,19 +5559,19 @@ let selectedTierId = null; // tracks selected tier in custom dropdown
       <span class="tier-opt-swatch" style="background:${t.color}"></span>
       <span class="tier-opt-label" style="color:${t.color}">${t.label}</span>
       <span class="tier-opt-range">${t.range}</span>
-      <span class="tier-opt-check">✓</span>`;
+      <span class="tier-opt-check">â</span>`;
     opt.addEventListener('click', () => {
       selectedTierId = t.id;
       // update button face
       btn.querySelector('.tdb-swatch').style.background = t.color;
-      btn.querySelector('.tdb-label').textContent = `${t.label}  —  ${t.range}`;
+      btn.querySelector('.tdb-label').textContent = `${t.label}  â  ${t.range}`;
       btn.querySelector('.tdb-label').style.color = t.color;
       btn.classList.add('has-value');
       // mark selected
       list.querySelectorAll('.tier-opt').forEach(o => o.classList.toggle('selected', o.dataset.tierId === t.id));
       // update preview
       const preview = document.getElementById('score-tier-preview');
-      preview.textContent = '→ ' + t.label;
+      preview.textContent = 'â ' + t.label;
       preview.style.color = t.color;
       preview.style.borderColor = t.color;
       preview.style.opacity = '1';
@@ -5603,21 +5608,21 @@ document.getElementById('score-mode-toggle').addEventListener('click', () => {
     scoreWrap.style.display = 'none';
     tierWrap.style.display  = 'block';
     label.textContent = 'Tier';
-    btn.textContent   = '🔄 Modo Score';
+    btn.textContent   = 'ð Modo Score';
     btn.classList.add('tier-mode');
     preview.style.opacity = '0';
   } else {
     scoreWrap.style.display = 'block';
     tierWrap.style.display  = 'none';
-    label.textContent = 'Score (0–10)';
-    btn.textContent   = '🔄 Tier directo';
+    label.textContent = 'Score (0â10)';
+    btn.textContent   = 'ð Tier directo';
     btn.classList.remove('tier-mode');
     // re-trigger score preview
     document.getElementById('input-score').dispatchEvent(new Event('input'));
   }
 });
 
-// ── SEARCH UI ──
+// ââ SEARCH UI ââ
 const searchAlbumInput  = document.getElementById('search-album');
 const searchArtistInput = document.getElementById('search-artist');
 const searchBtn         = document.getElementById('search-btn');
@@ -5634,7 +5639,7 @@ async function doSearch() {
 
   const engine = document.getElementById('search-engine-select').value;
 
-  searchBtn.disabled = true; searchBtn.textContent = '⏳';
+  searchBtn.disabled = true; searchBtn.textContent = 'â³';
   searchResultsEl.style.display = 'block';
 
   function renderLfm(results) {
@@ -5652,7 +5657,7 @@ async function doSearch() {
           <div class="result-sub">${escHtml(r.artist)}</div>
         </div>
         <span class="result-source" style="font-size:8px;letter-spacing:1px;color:#555;flex-shrink:0">LFM</span>
-        <span class="result-check" style="display:none">✓</span>`;
+        <span class="result-check" style="display:none">â</span>`;
       item.addEventListener('click', () => selectLfmRelease(r.name, r.artist, coverUrl, item));
       searchResultsEl.appendChild(item);
     }
@@ -5674,10 +5679,10 @@ async function doSearch() {
              onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1 1%22><rect fill=%22%231a1a1a%22 width=%221%22 height=%221%22/></svg>'">
         <div class="result-info">
           <div class="result-title">${escHtml(r.title)}</div>
-          <div class="result-sub">${escHtml(art)}${year?' · '+year:''}${r.country?' · '+r.country:''}</div>
+          <div class="result-sub">${escHtml(art)}${year?' Â· '+year:''}${r.country?' Â· '+r.country:''}</div>
         </div>
         <span class="result-source" style="font-size:8px;letter-spacing:1px;color:#555;flex-shrink:0">MB</span>
-        <span class="result-check" style="display:none">✓</span>`;
+        <span class="result-check" style="display:none">â</span>`;
       item.addEventListener('click', () => selectRelease(mbid, r.title, art, year, thumbUrl, item));
       searchResultsEl.appendChild(item);
     }
@@ -5685,25 +5690,25 @@ async function doSearch() {
 
   try {
     if (engine === 'lastfm') {
-      searchResultsEl.innerHTML = '<div id="search-status">Searching Last.fm…</div>';
+      searchResultsEl.innerHTML = '<div id="search-status">Searching Last.fmâ¦</div>';
       const results = await searchLastFm(album, artist);
       if (!results.length) { searchResultsEl.innerHTML = '<div id="search-status">No results found on Last.fm.</div>'; return; }
       renderLfm(results); return;
     }
     if (engine === 'musicbrainz') {
-      searchResultsEl.innerHTML = '<div id="search-status">Searching MusicBrainz…</div>';
+      searchResultsEl.innerHTML = '<div id="search-status">Searching MusicBrainzâ¦</div>';
       const q2 = album && artist ? `release:${album} AND artist:${artist}` : (album || artist);
       const releases2 = await searchMusicBrainz(q2);
       if (!releases2.length) { searchResultsEl.innerHTML = '<div id="search-status">No results found on MusicBrainz.</div>'; return; }
       renderMb(releases2); return;
     }
 
-    // ── AUTO: Last.fm primero, MusicBrainz de fallback ──
-    searchResultsEl.innerHTML = '<div id="search-status">Searching Last.fm…</div>';
+    // ââ AUTO: Last.fm primero, MusicBrainz de fallback ââ
+    searchResultsEl.innerHTML = '<div id="search-status">Searching Last.fmâ¦</div>';
     const lfmResults = await searchLastFm(album, artist);
     if (lfmResults.length) { renderLfm(lfmResults); return; }
 
-    searchResultsEl.innerHTML = '<div id="search-status">Trying MusicBrainz…</div>';
+    searchResultsEl.innerHTML = '<div id="search-status">Trying MusicBrainzâ¦</div>';
     const q = album && artist ? `release:${album} AND artist:${artist}` : (album || artist);
     const releases = await searchMusicBrainz(q);
     if (!releases.length) { searchResultsEl.innerHTML = '<div id="search-status">No results found.</div>'; return; }
@@ -5712,11 +5717,11 @@ async function doSearch() {
   } catch(e) {
     searchResultsEl.innerHTML = `<div id="search-status">Error: ${e.message}</div>`;
   } finally {
-    searchBtn.disabled = false; searchBtn.textContent = '🔍';
+    searchBtn.disabled = false; searchBtn.textContent = 'ð';
   }
 }
 
-// ── SELECT from Last.fm result ──
+// ââ SELECT from Last.fm result ââ
 async function selectLfmRelease(title, artist, coverUrl, itemEl) {
   searchResultsEl.querySelectorAll('.result-item').forEach(el => {
     el.querySelector('.result-check').style.display = 'none'; el.style.background = '';
@@ -5736,8 +5741,8 @@ async function selectLfmRelease(title, artist, coverUrl, itemEl) {
 
   const trackField = document.getElementById('input-tracks');
   const genreField = document.getElementById('input-genres');
-  trackField.value = 'Loading…'; trackField.disabled = true;
-  genreField.value = 'Loading…'; genreField.disabled = true;
+  trackField.value = 'Loadingâ¦'; trackField.disabled = true;
+  genreField.value = 'Loadingâ¦'; genreField.disabled = true;
 
   // Get full album info from Last.fm (tags + tracklist + year)
   const info = await getLastFmAlbumInfo(artist, title);
@@ -5769,13 +5774,13 @@ async function selectLfmRelease(title, artist, coverUrl, itemEl) {
     if (bigCover) coverUrl = bigCover;
   }
 
-  // Last.fm conserva una buena coincidencia de edición, pero sus archivos pueden ser
-  // chicos. Si iTunes encuentra el mismo álbum/artista, preferimos su arte grande.
+  // Last.fm conserva una buena coincidencia de ediciÃ³n, pero sus archivos pueden ser
+  // chicos. Si iTunes encuentra el mismo Ã¡lbum/artista, preferimos su arte grande.
   const itunesCover = await getHighResItunesCover(title, artist);
   if (itunesCover) coverUrl = itunesCover;
 
   if (year) document.getElementById('input-year').value = year;
-  document.getElementById('selected-sub-text').textContent = `${artist}${year ? ' · ' + year : ''}`;
+  document.getElementById('selected-sub-text').textContent = `${artist}${year ? ' Â· ' + year : ''}`;
   if (coverUrl) document.getElementById('selected-cover-thumb').src = coverUrl;
 
   trackField.disabled = false; trackField.value = tracks.join('\n');
@@ -5805,13 +5810,13 @@ async function selectRelease(mbid, title, artist, year, thumbUrl, itemEl) {
   const preview = document.getElementById('selected-preview');
   document.getElementById('selected-cover-thumb').src = thumbUrl;
   document.getElementById('selected-title-text').textContent = title;
-  document.getElementById('selected-sub-text').textContent   = `${artist}${year?' · '+year:''}`;
+  document.getElementById('selected-sub-text').textContent   = `${artist}${year?' Â· '+year:''}`;
   preview.classList.add('visible');
 
   const trackField = document.getElementById('input-tracks');
   const genreField = document.getElementById('input-genres');
-  trackField.value = 'Loading tracklist…'; trackField.disabled = true;
-  genreField.value = 'Loading genres…';   genreField.disabled = true;
+  trackField.value = 'Loading tracklistâ¦'; trackField.disabled = true;
+  genreField.value = 'Loading genresâ¦';   genreField.disabled = true;
 
   const [tracks, genres] = await Promise.all([getTracklist(mbid), getGenres(mbid)]);
 
@@ -5853,7 +5858,7 @@ function playRatingCeremony(album) {
   cover.alt = album.title || '';
   document.getElementById('ceremony-title').textContent = album.title;
   document.getElementById('ceremony-score').textContent = Number(album.score).toFixed(2);
-  document.getElementById('ceremony-tier').textContent = `${tier.label} · ${Number(album.score).toFixed(2)}`;
+  document.getElementById('ceremony-tier').textContent = `${tier.label} Â· ${Number(album.score).toFixed(2)}`;
 
   if (ratingCeremonyTimer) clearTimeout(ratingCeremonyTimer);
   ceremony.className = 'active';
@@ -5866,7 +5871,7 @@ function playRatingCeremony(album) {
   }, 2740);
 }
 
-// ── SAVE ──
+// ââ SAVE ââ
 document.getElementById('save-btn').addEventListener('click', () => {
   const title      = document.getElementById('input-title').value.trim();
   const artist     = document.getElementById('input-artist').value.trim();
@@ -5890,7 +5895,7 @@ document.getElementById('save-btn').addEventListener('click', () => {
   const genresRaw  = document.getElementById('input-genres').value.trim();
   const listenDate = isPending ? '' : document.getElementById('input-listen-date').value;
 
-  if (!title || !artist || (!isPending && isNaN(score))) { alert('Completa el título, artista y puntaje.'); return; }
+  if (!title || !artist || (!isPending && isNaN(score))) { alert('Completa el tÃ­tulo, artista y puntaje.'); return; }
 
   const tracks = tracksRaw.split('\n').map(t => t.trim()).filter(Boolean);
   const genres = genresRaw ? cleanGenres(genresRaw.split(',')) : [];
@@ -5918,7 +5923,7 @@ document.getElementById('save-btn').addEventListener('click', () => {
   // reset custom tier dropdown
   selectedTierId = null;
   const tdb = document.getElementById('tier-dropdown-btn');
-  tdb.querySelector('.tdb-label').textContent = '— Selecciona tier —';
+  tdb.querySelector('.tdb-label').textContent = 'â Selecciona tier â';
   tdb.querySelector('.tdb-label').style.color = '';
   tdb.querySelector('.tdb-swatch').style.background = '';
   tdb.classList.remove('has-value');
@@ -5954,7 +5959,7 @@ document.getElementById('rater-import-file').addEventListener('change', e => {
   reader.onload = ev => {
     try {
       const data = JSON.parse(ev.target.result);
-      if (!data._vaultImport) throw new Error('Este archivo no es un Vault import válido.\nExportalo desde Album Rater con "📤 Exportar al Vault".');
+      if (!data._vaultImport) throw new Error('Este archivo no es un Vault import vÃ¡lido.\nExportalo desde Album Rater con "ð¤ Exportar al Vault".');
 
       // Open add modal pre-filled
       editingAlbumId = null;
@@ -5983,7 +5988,7 @@ document.getElementById('rater-import-file').addEventListener('change', e => {
         selectedRelease = { coverUrl: data.coverUrl };
         document.getElementById('selected-cover-thumb').src = data.coverUrl;
         document.getElementById('selected-title-text').textContent = data.title;
-        document.getElementById('selected-sub-text').textContent   = `${data.artist}${data.year ? ' · ' + data.year : ''}`;
+        document.getElementById('selected-sub-text').textContent   = `${data.artist}${data.year ? ' Â· ' + data.year : ''}`;
         document.getElementById('selected-preview').classList.add('visible');
       }
 
@@ -5992,8 +5997,8 @@ document.getElementById('rater-import-file').addEventListener('change', e => {
         scoreModeIsTier = false;
         document.getElementById('score-input-wrap').style.display = 'block';
         document.getElementById('tier-input-wrap').style.display  = 'none';
-        document.getElementById('score-field-label').textContent  = 'Score (0–10)';
-        document.getElementById('score-mode-toggle').textContent  = '🔄 Tier directo';
+        document.getElementById('score-field-label').textContent  = 'Score (0â10)';
+        document.getElementById('score-mode-toggle').textContent  = 'ð Tier directo';
         document.getElementById('score-mode-toggle').classList.remove('tier-mode');
       }
 
@@ -6003,7 +6008,7 @@ document.getElementById('rater-import-file').addEventListener('change', e => {
       // Small toast
       const toast = document.createElement('div');
       toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#f0a830;color:#000;font-family:"DM Mono",monospace;font-size:12px;font-weight:600;padding:10px 20px;letter-spacing:1px;z-index:1199;pointer-events:none;opacity:0;transition:opacity .3s';
-      toast.textContent = `📤 ${data.title} importado desde Rater`;
+      toast.textContent = `ð¤ ${data.title} importado desde Rater`;
       document.body.appendChild(toast);
       requestAnimationFrame(() => { toast.style.opacity = '1'; });
       setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
@@ -6016,7 +6021,7 @@ document.getElementById('rater-import-file').addEventListener('change', e => {
   reader.readAsText(file);
 });
 
-// ── PENDING STATUS → HIDE SCORE ──
+// ââ PENDING STATUS â HIDE SCORE ââ
 function updateScoreFieldVisibility() {
   const isPending = document.getElementById('input-status').value === 'pending';
   document.getElementById('score-field-wrap').style.display       = isPending ? 'none' : '';
@@ -6024,7 +6029,7 @@ function updateScoreFieldVisibility() {
 }
 document.getElementById('input-status').addEventListener('change', updateScoreFieldVisibility);
 
-// ── HEADER CONTROLS ──
+// ââ HEADER CONTROLS ââ
 document.getElementById('header-search').addEventListener('input', e => {
   filterQuery = e.target.value.trim();
   buildTiersWithReveal();
@@ -6063,7 +6068,7 @@ document.getElementById('compare-btn').addEventListener('click', () => {
   buildTiersWithReveal();
 });
 
-// ── EXPORT / IMPORT ──
+// ââ EXPORT / IMPORT ââ
 document.getElementById('export-btn').addEventListener('click', () => {
   const data = JSON.stringify({ albums, nowPlayingId }, null, 2);
   const blob = new Blob([data], { type: 'application/json' });
@@ -6075,7 +6080,7 @@ document.getElementById('export-btn').addEventListener('click', () => {
 document.getElementById('import-btn').addEventListener('click', () => {
   document.getElementById('import-file').click();
 });
-// ── GENRE CLEANER (filtra tags basura de MusicBrainz) ──
+// ââ GENRE CLEANER (filtra tags basura de MusicBrainz) ââ
 function cleanGenres(genres) {
   if (!Array.isArray(genres)) return [];
   const junkPatterns = [
@@ -6096,8 +6101,8 @@ function cleanGenres(genres) {
   }, []);
 }
 
-// Un solo nombre canónico para el mismo género. Se deja el resto de géneros tal
-// como los escribió el usuario o la fuente, pero K-pop no se fragmenta en
+// Un solo nombre canÃ³nico para el mismo gÃ©nero. Se deja el resto de gÃ©neros tal
+// como los escribiÃ³ el usuario o la fuente, pero K-pop no se fragmenta en
 // "Kpop", "k pop", "K-POP", etc.
 function normalizeGenreName(value) {
   const label = String(value || '').trim();
@@ -6149,12 +6154,12 @@ document.getElementById('import-file').addEventListener('change', e => {
 });
 
 
-// ── IMAGE EXPORT ──
+// ââ IMAGE EXPORT ââ
 document.getElementById('img-export-btn').addEventListener('click', async () => {
   const btn = document.getElementById('img-export-btn');
   if (btn.classList.contains('exporting')) return;
   btn.classList.add('exporting');
-  btn.textContent = 'Rendering…';
+  btn.textContent = 'Renderingâ¦';
 
   try {
     await exportVaultImage();
@@ -6168,7 +6173,7 @@ document.getElementById('img-export-btn').addEventListener('click', async () => 
 });
 
 async function exportVaultImage() {
-  // ── Layout constants ──
+  // ââ Layout constants ââ
   const SCALE      = 3;          // retina multiplier
   const THUMB      = 80;         // album cover px (logical)
   const GAP        = 8;
@@ -6209,13 +6214,13 @@ async function exportVaultImage() {
     r.coverImgs = r.albums.map(() => allCovers[coverIdx++]);
   });
 
-  // ── Compute canvas width ──
+  // ââ Compute canvas width ââ
   // Try to fit nicely: aim for ~1400px logical width
   const TOTAL_W = 1400;
   const albumsW = TOTAL_W - LABEL_W - ROW_PAD_X * 2;
   const COLS = Math.min(COLS_MAX, Math.floor((albumsW + GAP) / (THUMB + GAP)));
 
-  // ── Compute each row height ──
+  // ââ Compute each row height ââ
   tierRows.forEach(r => {
     const rows = Math.ceil(r.albums.length / COLS);
     r.rowH = rows * (THUMB + GAP) - GAP + ROW_PAD_Y * 2;
@@ -6224,7 +6229,7 @@ async function exportVaultImage() {
 
   const totalH = HEADER_H + tierRows.reduce((s, r) => s + r.rowH + 1, 0); // +1 border
 
-  // ── Create canvas ──
+  // ââ Create canvas ââ
   const canvas  = document.createElement('canvas');
   canvas.width  = TOTAL_W  * SCALE;
   canvas.height = totalH   * SCALE;
@@ -6235,7 +6240,7 @@ async function exportVaultImage() {
   ctx.fillStyle = BG;
   ctx.fillRect(0, 0, TOTAL_W, totalH);
 
-  // ── Header ──
+  // ââ Header ââ
   ctx.fillStyle = '#111111';
   ctx.fillRect(0, 0, TOTAL_W, HEADER_H);
   ctx.strokeStyle = BORDER;
@@ -6252,10 +6257,10 @@ async function exportVaultImage() {
   ctx.font = `10px ${FONT_MONO}`;
   ctx.letterSpacing = '2px';
   ctx.textAlign = 'right';
-  ctx.fillText(`${albums.length} ALBUMS  ·  ${new Date().toISOString().slice(0,10)}`, TOTAL_W - ROW_PAD_X, HEADER_H / 2);
+  ctx.fillText(`${albums.length} ALBUMS  Â·  ${new Date().toISOString().slice(0,10)}`, TOTAL_W - ROW_PAD_X, HEADER_H / 2);
   ctx.textAlign = 'left';
 
-  // ── Tier rows ──
+  // ââ Tier rows ââ
   let y = HEADER_H;
 
   for (const r of tierRows) {
@@ -6332,7 +6337,7 @@ async function exportVaultImage() {
         ctx.font = '18px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('♪', cx + THUMB / 2, cy + THUMB / 2);
+        ctx.fillText('âª', cx + THUMB / 2, cy + THUMB / 2);
         ctx.textAlign = 'left';
         ctx.textBaseline = 'alphabetic';
       }
@@ -6382,7 +6387,7 @@ async function exportVaultImage() {
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
-// ── TOP 10 ──
+// ââ TOP 10 ââ
 let top10Mode = 'top10'; // 'top10' | 'per-tier'
 
 function renderTop10() {
@@ -6414,7 +6419,7 @@ function renderTop10() {
       hdr.style.setProperty('--tier-color', tier.color);
       hdr.innerHTML = `
         <span class="top10-tier-section-letter" style="color:${tier.color}">${tier.label}</span>
-        <span class="top10-tier-section-meta">${tier.range} · ${tierAlbums.length} shown</span>`;
+        <span class="top10-tier-section-meta">${tier.range} Â· ${tierAlbums.length} shown</span>`;
       list.appendChild(hdr);
 
       tierAlbums.forEach((album, idx) => {
@@ -6441,9 +6446,9 @@ function buildTop10Item(album, rank) {
          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1 1%22><rect fill=%22%231a1a1a%22 width=%221%22 height=%221%22/></svg>'">
     <div class="top10-info">
       <div class="top10-title">${escHtml(album.title)}</div>
-      <div class="top10-artist">${escHtml(album.artist)}${album.year?' · '+album.year:''}</div>
+      <div class="top10-artist">${escHtml(album.artist)}${album.year?' Â· '+album.year:''}</div>
     </div>
-    ${legendary?'<div class="top10-legendary-badge">⚡ 11</div>':''}
+    ${legendary?'<div class="top10-legendary-badge">â¡ 11</div>':''}
     <div class="top10-tier-badge" style="color:${tier?.color||'#fff'};border-color:${tier?.color||'#333'}">${tier?.label||'?'}</div>
     <div class="top10-score" style="color:${tier?.color||'#fff'}">${album.score}</div>`;
   item.addEventListener('click', () => {
@@ -6512,9 +6517,9 @@ function renderStats() {
     <div class="stat-card"><div class="stat-label">Total albums</div><div class="stat-value">${total}</div></div>
     <div class="stat-card"><div class="stat-label">Avg score</div><div class="stat-value" style="color:${getTier(parseFloat(avgScore)).color}">${avgScore}</div></div>
     <div class="stat-card"><div class="stat-label">Total listens</div><div class="stat-value">${allListens}</div></div>
-    <div class="stat-card"><div class="stat-label">Top artist</div><div class="stat-value" style="font-size:20px;line-height:1.2">${topArtist?topArtist[0]:'—'}</div><div class="stat-sub">${topArtist?topArtist[1]+' album'+(topArtist[1]>1?'s':''):''}</div></div>
-    <div class="stat-card"><div class="stat-label">Most played</div><div class="stat-value" style="font-size:16px;line-height:1.3">${mostListened?.title||'—'}</div><div class="stat-sub">${mostListened?(mostListened.replays||[]).length+(mostListened.listenDate?1:0)+' listen(s)':''}</div></div>
-    <div class="stat-card"><div class="stat-label">Highest tier</div><div class="stat-value" style="color:${topTier?.color||'var(--muted)'}">${topTier?.label||'—'}</div></div>`;
+    <div class="stat-card"><div class="stat-label">Top artist</div><div class="stat-value" style="font-size:20px;line-height:1.2">${topArtist?topArtist[0]:'â'}</div><div class="stat-sub">${topArtist?topArtist[1]+' album'+(topArtist[1]>1?'s':''):''}</div></div>
+    <div class="stat-card"><div class="stat-label">Most played</div><div class="stat-value" style="font-size:16px;line-height:1.3">${mostListened?.title||'â'}</div><div class="stat-sub">${mostListened?(mostListened.replays||[]).length+(mostListened.listenDate?1:0)+' listen(s)':''}</div></div>
+    <div class="stat-card"><div class="stat-label">Highest tier</div><div class="stat-value" style="color:${topTier?.color||'var(--muted)'}">${topTier?.label||'â'}</div></div>`;
 
   // tier bars
   const maxTierCount = Math.max(...TIERS.map(t => albums.filter(a => getTier(a.score)?.id===t.id).length), 1);
@@ -6569,10 +6574,10 @@ function renderStats() {
           <div class="tier-bar-track"><div class="tier-bar-fill" style="width:${(c/maxG*100).toFixed(1)}%;background:#7b6de0"></div></div>
           <div class="tier-bar-count">${c}</div>
         </div>`).join('')
-    : '<span style="color:var(--muted);font-size:10px">No genre data — add genres when editing albums</span>';
+    : '<span style="color:var(--muted);font-size:10px">No genre data â add genres when editing albums</span>';
 }
 
-// ── PENDING MODAL ──
+// ââ PENDING MODAL ââ
 function renderPending() {
   const pending = albums.filter(a => (a.status || 'listened') === 'pending');
   const list    = document.getElementById('pending-list');
@@ -6610,7 +6615,7 @@ function renderPending() {
 
     const markBtn = document.createElement('button');
     markBtn.className = 'pending-mark-btn';
-    markBtn.textContent = '✓ Mark as listened';
+    markBtn.textContent = 'â Mark as listened';
     markBtn.addEventListener('click', e => {
       e.stopPropagation();
       album.status = 'listened';
@@ -6650,12 +6655,12 @@ document.getElementById('pending-backdrop').addEventListener('click', e => {
   }
 });
 
-// ── SCORE HISTORY ──
+// ââ SCORE HISTORY ââ
 let scoreHistoryAlbum = null;
 
 function openScoreHistory(album) {
   scoreHistoryAlbum = album;
-  document.getElementById('scorehistory-album-name').textContent = `${album.title} — ${album.artist}`;
+  document.getElementById('scorehistory-album-name').textContent = `${album.title} â ${album.artist}`;
   renderScoreHistory();
   document.getElementById('sh-new-score').value = '';
   document.getElementById('scorehistory-backdrop').classList.add('open');
@@ -6754,7 +6759,7 @@ document.getElementById('btn-score-history').addEventListener('click', () => {
   openScoreHistory(currentDetailAlbum);
 });
 
-// ── LOAD FROM RATER DB ──
+// ââ LOAD FROM RATER DB ââ
 const RATER_BOT_SERVER = 'https://album-rater-bot.onrender.com';
 let dbSyncItems = []; // fetched from server
 let dbSyncSelected = new Set(); // indices selected by user
@@ -6770,14 +6775,14 @@ document.getElementById('load-db-btn').addEventListener('click', () => {
   document.getElementById('dbsync-backdrop').classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  // Si ya hay sesión con Discord, no hace falta escribir el usuario ni tocar "Buscar":
-  // se sabe quién sos, así que se busca de una.
+  // Si ya hay sesiÃ³n con Discord, no hace falta escribir el usuario ni tocar "Buscar":
+  // se sabe quiÃ©n sos, asÃ­ que se busca de una.
   const loggedIn = !!localStorage.getItem('auth_token');
   if (loggedIn && savedUser) {
-    document.getElementById('dbsync-status').textContent = 'Buscando tus álbumes…';
+    document.getElementById('dbsync-status').textContent = 'Buscando tus Ã¡lbumesâ¦';
     fetchFromRaterDb();
   } else {
-    document.getElementById('dbsync-status').textContent = savedUser ? 'Presiona Buscar para cargar tus álbumes.' : '';
+    document.getElementById('dbsync-status').textContent = savedUser ? 'Presiona Buscar para cargar tus Ã¡lbumes.' : '';
   }
 });
 
@@ -6789,12 +6794,12 @@ document.getElementById('dbsync-backdrop').addEventListener('click', e => {
 function updateAllTrackScores() {
   const btn = document.getElementById('dbsync-update-scores-btn');
   btn.disabled = true;
-  btn.textContent = '⌛ Actualizando…';
+  btn.textContent = 'â Actualizandoâ¦';
 
-  // Safety timeout — reset after 5s if stuck
+  // Safety timeout â reset after 5s if stuck
   const timeout = setTimeout(() => {
     btn.disabled = false;
-    btn.textContent = '🔄 Actualizar scores de tracks';
+    btn.textContent = 'ð Actualizar scores de tracks';
   }, 5000);
 
   let updated = 0;
@@ -6812,9 +6817,9 @@ function updateAllTrackScores() {
 
     if (updated) {
       saveAlbums();
-      showToast(`✓ ${updated} álbum${updated !== 1 ? 'es' : ''} actualizados`);
+      showToast(`â ${updated} Ã¡lbum${updated !== 1 ? 'es' : ''} actualizados`);
     } else {
-      showToast('No se encontraron álbumes para actualizar');
+      showToast('No se encontraron Ã¡lbumes para actualizar');
     }
   } catch(e) {
     console.error(e);
@@ -6823,7 +6828,7 @@ function updateAllTrackScores() {
 
   clearTimeout(timeout);
   btn.disabled = false;
-  btn.textContent = '🔄 Actualizar scores de tracks';
+  btn.textContent = 'ð Actualizar scores de tracks';
 }
 
 function scrollHeader(dir) {
@@ -6860,14 +6865,14 @@ document.getElementById('dbsync-user-input').addEventListener('keydown', e => {
 
 async function fetchFromRaterDb() {
   const userId = document.getElementById('dbsync-user-input').value.trim();
-  if (!userId) { document.getElementById('dbsync-status').textContent = '⚠ Ingresa tu nombre de usuario.'; return; }
+  if (!userId) { document.getElementById('dbsync-status').textContent = 'â  Ingresa tu nombre de usuario.'; return; }
 
   localStorage.setItem('discord_user_id', userId);
 
   const btn = document.getElementById('dbsync-fetch-btn');
   btn.disabled = true;
-  btn.textContent = '…';
-  document.getElementById('dbsync-status').textContent = 'Buscando en la base de datos…';
+  btn.textContent = 'â¦';
+  document.getElementById('dbsync-status').textContent = 'Buscando en la base de datosâ¦';
   document.getElementById('dbsync-list').innerHTML = '';
   document.getElementById('dbsync-actions').style.display = 'none';
   dbSyncItems = [];
@@ -6877,10 +6882,10 @@ async function fetchFromRaterDb() {
     let res;
     const statusEl = document.getElementById('dbsync-status');
 
-    // Try fetching — if it fails (Render sleeping), wait and retry
+    // Try fetching â if it fails (Render sleeping), wait and retry
     const attemptFetch = async (attempt) => {
       if (attempt > 1) {
-        statusEl.textContent = `⏳ El servidor está despertando… intentando de nuevo (${attempt}/3)`;
+        statusEl.textContent = `â³ El servidor estÃ¡ despertandoâ¦ intentando de nuevo (${attempt}/3)`;
         await new Promise(r => setTimeout(r, attempt === 2 ? 8000 : 12000));
       }
       return fetch(`${RATER_BOT_SERVER}/history?user_id=${encodeURIComponent(userId)}`, { signal: AbortSignal.timeout(25000) });
@@ -6898,8 +6903,8 @@ async function fetchFromRaterDb() {
     if (!res || !res.ok) throw new Error(`Error del servidor: ${res?.status}`);
     const rows = await res.json();
     if (!Array.isArray(rows) || !rows.length) {
-      document.getElementById('dbsync-status').textContent = 'No se encontraron álbumes para ese usuario.';
-      btn.disabled = false; btn.textContent = '🔍 Buscar'; return;
+      document.getElementById('dbsync-status').textContent = 'No se encontraron Ã¡lbumes para ese usuario.';
+      btn.disabled = false; btn.textContent = 'ð Buscar'; return;
     }
 
     // Convert DB rows to vault-compatible objects
@@ -6932,12 +6937,12 @@ async function fetchFromRaterDb() {
       };
     });
 
-    document.getElementById('dbsync-status').textContent = `${dbSyncItems.length} álbum${dbSyncItems.length !== 1 ? 'es' : ''} encontrado${dbSyncItems.length !== 1 ? 's' : ''}.`;
+    document.getElementById('dbsync-status').textContent = `${dbSyncItems.length} Ã¡lbum${dbSyncItems.length !== 1 ? 'es' : ''} encontrado${dbSyncItems.length !== 1 ? 's' : ''}.`;
     renderDbSyncList();
-    btn.disabled = false; btn.textContent = '🔍 Buscar';
+    btn.disabled = false; btn.textContent = 'ð Buscar';
   } catch(e) {
-    document.getElementById('dbsync-status').textContent = '⚠ No se pudo conectar con el servidor. Intentá de nuevo en unos segundos.';
-    btn.disabled = false; btn.textContent = '🔍 Buscar';
+    document.getElementById('dbsync-status').textContent = 'â  No se pudo conectar con el servidor. IntentÃ¡ de nuevo en unos segundos.';
+    btn.disabled = false; btn.textContent = 'ð Buscar';
   }
 }
 
@@ -6954,7 +6959,7 @@ function hasReviewUpdate(item, existing) {
 function isAlreadyInVault(item) {
   const dup = getVaultDuplicate(item);
   if (!dup) return false;
-  // Un score igual solo está al día si tampoco llegó una reseña nueva desde Rater.
+  // Un score igual solo estÃ¡ al dÃ­a si tampoco llegÃ³ una reseÃ±a nueva desde Rater.
   return Math.abs(dup.score - item.score) < 0.001 && !hasReviewUpdate(item, dup);
 }
 function isUpdateAvailable(item) {
@@ -6969,8 +6974,8 @@ function hasScoreUpdate(item, existing = getVaultDuplicate(item)) {
 }
 function shouldShowInDbSync(item) {
   const existing = getVaultDuplicate(item);
-  // No repitas álbumes ya sincronizados, pero sí ofrecé cualquier cambio que
-  // todavía no llegó al Vault: un re-score o una reseña nueva/editada.
+  // No repitas Ã¡lbumes ya sincronizados, pero sÃ­ ofrecÃ© cualquier cambio que
+  // todavÃ­a no llegÃ³ al Vault: un re-score o una reseÃ±a nueva/editada.
   return !existing || hasScoreUpdate(item, existing) || hasReviewUpdate(item, existing);
 }
 
@@ -6989,12 +6994,12 @@ function renderDbSyncList() {
   visibleItems.forEach(({ i }) => dbSyncSelected.add(i));
 
   if (!visibleItems.length) {
-    document.getElementById('dbsync-status').textContent = 'Todos tus álbumes de la base ya están al día en el Vault.';
+    document.getElementById('dbsync-status').textContent = 'Todos tus Ã¡lbumes de la base ya estÃ¡n al dÃ­a en el Vault.';
     document.getElementById('dbsync-actions').style.display = 'none';
     return;
   }
 
-  document.getElementById('dbsync-status').textContent = visibleItems.length + ' álbum' + (visibleItems.length !== 1 ? 'es' : '') + ' nuevo' + (visibleItems.length !== 1 ? 's' : '') + ' o con actualización disponible' + (visibleItems.length !== 1 ? 's' : '') + '.';
+  document.getElementById('dbsync-status').textContent = visibleItems.length + ' Ã¡lbum' + (visibleItems.length !== 1 ? 'es' : '') + ' nuevo' + (visibleItems.length !== 1 ? 's' : '') + ' o con actualizaciÃ³n disponible' + (visibleItems.length !== 1 ? 's' : '') + '.';
 
   visibleItems.forEach(({ item, i }) => {
     const alreadyIn    = isAlreadyInVault(item);
@@ -7017,18 +7022,18 @@ function renderDbSyncList() {
       (alreadyIn  ? ' already-in-check' :
        updateAvail ? ' update-check' + (selected ? ' selected' : '') :
        (selected ? ' selected' : ''));
-    checkEl.textContent = (selected || alreadyIn) ? '✓' : (updateAvail ? '↑' : '');
+    checkEl.textContent = (selected || alreadyIn) ? 'â' : (updateAvail ? 'â' : '');
 
     if (!alreadyIn) {
       checkEl.addEventListener('click', () => {
         if (dbSyncSelected.has(i)) {
           dbSyncSelected.delete(i);
           checkEl.classList.remove('selected');
-          checkEl.textContent = updateAvail ? '↑' : '';
+          checkEl.textContent = updateAvail ? 'â' : '';
         } else {
           dbSyncSelected.add(i);
           checkEl.classList.add('selected');
-          checkEl.textContent = '✓';
+          checkEl.textContent = 'â';
         }
         updateDbSyncCount();
       });
@@ -7043,7 +7048,7 @@ function renderDbSyncList() {
     info.className = 'dbsync-info';
     info.innerHTML = `
       <div class="dbsync-title">${escHtml(item.title)}</div>
-      <div class="dbsync-meta">${escHtml(item.artist)}${item.year ? ' · ' + item.year : ''}${item.genre ? ' · ' + item.genre : ''}</div>`;
+      <div class="dbsync-meta">${escHtml(item.artist)}${item.year ? ' Â· ' + item.year : ''}${item.genre ? ' Â· ' + item.genre : ''}</div>`;
 
     const tierEl = document.createElement('div');
     tierEl.className = 'dbsync-tier';
@@ -7058,7 +7063,7 @@ function renderDbSyncList() {
     if (alreadyIn) {
       const tag = document.createElement('div');
       tag.className = 'dbsync-already-tag';
-      tag.textContent = '✓ ya en Vault';
+      tag.textContent = 'â ya en Vault';
       div.appendChild(checkEl);
       div.appendChild(thumb);
       div.appendChild(info);
@@ -7071,8 +7076,8 @@ function renderDbSyncList() {
       tag.className = 'dbsync-update-tag';
       const scoreChanged = Math.abs(parseFloat(existing.score) - parseFloat(item.score)) >= 0.001;
       tag.textContent = scoreChanged
-        ? `↑ ${existing.score.toFixed(2)} → ${item.score.toFixed(2)}`
-        : '✎ reseña actualizada';
+        ? `â ${existing.score.toFixed(2)} â ${item.score.toFixed(2)}`
+        : 'â reseÃ±a actualizada';
       div.appendChild(checkEl);
       div.appendChild(thumb);
       div.appendChild(info);
@@ -7195,7 +7200,7 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
   refreshGenreFilter();
   closeDbSync();
 
-  // Si importaste varios a la vez, celebramos la última incorporación sin
+  // Si importaste varios a la vez, celebramos la Ãºltima incorporaciÃ³n sin
   // encadenar muchas ceremonias seguidas.
   if (importedAlbums.length) {
     setTimeout(() => playRatingCeremony(importedAlbums[importedAlbums.length - 1]), 120);
@@ -7206,7 +7211,7 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
   if (updated) parts.push(`${updated} actualizado${updated !== 1 ? 's' : ''}`);
   const toast = document.createElement('div');
   toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#3ab870;color:#000;font-family:"DM Mono",monospace;font-size:12px;font-weight:600;padding:10px 24px;letter-spacing:1px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s';
-  toast.textContent = `☁ ${parts.join(' · ')} desde la base de datos`;
+  toast.textContent = `â ${parts.join(' Â· ')} desde la base de datos`;
   document.body.appendChild(toast);
   requestAnimationFrame(() => { toast.style.opacity = '1'; });
   setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3500);
@@ -7232,22 +7237,22 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
   }, { passive: true });
 })();
 
-// ── SCROLL HINT ──
+// ââ SCROLL HINT ââ
 const hint = document.getElementById('scroll-hint');
 window.addEventListener('scroll', () => {
   hint.classList.toggle('hidden', window.scrollY > 80);
 }, { passive:true });
 
-// ── INIT ──
-// "Despertar" al bot en Render apenas se carga la página: un GET liviano a la raíz,
+// ââ INIT ââ
+// "Despertar" al bot en Render apenas se carga la pÃ¡gina: un GET liviano a la raÃ­z,
 // disparado en paralelo sin esperar respuesta. Render duerme el servicio gratuito
 // tras inactividad, y el primer request real (login, perfil, etc.) puede tardar
-// varios segundos en ese caso — este ping adelanta ese arranque para cuando el
+// varios segundos en ese caso â este ping adelanta ese arranque para cuando el
 // usuario realmente lo necesite.
 if (new URLSearchParams(location.search).get('guest') !== '1') fetch(`${BOT_SERVER}/`).catch(() => {});
 loadAlbums();
 checkAuth();
-// Auto-arreglo de portadas rotas contra la DB del Rater — en segundo plano, no
+// Auto-arreglo de portadas rotas contra la DB del Rater â en segundo plano, no
 // bloquea el render inicial ni se avisa al usuario si no encuentra nada.
 if (!isGuestMode) autoRefreshBrokenCovers();
 // Wire up the reveal version globally after everything is loaded
