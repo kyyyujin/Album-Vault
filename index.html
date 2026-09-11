@@ -2089,7 +2089,8 @@
 
 
   /* PROFILE V3.1 — estadísticas integradas en el hero */
-  #profile-banner { height:clamp(500px,48vw,650px)!important; }
+  /* PC: hero más compacto; tablet y teléfono mantienen sus reglas propias. */
+  #profile-banner { height:clamp(375px,36vw,488px)!important; }
   .profile-hero-content { bottom:174px!important; padding-bottom:0!important; }
   #profile-banner > .profile-stats-grid {
     display:grid!important;
@@ -2422,7 +2423,6 @@
       <section class="profile-panel"><div class="profile-tier-panel"><div class="profile-panel-head"><span class="profile-panel-title">Distribución por tier</span></div><div id="profile-tier-dist"></div></div></section>
       <section class="profile-panel profile-activity-panel"><div class="profile-panel-head"><span class="profile-panel-title">Actividad reciente</span><span class="profile-panel-kicker">fechas reales</span></div><div id="profile-recent-row" class="profile-activity-list"></div></section>
     </div>
-    <section id="profile-editorial" class="profile-editorial" hidden><div class="profile-editorial-quote" id="profile-editorial-copy"></div><div class="profile-editorial-note">Desde el perfil de <span id="profile-editorial-user"></span></div></section>
     <section id="profile-pinned-section" style="margin-top:36px;"><div class="profile-panel-head" style="padding-left:0;padding-right:0;"><div><span class="profile-panel-title">Favoritos personales</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">seleccionados por vos</span></div><button id="profile-edit-pinned-btn" class="profile-panel-action">Editar</button></div><div id="profile-pinned-row" class="profile-album-grid"></div><p id="profile-pinned-empty" style="display:none;color:#788399;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no elegiste favoritos. Tocá “Editar” para elegir hasta 10.</p></section>
     <section id="profile-shelves-section" class="profile-shelf-wrap"><div class="profile-panel-head" style="padding-left:0;padding-right:0;"><span class="profile-panel-title">Estanterías</span><button id="profile-new-shelf-btn" class="profile-panel-action">+ Nueva</button></div><div id="profile-shelves-list" style="margin-top:14px;display:flex;flex-direction:column;gap:28px;"></div><p id="profile-shelves-empty" style="display:none;color:#788399;font-family:'DM Mono',monospace;font-size:11px;margin-top:8px;">Todavía no creaste ninguna estantería.</p></section>
     <div id="profile-own-footer" style="margin-top:44px;text-align:center;"><span onclick="logoutVaultAuth()" style="color:#e05050;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer;">Cerrar sesión</span></div>
@@ -3165,9 +3165,6 @@ function renderOwnProfile() {
   document.getElementById('profile-banner').style.backgroundImage = vaultProfile.banner ? `url(${vaultProfile.banner})` : '';
   document.getElementById('profile-bio-display').textContent = vaultProfile.bio || 'Sin descripción todavía.';
   document.getElementById('profile-hero-bio').textContent = vaultProfile.bio || 'Tu archivo personal de música.';
-  document.getElementById('profile-editorial-copy').textContent = vaultProfile.bio || '';
-  document.getElementById('profile-editorial-user').textContent = readOnly ? 'Album Vault' : (localStorage.getItem('discord_user_id') || '');
-  document.getElementById('profile-editorial').hidden = !(vaultProfile.bio || '').trim();
   renderProfileStats(albums, vaultProfile);
   renderProfileAlbumRows(albums, vaultProfile, readOnly);
   renderProfileShelves(albums, vaultProfile, readOnly);
@@ -3204,9 +3201,6 @@ async function openForeignProfile(discordUsername) {
     document.getElementById('profile-banner').style.backgroundImage = fProfile.banner ? `url(${fProfile.banner})` : '';
     document.getElementById('profile-bio-display').textContent = fProfile.bio || 'Sin descripción todavía.';
     document.getElementById('profile-hero-bio').textContent = fProfile.bio || 'Perfil musical de la comunidad.';
-    document.getElementById('profile-editorial-copy').textContent = fProfile.bio || '';
-    document.getElementById('profile-editorial-user').textContent = data.discord_username || discordUsername;
-    document.getElementById('profile-editorial').hidden = !(fProfile.bio || '').trim();
     document.getElementById('profile-bio-editor').style.display = 'none';
     document.getElementById('profile-bio-display').style.display = 'block';
     renderProfileStats(fAlbums, fProfile);
