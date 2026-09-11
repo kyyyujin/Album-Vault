@@ -2185,8 +2185,11 @@
       scroll-snap-align:none!important;
     }
     #profile-banner > .profile-stats-grid #stat-card-streak { display:none!important; }
-    #profile-banner > .profile-stats-grid .profile-segstat-text { padding:10px!important; }
-    #profile-banner > .profile-stats-grid .profile-segstat-value { font-size:28px!important; }
+    /* Reservar una columna real para el icono evita que se cruce con 114/8.85. */
+    #profile-banner > .profile-stats-grid .profile-segstat-text { padding:9px 9px 8px 42px!important; }
+    #profile-banner > .profile-stats-grid .profile-segstat-value { font-size:26px!important; }
+    #profile-banner > .profile-stats-grid #profile-stat-total,
+    #profile-banner > .profile-stats-grid #profile-stat-avg { font-size:25px!important;letter-spacing:0!important; }
     #profile-banner > .profile-stats-grid .profile-segstat-value-sm { font-size:12px!important;line-height:1.05!important; }
     #profile-banner > .profile-stats-grid .profile-segstat-label { margin-top:3px!important;font-size:7px!important;letter-spacing:.1em!important; }
     #profile-banner > .profile-stats-grid .profile-segstat::before { width:22px!important;height:22px!important;left:10px!important;top:9px!important;font-size:11px!important;border-radius:8px!important; }
@@ -2996,7 +2999,9 @@ async function syncVaultCollectionFromServer() {
   if (!remote) return;
   albums       = remote.albums       || [];
   nowPlayingId = remote.nowPlayingId || null;
+  const genresNormalized = normalizeCollectionGenres(albums);
   try { localStorage.setItem('album_vault_v3', JSON.stringify(remote)); } catch(e) {}
+  if (genresNormalized) queueVaultCollectionSync();
   buildTiers();
   updateNowPlayingBar();
   refreshGenreFilter();
@@ -3152,6 +3157,7 @@ async function openForeignProfile(discordUsername) {
 
     const fProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', shelves: [], ...(data.profile || {}) };
     const fAlbums  = (data.collection && data.collection.albums) || [];
+    normalizeCollectionGenres(fAlbums);
 
     applyAccentColor(fProfile.accentColor || '#c8f060');
     document.getElementById('profile-avatar-img').src = data.discord_avatar || '';
@@ -3542,7 +3548,7 @@ function renderProfileStats(albumList, profile) {
   const avg = total ? albumList.reduce((sum, album) => sum + (Number(album.score) || 0), 0) / total : null;
   document.getElementById('profile-stat-avg').textContent = avg === null ? '–' : avg.toFixed(2);
 
-  const genreCounts = countBy(albumList, album => (album.genres || []).filter(Boolean));
+  const genreCounts = countBy(albumList, album => cleanGenres(album.genres));
   const artistCounts = countBy(albumList, album => album.artist ? [album.artist] : []);
   const topGenre = sortedCounts(genreCounts)[0];
   const topArtist = sortedCounts(artistCounts)[0];
@@ -4333,6 +4339,7 @@ function loadAlbums() {
           ? album.coverUrl.replace(/\\d+x\\d+bb/i, '1200x1200bb')
           : album.coverUrl;
         if (nextCover !== album.coverUrl) { album.coverUrl = nextCover; upgraded = true; }
+        if (normalizeAlbumGenres(album)) upgraded = true;
       });
       if (upgraded) localStorage.setItem('album_vault_v3', JSON.stringify({ albums, nowPlayingId }));
     }
@@ -4344,6 +4351,7 @@ function loadAlbums() {
 }
 function saveAlbums() {
   if (isGuestMode) return;
+  normalizeCollectionGenres(albums);
   try { localStorage.setItem('album_vault_v3', JSON.stringify({ albums, nowPlayingId })); }
   catch(e) { console.error('Storage error:', e); }
   queueVaultCollectionSync();
@@ -4419,10 +4427,10 @@ async function getGenres(mbid) {
     const rgRes = await fetch(`${MB_BASE}/release-group/${rgid}?inc=tags&fmt=json`, { headers: MB_HEADERS });
     if (!rgRes.ok) return [];
     const rgData = await rgRes.json();
-    return (rgData.tags || [])
+    return cleanGenres((rgData.tags || [])
       .sort((a, b) => b.count - a.count)
       .slice(0, 4)
-      .map(t => t.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '));
+      .map(t => t.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')));
   } catch(e) { return []; }
 }
 
@@ -4616,7 +4624,7 @@ function getVisibleAlbums() {
     );
   }
   if (filterGenre) {
-    list = list.filter(a => (a.genres||[]).some(g => g.toLowerCase() === filterGenre.toLowerCase()));
+    list = list.filter(a => cleanGenres(a.genres).some(g => g.toLowerCase() === filterGenre.toLowerCase()));
   }
   if (filterStatus) {
     list = list.filter(a => (a.status||'listened') === filterStatus);
@@ -4642,7 +4650,7 @@ function getLastListened(album) {
 // ── GENRE FILTER ──
 function refreshGenreFilter() {
   const all = new Set();
-  albums.forEach(a => (a.genres||[]).forEach(g => all.add(g)));
+  albums.forEach(a => cleanGenres(a.genres).forEach(g => all.add(g)));
   const sel = document.getElementById('genre-filter');
   const cur = sel.value;
   sel.innerHTML = '<option value="">All genres</option>';
@@ -5709,7 +5717,7 @@ async function selectLfmRelease(title, artist, coverUrl, itemEl) {
     // Tags/genres
     const lfmTags = info.tags?.tag;
     const tagList = Array.isArray(lfmTags) ? lfmTags : (lfmTags ? [lfmTags] : []);
-    genres = tagList.slice(0, 4).map(t => t.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '));
+    genres = cleanGenres(tagList.slice(0, 4).map(t => t.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')));
 
     // Wiki published year
     const wiki = info.wiki?.published;
@@ -5847,7 +5855,7 @@ document.getElementById('save-btn').addEventListener('click', () => {
   if (!title || !artist || (!isPending && isNaN(score))) { alert('Completa el título, artista y puntaje.'); return; }
 
   const tracks = tracksRaw.split('\n').map(t => t.trim()).filter(Boolean);
-  const genres = genresRaw ? genresRaw.split(',').map(g => g.trim()).filter(Boolean) : [];
+  const genres = genresRaw ? cleanGenres(genresRaw.split(',')) : [];
 
   let newlySavedAlbum = null;
   if (editingAlbumId) {
@@ -6038,12 +6046,44 @@ function cleanGenres(genres) {
     /^\d{4}$/, // pure year like "2024"
     /^ep$/i, /^lp$/i, /^y$/i, /^aoty$/i,
   ];
-  return genres.filter(g => {
-    if (!g || typeof g !== 'string') return false;
+  const unique = new Set();
+  return genres.reduce((clean, g) => {
+    if (!g || typeof g !== 'string') return clean;
     const trimmed = g.trim();
-    if (!trimmed) return false;
-    return !junkPatterns.some(p => p.test(trimmed));
-  });
+    if (!trimmed || junkPatterns.some(p => p.test(trimmed))) return clean;
+    const normalized = normalizeGenreName(trimmed);
+    const key = normalized.toLocaleLowerCase();
+    if (!unique.has(key)) { unique.add(key); clean.push(normalized); }
+    return clean;
+  }, []);
+}
+
+// Un solo nombre canónico para el mismo género. Se deja el resto de géneros tal
+// como los escribió el usuario o la fuente, pero K-pop no se fragmenta en
+// "Kpop", "k pop", "K-POP", etc.
+function normalizeGenreName(value) {
+  const label = String(value || '').trim();
+  const key = label
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLocaleLowerCase()
+    .replace(/[\s_.-]+/g, '');
+  return key === 'kpop' || key === 'kpopmusic' ? 'K-pop' : label;
+}
+
+function normalizeAlbumGenres(album) {
+  if (!album || typeof album !== 'object') return false;
+  const before = Array.isArray(album.genres) ? album.genres : [];
+  const after = cleanGenres(before);
+  const changed = before.length !== after.length || before.some((genre, index) => genre !== after[index]);
+  if (changed) album.genres = after;
+  return changed;
+}
+
+function normalizeCollectionGenres(collection) {
+  let changed = false;
+  (collection || []).forEach(album => { if (normalizeAlbumGenres(album)) changed = true; });
+  return changed;
 }
 
 document.getElementById('import-file').addEventListener('change', e => {
@@ -6481,7 +6521,7 @@ function renderStats() {
 
   // genre breakdown
   const genreMap = {};
-  albums.forEach(a => (a.genres||[]).forEach(g => { genreMap[g]=(genreMap[g]||0)+1; }));
+  albums.forEach(a => cleanGenres(a.genres).forEach(g => { genreMap[g]=(genreMap[g]||0)+1; }));
   const sortedGenres = Object.entries(genreMap).sort((a,b)=>b[1]-a[1]);
   const maxG = Math.max(...Object.values(genreMap),1);
   document.getElementById('stats-genres').innerHTML = sortedGenres.length
@@ -6850,7 +6890,7 @@ async function fetchFromRaterDb() {
         listenDate: row.created_at ? new Date(row.created_at).toISOString().slice(0,10) : '',
         addedAt:   row.created_at ? new Date(row.created_at).getTime() : Date.now(),
         status:    'listened',
-        genres:    row.genre ? row.genre.split(/[,/]/).map(g => g.trim()).filter(Boolean) : [],
+        genres:    row.genre ? cleanGenres(row.genre.split(/[,/]/)) : [],
       };
     });
 
