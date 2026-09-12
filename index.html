@@ -3020,18 +3020,24 @@ function renderUserSessionChip() {
 
 // ── Colección del Vault: sincronización con el backend (además de localStorage) ──
 let vaultSyncTimer = null;
+let vaultSyncInFlight = false;
+let vaultSyncQueuedAfterFlight = false;
 function queueVaultCollectionSync() {
   const token = localStorage.getItem('auth_token');
   if (!token) return;
   clearTimeout(vaultSyncTimer);
-  vaultSyncTimer = setTimeout(() => { flushVaultCollectionSync(); }, 1500);
+  // Una colección de cientos de álbumes no debe subirse varias veces mientras
+  // el usuario hace cambios consecutivos. Se conserva solo el estado final.
+  vaultSyncTimer = setTimeout(() => { flushVaultCollectionSync(); }, 5000);
 }
 
 async function flushVaultCollectionSync(collectionOverride) {
   clearTimeout(vaultSyncTimer);
   const token = localStorage.getItem('auth_token');
   if (!token) return;
+  if (vaultSyncInFlight) { vaultSyncQueuedAfterFlight = true; return; }
   const collection = collectionOverride || { albums, nowPlayingId };
+  vaultSyncInFlight = true;
   try {
     const res = await fetch(`${BOT_SERVER}/vault-collection`, {
       method: 'POST',
@@ -3052,6 +3058,13 @@ async function flushVaultCollectionSync(collectionOverride) {
       console.warn('[vault-sync] El servidor respondió', res.status, '— la colección solo quedó guardada localmente por ahora.');
     }
   } catch (e) { /* backend dormido o sin conexión — localStorage ya lo tiene igual, se reintentará */ }
+  finally {
+    vaultSyncInFlight = false;
+    if (vaultSyncQueuedAfterFlight) {
+      vaultSyncQueuedAfterFlight = false;
+      queueVaultCollectionSync();
+    }
+  }
 }
 
 async function fetchRemoteVaultCollection() {
@@ -3086,14 +3099,8 @@ async function syncVaultCollectionFromServer() {
   refreshGenreFilter();
 }
 
-window.addEventListener('beforeunload', () => {
-  const token = localStorage.getItem('auth_token');
-  if (!token) return;
-  try {
-    const payload = JSON.stringify({ token, collection: { albums, nowPlayingId } });
-    navigator.sendBeacon(`${BOT_SERVER}/vault-collection`, new Blob([payload], { type: 'application/json' }));
-  } catch (e) {}
-});
+// No se usa sendBeacon al cerrar: duplicaba una colección completa junto a un
+// sync en curso y podía disparar varios cuerpos grandes contra el backend.
 
 async function initVaultApp() {
   renderUserSessionChip();
