@@ -3127,7 +3127,15 @@ async function initVaultApp() {
   await syncVaultCollectionFromServer();
   vaultProfileSyncPromise = syncVaultProfileFromServer();
   await vaultProfileSyncPromise;
-  if (isAchievementBetaUser()) { await flushAchievementOutbox(); await refreshAchievements(true); }
+  if (isAchievementBetaUser()) {
+    // Phase 1 tracks forward from its activation point.  A retry queue created
+    // by an older build has no trustworthy relationship to that cutoff, so
+    // discard it once when moving to the zero-history tracking epoch.
+    initializeAchievementTrackingEpoch();
+    await refreshAchievements(true);
+    await flushAchievementOutbox();
+    await refreshAchievements();
+  }
   document.getElementById('profile-avatar-img').src = localStorage.getItem(DISCORD_AVATAR_KEY) || '';
   document.getElementById('profile-username').textContent = localStorage.getItem('discord_user_id') || '';
   // El padding del header se calcula acá (no en window.load) porque hasta este punto
@@ -4514,6 +4522,7 @@ function saveAlbums() {
 // Phase 1 outbox: a network retry keeps the exact same idempotency key. The
 // backend, never this browser, decides whether an achievement unlocks.
 const ACHIEVEMENT_OUTBOX_KEY = 'album_vault_achievement_outbox_v1';
+const ACHIEVEMENT_TRACKING_EPOCH_KEY = 'album_vault_achievement_tracking_epoch_v2';
 let achievementState = null;
 const ACHIEVEMENT_BETA_USERNAME = 'kyujin';
 function isAchievementBetaUser() { return (localStorage.getItem('discord_user_id') || '').trim().toLowerCase() === ACHIEVEMENT_BETA_USERNAME; }
@@ -4525,6 +4534,11 @@ function makeAchievementEvent(type, album, extra={}, source='vault') {
 }
 function getAchievementOutbox() { try { return JSON.parse(localStorage.getItem(ACHIEVEMENT_OUTBOX_KEY)||'[]'); } catch(e) { return []; } }
 function setAchievementOutbox(items) { localStorage.setItem(ACHIEVEMENT_OUTBOX_KEY,JSON.stringify(items)); }
+function initializeAchievementTrackingEpoch() {
+  if (localStorage.getItem(ACHIEVEMENT_TRACKING_EPOCH_KEY)) return;
+  setAchievementOutbox([]);
+  localStorage.setItem(ACHIEVEMENT_TRACKING_EPOCH_KEY, '1');
+}
 async function flushAchievementOutbox() {
   if (!isAchievementBetaUser()) return;
   const token=localStorage.getItem('auth_token'), queue=getAchievementOutbox(); if(!token||!queue.length||isGuestMode) return;
