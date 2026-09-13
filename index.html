@@ -3678,11 +3678,11 @@ function renderAchievements() {
   const keys=(achievementState.showcase||[]).map(x=>x.achievement_key); const unlocked=achievementState.unlocks||[];
   const visible=(keys.length?keys:[...new Set(unlocked.map(x=>x.achievement_key))].slice(0,4)); panel.innerHTML='';
   if(!visible.length) { panel.innerHTML='<div class="achievement-empty">Tus primeras historias aparecerán acá cuando puntúes álbumes.</div>'; return; }
-  visible.forEach(key=>{ const d=achievementDefinition(key); if(!d)return; const u=unlocked.filter(x=>x.achievement_key===key).sort((a,b)=>b.level-a.level)[0]; const card=document.createElement('div'); card.className='achievement-chip'; card.dataset.rarity=d.rarity; card.innerHTML=`<b>${escHtml(d.title)}${u?.level>1?' '+['I','II','III','IV','V'][u.level-1]:''}</b><span>${escHtml(d.rarity)}</span>`; panel.appendChild(card); });
+  visible.forEach(key=>{ const d=achievementDefinition(key); if(!d)return; const u=unlocked.filter(x=>x.achievement_key===key).sort((a,b)=>b.level-a.level)[0]; const title=u?.snapshot?.display_title||d.title, rarity=u?.snapshot?.level_rarity||d.rarity; const card=document.createElement('div'); card.className='achievement-chip'; card.dataset.rarity=rarity; card.innerHTML=`<b>${escHtml(title)}${u?.level>1?' '+['I','II','III','IV','V'][u.level-1]:''}</b><span>${escHtml(rarity)}</span>`; panel.appendChild(card); });
 }
 function openAchievementVault() { if(!achievementState) { refreshAchievements(); return; } achievementShowcaseDraft=(achievementState.showcase||[]).map(x=>x.achievement_key); renderAchievementVault(); document.getElementById('achievement-vault-backdrop').classList.add('open'); }
 function renderAchievementVault() { const grid=document.getElementById('achievement-vault-grid'); const unlocked=achievementState.unlocks||[], progress=achievementState.progress||[]; document.getElementById('achievement-vault-subtitle').textContent=`${achievementState.unlockedFamilies || 0} de ${achievementState.availableCount || 17} historias desbloqueadas · elegí hasta 6 para exhibir`;
-  grid.innerHTML=''; (achievementState.definitions||[]).forEach(d=>{ const us=unlocked.filter(x=>x.achievement_key===d.key), u=us.sort((a,b)=>b.level-a.level)[0], p=progress.find(x=>x.achievement_key===d.key); const card=document.createElement('button'); card.type='button'; card.className='achievement-card '+(u?'':'locked')+(achievementShowcaseDraft.includes(d.key)?' pinned':''); card.disabled=!u; const level=u?.level || p?.current_level || 0; const numeral=level>1?' '+['I','II','III','IV','V'][level-1]:''; const progressText=!u&&p?.target_value?`${p.current_value||0} / ${p.target_value}`:(u?`Unlocked · ${d.rarity}`:'Locked'); card.innerHTML=`<strong>${escHtml(d.title)}${numeral}</strong><small>${escHtml(progressText)}</small>`; if(u) card.onclick=()=>{ const i=achievementShowcaseDraft.indexOf(d.key); if(i>=0)achievementShowcaseDraft.splice(i,1); else if(achievementShowcaseDraft.length<6)achievementShowcaseDraft.push(d.key); renderAchievementVault(); }; grid.appendChild(card); }); }
+  grid.innerHTML=''; (achievementState.definitions||[]).forEach(d=>{ const us=unlocked.filter(x=>x.achievement_key===d.key), u=us.sort((a,b)=>b.level-a.level)[0], p=progress.find(x=>x.achievement_key===d.key); const title=u?.snapshot?.display_title||d.title, rarity=u?.snapshot?.level_rarity||d.rarity; const card=document.createElement('button'); card.type='button'; card.className='achievement-card '+(u?'':'locked')+(achievementShowcaseDraft.includes(d.key)?' pinned':''); card.disabled=!u; const level=u?.level || p?.current_level || 0; const numeral=level>1?' '+['I','II','III','IV','V'][level-1]:''; const progressText=!u&&p?.target_value?`${p.current_value||0} / ${p.target_value}`:(u?`Unlocked · ${rarity}`:'Locked'); card.innerHTML=`<strong>${escHtml(title)}${numeral}</strong><small>${escHtml(progressText)}</small>`; if(u) card.onclick=()=>{ const i=achievementShowcaseDraft.indexOf(d.key); if(i>=0)achievementShowcaseDraft.splice(i,1); else if(achievementShowcaseDraft.length<6)achievementShowcaseDraft.push(d.key); renderAchievementVault(); }; grid.appendChild(card); }); }
 document.getElementById('profile-achievements-open').addEventListener('click',openAchievementVault);
 document.getElementById('achievement-vault-close').addEventListener('click',()=>document.getElementById('achievement-vault-backdrop').classList.remove('open'));
 document.getElementById('achievement-vault-backdrop').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
@@ -4527,7 +4527,7 @@ let achievementState = null;
 const ACHIEVEMENT_BETA_USERNAME = 'kyujin';
 function isAchievementBetaUser() { return (localStorage.getItem('discord_user_id') || '').trim().toLowerCase() === ACHIEVEMENT_BETA_USERNAME; }
 function achievementEventId() { return crypto.randomUUID ? crypto.randomUUID() : `av-${Date.now()}-${Math.random().toString(36).slice(2)}`; }
-function compactAchievementAlbum(a) { return { id:String(a.id), title:a.title||'', artist:a.artist||'', year:a.year||'', score:Number(Number(a.score).toFixed(2)), coverUrl:a.coverUrl||'', genres:a.genres||[], genre:a.genre||'', trackScores:a.trackScores||{}, status:a.status||'', notes:a.notes||'' }; }
+function compactAchievementAlbum(a) { return { id:String(a.id), title:a.title||'', artist:a.artist||'', year:a.year||'', score:Number(Number(a.score).toFixed(2)), coverUrl:a.coverUrl||'', genres:a.genres||[], genre:a.genre||'', trackScores:a.trackScores||{}, status:a.status||'', notes:a.notes||'', musicbrainzReleaseMbid:a.musicbrainzReleaseMbid||null }; }
 function makeAchievementEvent(type, album, extra={}, source='vault') {
   const now = new Date().toISOString(); const id=achievementEventId();
   return { event_id:id, occurred_at:now, type, source, idempotency_key:`${type}:${album?.id||'collection'}:${now}:${id}`, payload:{album_id:album ? String(album.id) : null, album:album?compactAchievementAlbum(album):null, ...extra} };
@@ -6064,7 +6064,8 @@ document.getElementById('save-btn').addEventListener('click', () => {
     if (idx !== -1) {
       const before = albums[idx];
       albums[idx] = { ...before, title, artist, year, score, tracks, notes, genres, listenDate, status,
-        coverUrl: selectedRelease?.coverUrl || albums[idx].coverUrl };
+        coverUrl: selectedRelease?.coverUrl || albums[idx].coverUrl,
+        musicbrainzReleaseMbid: selectedRelease?.mbid || before.musicbrainzReleaseMbid || null };
       const oldScore = Number(before.score), nextScore = Number(score);
       if (status === 'listened' && before.status === 'listened' && Number.isFinite(oldScore) && Number.isFinite(nextScore) && Math.abs(nextScore-oldScore) >= .01) {
         const occurredAt = new Date().toISOString();
@@ -6079,6 +6080,7 @@ document.getElementById('save-btn').addEventListener('click', () => {
     newlySavedAlbum = { id:'alb_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
       title, artist, year, score, tracks, notes, genres, listenDate, status,
       coverUrl: selectedRelease?.coverUrl || '',
+      musicbrainzReleaseMbid: selectedRelease?.mbid || null,
       addedAt: Date.now(), replays:[], scoreHistory: isPending ? [] : [{score:Number(Number(score).toFixed(2)),date:new Date().toISOString().slice(0,10),label:'Initial score'}] };
     albums.push(newlySavedAlbum);
     if (!isPending) { achievementEvents.push(makeAchievementEvent('album_added',newlySavedAlbum)); achievementEvents.push(makeAchievementEvent('album_rated',newlySavedAlbum,{score:Number(Number(score).toFixed(2))})); }
