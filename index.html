@@ -1998,6 +1998,8 @@
   #profile-now-listening #nl-cover { width:64px!important;height:64px!important;flex:0 0 64px!important;object-fit:cover!important;border-radius:11px!important;background:#141b27; }
   #profile-now-listening #nl-track { margin-top:4px;font:500 15px/1.2 'DM Mono',monospace;color:#eff3fa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
   #profile-now-listening #nl-artist { margin-top:4px;font:11px/1.2 'DM Mono',monospace;color:#8994aa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  #profile-listening-tracking { display:none;margin-top:9px;color:#8190a9;font:9px/1.35 'DM Mono',monospace;letter-spacing:.035em; }
+  #profile-listening-tracking.active { display:block; }
   #profile-bio-editor { padding:18px;border:1px solid var(--profile-border);border-radius:var(--profile-radius);background:linear-gradient(145deg,rgba(20,27,39,.9),rgba(11,15,24,.9));box-shadow:inset 0 1px 0 rgba(255,255,255,.035); }
   #profile-bio-editor label { display:block;margin:0 0 7px;color:#98a5bb;font:9px 'DM Mono',monospace;letter-spacing:.12em; }
   #profile-bio-editor textarea,#profile-bio-editor input { width:100%;border:1px solid rgba(205,222,255,.15);border-radius:10px;background:rgba(5,9,16,.56);color:#f1f5fb;font:12px/1.5 'DM Mono',monospace;outline:none;transition:border-color .18s,background .18s,box-shadow .18s; }
@@ -2460,12 +2462,13 @@
   <div class="profile-content-shell">
     <div id="profile-content-old-identity"></div><p id="profile-bio-display"></p>
     <div id="profile-now-listening"><img id="nl-cover" src="" alt="" /><div style="min-width:0;flex:1;"><div style="display:flex;align-items:center;gap:6px;"><span id="nl-dot" style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:nlPulse 1.4s ease-in-out infinite;"></span><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#777;text-transform:uppercase;">Escuchando ahora</span></div><div id="nl-track">—</div><div id="nl-artist">—</div></div></div>
+    <div id="profile-listening-tracking" aria-live="polite"></div>
     <div id="profile-bio-editor" style="display:none;flex-direction:column;gap:10px;"><textarea id="profile-bio-input" maxlength="280" placeholder="Escribí algo sobre vos y tu gusto musical…"></textarea><div><label>USUARIO DE LAST.FM (para "Escuchando ahora")</label><input id="profile-lastfm-input" type="text" placeholder="ej: kyujin_music" /></div><div><label>COLOR DE ACENTO</label><div id="profile-accent-picker"></div></div><div class="profile-editor-actions"><button id="profile-banner-edit-btn" type="button" title="Cambiar imagen del banner">Cambiar banner</button><span class="profile-editor-actions-spacer"></span><button id="profile-bio-cancel-btn">Cancelar</button><button id="profile-bio-save-btn">Guardar</button></div></div>
     <div class="profile-dashboard">
       <section class="profile-panel profile-top-panel"><div class="profile-panel-head"><div><span class="profile-panel-title">♬ Top álbumes</span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">Mejor puntuados</span></div></div><div id="profile-top10-row" class="profile-album-grid"></div></section>
       <section class="profile-panel"><div class="profile-panel-head"><span class="profile-panel-title">Géneros favoritos</span><span class="profile-panel-kicker">por colección</span></div><div id="profile-genre-dist" class="profile-bar-list"></div></section>
     </div>
-    <section class="profile-panel profile-achievements-panel"><div class="profile-panel-head"><div><span class="profile-panel-title">ACHIEVEMENTS <span id="profile-achievement-count">0 / 17</span></span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">historias de tu Vault</span></div><button id="profile-achievements-open" class="profile-panel-action">View All →</button></div><div id="profile-achievement-showcase" class="achievement-showcase"></div></section>
+    <section class="profile-panel profile-achievements-panel"><div class="profile-panel-head"><div><span class="profile-panel-title">ACHIEVEMENTS <span id="profile-achievement-count">0 / 17</span></span><span class="profile-panel-kicker" style="display:block;margin-top:4px;">historias de tu Vault y listening</span></div><button id="profile-achievements-open" class="profile-panel-action">View All →</button></div><div id="profile-achievement-showcase" class="achievement-showcase"></div></section>
     <div class="profile-lower-grid">
       <div class="profile-insights-stack">
       <section class="profile-panel"><div class="profile-panel-head"><span class="profile-panel-title">Artistas más rateados</span></div><div id="profile-artist-list" class="profile-artist-list"></div></section>
@@ -3135,6 +3138,7 @@ async function initVaultApp() {
     await refreshAchievements(true);
     await flushAchievementOutbox();
     await refreshAchievements();
+    await refreshListeningTracking();
   }
   document.getElementById('profile-avatar-img').src = localStorage.getItem(DISCORD_AVATAR_KEY) || '';
   document.getElementById('profile-username').textContent = localStorage.getItem('discord_user_id') || '';
@@ -4552,6 +4556,20 @@ async function refreshAchievements(activate=false) {
   if (!isAchievementBetaUser()) return;
   const token=localStorage.getItem('auth_token'); if(!token||isGuestMode) return;
   try { const res=await fetch(`${BOT_SERVER}${activate?'/achievements/activate':'/achievements/me'}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})}); const data=await res.json(); if(res.ok){ achievementState=data; renderAchievements(); if(!activate) showAchievementInbox(data.inbox||[]); } } catch(e) {}
+}
+let listeningTrackingState = null;
+function renderListeningTracking() {
+  const el=document.getElementById('profile-listening-tracking'); if(!el) return;
+  if(!isAchievementBetaUser() || !listeningTrackingState?.configured) { el.classList.remove('active'); el.textContent=''; return; }
+  const started=new Date(listeningTrackingState.trackingStartedAt).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
+  const count=Number(listeningTrackingState.trackedScrobbles||0);
+  el.textContent=`Listening tracked since ${started} · ${count} scrobble${count===1?'':'s'} tracked`;
+  el.classList.add('active');
+}
+async function refreshListeningTracking() {
+  if(!isAchievementBetaUser() || isGuestMode) return;
+  const token=localStorage.getItem('auth_token'); if(!token) return;
+  try { const res=await fetch(`${BOT_SERVER}/listening/me`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})}); const data=await res.json(); if(res.ok&&data.beta) { listeningTrackingState=data; renderListeningTracking(); } } catch(e) {}
 }
 function showAchievementInbox(inbox) { if(!inbox.length || document.getElementById('rating-ceremony').classList.contains('active')) return; const unlocked=(achievementState?.unlocks||[]).find(x=>x.id===inbox[0].unlock_id); const def=(achievementState?.definitions||[]).find(x=>x.key===unlocked?.achievement_key); if(!def)return; const n=document.getElementById('achievement-toast'); n.querySelector('[data-achievement-title]').textContent=def.title; n.querySelector('[data-achievement-rarity]').textContent=`${def.rarity.toUpperCase()} UNLOCKED`; n.classList.add('visible'); setTimeout(()=>n.classList.remove('visible'),4200); const token=localStorage.getItem('auth_token'); fetch(`${BOT_SERVER}/achievements/inbox/consume`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,ids:[inbox[0].id]})}).catch(()=>{}); }
 
@@ -7184,266 +7202,4 @@ function renderDbSyncList() {
     const tier         = item.tier;
 
     const div = document.createElement('div');
-    div.className = 'dbsync-item' + (alreadyIn ? ' already-in' : updateAvail ? ' update-available' : '');
-
-    if (item.coverUrl) {
-      const bg = document.createElement('div');
-      bg.className = 'dbsync-item-bg';
-      bg.style.backgroundImage = `url('${item.coverUrl}')`;
-      div.appendChild(bg);
-    }
-
-    const checkEl = document.createElement('div');
-    checkEl.className = 'dbsync-check' +
-      (alreadyIn  ? ' already-in-check' :
-       updateAvail ? ' update-check' + (selected ? ' selected' : '') :
-       (selected ? ' selected' : ''));
-    checkEl.textContent = (selected || alreadyIn) ? '✓' : (updateAvail ? '↑' : '');
-
-    if (!alreadyIn) {
-      checkEl.addEventListener('click', () => {
-        if (dbSyncSelected.has(i)) {
-          dbSyncSelected.delete(i);
-          checkEl.classList.remove('selected');
-          checkEl.textContent = updateAvail ? '↑' : '';
-        } else {
-          dbSyncSelected.add(i);
-          checkEl.classList.add('selected');
-          checkEl.textContent = '✓';
-        }
-        updateDbSyncCount();
-      });
-    }
-
-    const thumb = document.createElement('img');
-    thumb.className = 'dbsync-thumb';
-    thumb.src = item.coverUrl || '';
-    thumb.onerror = function() { this.style.visibility='hidden'; };
-
-    const info = document.createElement('div');
-    info.className = 'dbsync-info';
-    info.innerHTML = `
-      <div class="dbsync-title">${escHtml(item.title)}</div>
-      <div class="dbsync-meta">${escHtml(item.artist)}${item.year ? ' · ' + item.year : ''}${item.genre ? ' · ' + item.genre : ''}</div>`;
-
-    const tierEl = document.createElement('div');
-    tierEl.className = 'dbsync-tier';
-    tierEl.style.color = tier?.color || '#888';
-    tierEl.textContent = tier?.label || '?';
-
-    const scoreEl = document.createElement('div');
-    scoreEl.className = 'dbsync-score';
-    scoreEl.style.color = tier?.color || '#888';
-    scoreEl.textContent = item.score.toFixed(2);
-
-    if (alreadyIn) {
-      const tag = document.createElement('div');
-      tag.className = 'dbsync-already-tag';
-      tag.textContent = '✓ ya en Vault';
-      div.appendChild(checkEl);
-      div.appendChild(thumb);
-      div.appendChild(info);
-      div.appendChild(tierEl);
-      div.appendChild(scoreEl);
-      div.appendChild(tag);
-    } else if (updateAvail) {
-      const existing = getVaultDuplicate(item);
-      const tag = document.createElement('div');
-      tag.className = 'dbsync-update-tag';
-      const scoreChanged = Math.abs(parseFloat(existing.score) - parseFloat(item.score)) >= 0.001;
-      tag.textContent = scoreChanged
-        ? `↑ ${existing.score.toFixed(2)} → ${item.score.toFixed(2)}`
-        : '✎ reseña actualizada';
-      div.appendChild(checkEl);
-      div.appendChild(thumb);
-      div.appendChild(info);
-      div.appendChild(tierEl);
-      div.appendChild(scoreEl);
-      div.appendChild(tag);
-    } else {
-      div.appendChild(checkEl);
-      div.appendChild(thumb);
-      div.appendChild(info);
-      div.appendChild(tierEl);
-      div.appendChild(scoreEl);
-    }
-
-    // Click row to toggle (if not already in vault)
-    if (!alreadyIn) {
-      div.addEventListener('click', e => {
-        if (e.target === checkEl) return;
-        checkEl.click();
-      });
-    }
-
-    list.appendChild(div);
-  });
-
-  document.getElementById('dbsync-actions').style.display = 'flex';
-  updateDbSyncCount();
-}
-
-function updateDbSyncCount() {
-  const count = dbSyncSelected.size;
-  document.getElementById('dbsync-count').textContent = count > 0 ? `${count} seleccionado${count !== 1 ? 's' : ''}` : '';
-  document.getElementById('dbsync-import-btn').disabled = count === 0;
-}
-
-// Select all / deselect all
-document.getElementById('dbsync-select-all').addEventListener('click', () => {
-  const allSelectable = dbSyncItems.map((item, i) => ({ item, i })).filter(({ item }) => shouldShowInDbSync(item));
-  const allSelected = allSelectable.every(({ i }) => dbSyncSelected.has(i));
-  if (allSelected) {
-    allSelectable.forEach(({ i }) => dbSyncSelected.delete(i));
-  } else {
-    allSelectable.forEach(({ i }) => dbSyncSelected.add(i));
-  }
-  renderDbSyncList();
-});
-
-// Import selected
-document.getElementById('dbsync-import-btn').addEventListener('click', () => {
-  if (!dbSyncSelected.size) return;
-
-  let added = 0, updated = 0;
-  const importedAlbums = [];
-  const importAchievementEvents = [];
-  dbSyncSelected.forEach(i => {
-    const item = dbSyncItems[i];
-    if (!item) return;
-
-    const existing = getVaultDuplicate(item);
-
-    const scoreChanged = existing && Math.abs(parseFloat(existing.score) - parseFloat(item.score)) >= 0.001;
-    const reviewChanged = existing && hasReviewUpdate(item, existing);
-    if (existing && !scoreChanged && !reviewChanged) return;
-
-    if (existing) {
-      if (scoreChanged) {
-        const scoreBeforeImport = parseFloat(existing.score);
-        // Save score history only when the score really changed.
-        if (!existing.scoreHistory) existing.scoreHistory = [];
-        const lastEntry = existing.scoreHistory[existing.scoreHistory.length - 1];
-        if (!lastEntry || Math.abs(lastEntry.score - parseFloat(existing.score)) >= 0.001) {
-          existing.scoreHistory.push({
-            score: parseFloat(existing.score),
-            date:  existing.listenDate || new Date().toISOString().slice(0,10),
-            label: 'Antes del re-score'
-          });
-        }
-        existing.scoreHistory.push({
-          score: parseFloat(item.score),
-          date:  item.listenDate || new Date().toISOString().slice(0,10),
-          label: 'Re-score desde Rater DB'
-        });
-        existing.score       = parseFloat(item.score);
-        existing.year        = item.year;
-        existing.coverUrl    = item.coverUrl;
-        existing.coverScore  = item.coverScore;
-        existing.genres      = item.genres;
-        existing.listenDate  = item.listenDate;
-        existing.tracks      = item.tracks;
-        existing.trackScores = item.trackScores || {};
-        importAchievementEvents.push(makeAchievementEvent('album_rescored', existing, { previous_score:scoreBeforeImport, new_score:parseFloat(item.score), delta:Number((parseFloat(item.score)-scoreBeforeImport).toFixed(2)), previous_at:lastEntry?.timestamp || null }, 'rater'));
-        importAchievementEvents.push(makeAchievementEvent('track_scores_saved', existing, {}, 'rater'));
-      }
-      if (reviewChanged) { existing.notes = item.notes.trim(); importAchievementEvents.push(makeAchievementEvent('review_updated',existing,{review_text:existing.notes},'rater')); }
-      updated++;
-    } else {
-      const importedAlbum = {
-        id:          Date.now() + Math.random(),
-        title:       item.title,
-        artist:      item.artist,
-        year:        item.year,
-        score:       parseFloat(item.score),
-        coverUrl:    item.coverUrl,
-        coverScore:  item.coverScore,
-        genres:      item.genres,
-        status:      'listened',
-        listenDate:  item.listenDate,
-        addedAt:     item.addedAt,
-        tracks:      item.tracks,
-        trackScores: item.trackScores || {},
-        notes:       item.notes,
-        replays:     [],
-        scoreHistory:[{ score: parseFloat(item.score), date: item.listenDate, label: 'Importado desde Rater DB' }],
-        _dbId:       item._dbId,
-      };
-      albums.push(importedAlbum);
-      importedAlbums.push(importedAlbum);
-      importAchievementEvents.push(makeAchievementEvent('album_added',importedAlbum,{},'rater'));
-      importAchievementEvents.push(makeAchievementEvent('album_rated',importedAlbum,{score:parseFloat(importedAlbum.score)},'rater'));
-      if (Object.keys(importedAlbum.trackScores||{}).length) importAchievementEvents.push(makeAchievementEvent('track_scores_saved',importedAlbum,{},'rater'));
-      if (importedAlbum.notes) importAchievementEvents.push(makeAchievementEvent('review_written',importedAlbum,{review_text:importedAlbum.notes},'rater'));
-      added++;
-    }
-  });
-
-  if (importAchievementEvents.length) saveAlbumsWithAchievementEvents(importAchievementEvents); else saveAlbums();
-  buildTiersWithReveal();
-  refreshGenreFilter();
-  closeDbSync();
-
-  // Si importaste varios a la vez, celebramos la última incorporación sin
-  // encadenar muchas ceremonias seguidas.
-  if (importedAlbums.length) {
-    setTimeout(() => playRatingCeremony(importedAlbums[importedAlbums.length - 1]), 120);
-  }
-
-  const parts = [];
-  if (added)   parts.push(`${added} importado${added !== 1 ? 's' : ''}`);
-  if (updated) parts.push(`${updated} actualizado${updated !== 1 ? 's' : ''}`);
-  const toast = document.createElement('div');
-  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#3ab870;color:#000;font-family:"DM Mono",monospace;font-size:12px;font-weight:600;padding:10px 24px;letter-spacing:1px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s';
-  toast.textContent = `☁ ${parts.join(' · ')} desde la base de datos`;
-  document.body.appendChild(toast);
-  requestAnimationFrame(() => { toast.style.opacity = '1'; });
-  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3500);
-});
-(function() {
-  let lastY = 0;
-  let ticking = false;
-  const header = document.getElementById('header');
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        const y = window.scrollY;
-        if (y > lastY && y > 80) {
-          header.classList.add('hidden');
-        } else {
-          header.classList.remove('hidden');
-        }
-        lastY = y;
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, { passive: true });
-})();
-
-// ── SCROLL HINT ──
-const hint = document.getElementById('scroll-hint');
-window.addEventListener('scroll', () => {
-  hint.classList.toggle('hidden', window.scrollY > 80);
-}, { passive:true });
-
-// ── INIT ──
-// "Despertar" al bot en Render apenas se carga la página: un GET liviano a la raíz,
-// disparado en paralelo sin esperar respuesta. Render duerme el servicio gratuito
-// tras inactividad, y el primer request real (login, perfil, etc.) puede tardar
-// varios segundos en ese caso — este ping adelanta ese arranque para cuando el
-// usuario realmente lo necesite.
-if (new URLSearchParams(location.search).get('guest') !== '1') fetch(`${BOT_SERVER}/`).catch(() => {});
-loadAlbums();
-checkAuth();
-// Auto-arreglo de portadas rotas contra la DB del Rater — en segundo plano, no
-// bloquea el render inicial ni se avisa al usuario si no encuentra nada.
-if (!isGuestMode) autoRefreshBrokenCovers();
-// Wire up the reveal version globally after everything is loaded
-window.addEventListener('load', () => {
-  window.buildTiers = buildTiersWithReveal;
-});
-</script>
-</div>
-</body>
-</html>
+    div.className = 'dbsync-item' + (alreadyIn ? '
