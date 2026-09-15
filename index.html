@@ -3163,7 +3163,7 @@ async function initVaultApp() {
 
 // ══════════════════ PERFIL ══════════════════
 
-let vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', shelves: [] };
+let vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', timezone: null, shelves: [] };
 const ACCENT_PRESETS = ['#c8f060', '#e05252', '#4d82e0', '#e87c3e', '#b06de0', '#3ac4b0', '#f5e642'];
 
 // Estado del "perfil ajeno" (solo lectura). Cuando es null, el perfil mostrado es el propio.
@@ -3182,7 +3182,11 @@ async function syncVaultProfileFromServer() {
       body: JSON.stringify({ token })
     });
     const data = await res.json();
-    if (res.ok && data.profile) vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', shelves: [], ...data.profile };
+    if (res.ok && data.profile) vaultProfile = { banner: null, bio: '', pinned: [], accentColor: '#c8f060', lastfmUsername: '', timezone: null, shelves: [], ...data.profile };
+    if (!vaultProfile.timezone) {
+      const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (detectedTimezone) { vaultProfile.timezone = detectedTimezone; await saveVaultProfile(); }
+    }
   } catch (e) { /* backend dormido o sin conexión — se usa el default local */ }
   vaultProfileSynced = true;
 }
@@ -3636,7 +3640,7 @@ async function fetchNowListening(lfUser) {
   const box = document.getElementById('profile-now-listening');
   if (!lfUser) { box.style.display = 'none'; return; }
   try {
-    const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(lfUser)}&api_key=${LFM_KEY}&format=json&limit=1`;
+    const url = `${BOT_SERVER}/lastfm?method=user.getrecenttracks&user=${encodeURIComponent(lfUser)}&limit=1`;
     const res = await fetch(url);
     const data = await res.json();
     const track = data?.recenttracks?.track?.[0];
@@ -4589,16 +4593,13 @@ const MB_BASE    = 'https://musicbrainz.org/ws/2';
 const CAA_BASE   = 'https://coverartarchive.org';
 const MB_HEADERS = { 'Accept':'application/json', 'User-Agent':'AlbumVault/1.0 (personal-app)' };
 
-const LFM_KEY    = '194ec400973f470ddaccd3248100186f';
-const LFM_BASE   = 'https://ws.audioscrobbler.com/2.0/';
+const LFM_BASE   = `${BOT_SERVER}/lastfm`;
 
 // ── LAST.FM SEARCH (primary) ──
 async function searchLastFm(album, artist) {
   const params = new URLSearchParams({
     method: 'album.search',
     album: album || artist,
-    api_key: LFM_KEY,
-    format: 'json',
     limit: 12,
   });
   if (artist) params.set('artist', artist);
@@ -4613,8 +4614,6 @@ async function getLastFmAlbumInfo(artist, album) {
     method: 'album.getinfo',
     artist,
     album,
-    api_key: LFM_KEY,
-    format: 'json',
     autocorrect: 1,
   });
   const res = await fetch(`${LFM_BASE}?${params}`);
@@ -4703,7 +4702,7 @@ async function refetchCoverFallback(title, artist) {
     if (cover) return cover;
   } catch {}
   try {
-    const url = `${LFM_BASE}?method=album.getinfo&artist=${encodeURIComponent(artist || '')}&album=${encodeURIComponent(title)}&api_key=${LFM_KEY}&format=json`;
+    const url = `${LFM_BASE}?method=album.getinfo&artist=${encodeURIComponent(artist || '')}&album=${encodeURIComponent(title)}`;
     const res = await fetch(url);
     if (res.ok) {
       const data = await res.json();
