@@ -3056,51 +3056,88 @@ function renderUserSessionChip() {
 
 // ── Colección del Vault: sincronización con el backend (además de localStorage) ──
 let vaultSyncTimer = null;
-let vaultSyncInFlight = false;
-let vaultSyncQueuedAfterFlight = false;
+let vaultSyncChain = Promise.resolve();
+
+function currentVaultCollectionSnapshot() {
+  return {
+    albums,
+    nowPlayingId,
+    revision: vaultCollectionRevision,
+    updatedAt: vaultCollectionUpdatedAt,
+    owner: vaultCollectionOwner
+  };
+}
+
+function vaultCollectionFreshness(collection) {
+  const updatedAt = Date.parse(collection?.updatedAt || '');
+  return {
+    updatedAt: Number.isFinite(updatedAt) ? updatedAt : 0,
+    revision: Math.max(0, Number(collection?.revision) || 0)
+  };
+}
+
+function isVaultCollectionNewer(candidate, baseline) {
+  const a = vaultCollectionFreshness(candidate);
+  const b = vaultCollectionFreshness(baseline);
+  if (a.updatedAt !== b.updatedAt) return a.updatedAt > b.updatedAt;
+  return a.revision > b.revision;
+}
+
+function showVaultSyncNotice(message, isError = false) {
+  const existing = document.getElementById('vault-sync-notice');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.id = 'vault-sync-notice';
+  toast.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:${isError ? '#e05252' : '#3ab870'};color:#080b0f;font-family:"DM Mono",monospace;font-size:12px;font-weight:600;padding:11px 20px;letter-spacing:.5px;z-index:12000;max-width:min(520px,calc(100vw - 32px));text-align:center;box-shadow:0 12px 32px rgba(0,0,0,.4)`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), isError ? 6500 : 3500);
+}
+
 function queueVaultCollectionSync() {
   const token = localStorage.getItem('auth_token');
   if (!token) return;
   clearTimeout(vaultSyncTimer);
   // Una colección de cientos de álbumes no debe subirse varias veces mientras
   // el usuario hace cambios consecutivos. Se conserva solo el estado final.
-  vaultSyncTimer = setTimeout(() => { flushVaultCollectionSync(); }, 5000);
+  vaultSyncTimer = setTimeout(async () => {
+    const result = await flushVaultCollectionSync();
+    if (!result.ok) console.warn('[vault-sync] No se pudo completar el guardado diferido.', result.status || result.error || 'network');
+  }, 5000);
 }
 
-async function flushVaultCollectionSync(collectionOverride) {
+function flushVaultCollectionSync(collectionOverride) {
   clearTimeout(vaultSyncTimer);
   const token = localStorage.getItem('auth_token');
-  if (!token) return;
-  if (vaultSyncInFlight) { vaultSyncQueuedAfterFlight = true; return; }
-  const collection = collectionOverride || { albums, nowPlayingId };
-  vaultSyncInFlight = true;
-  try {
-    const res = await fetch(`${BOT_SERVER}/vault-collection`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token, collection })
-    });
-    // fetch() no lanza excepción por códigos de error HTTP (401, 500, etc.), solo
-    // por fallos de red — sin este chequeo, una sesión inválida/expirada fallaba
-    // en silencio para siempre: la app seguía funcionando con localStorage pero
-    // nunca volvía a sincronizar nada a la nube, sin ningún aviso al usuario.
-    if (res.status === 401) {
-      console.warn('[vault-sync] Sesión inválida o expirada — forzando cierre de sesión para pedir login de nuevo.');
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('discord_user_id');
-      localStorage.removeItem(DISCORD_AVATAR_KEY);
-      showAuthOverlay();
-    } else if (!res.ok) {
-      console.warn('[vault-sync] El servidor respondió', res.status, '— la colección solo quedó guardada localmente por ahora.');
+  if (!token) return Promise.resolve({ ok:false, status:401, error:'missing-token' });
+  const collection = collectionOverride || currentVaultCollectionSnapshot();
+  const request = async () => {
+    try {
+      const res = await fetch(`${BOT_SERVER}/vault-collection`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, collection })
+      });
+      if (res.status === 401) {
+        console.warn('[vault-sync] Sesión inválida o expirada — forzando cierre de sesión para pedir login de nuevo.');
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('discord_user_id');
+        localStorage.removeItem(DISCORD_AVATAR_KEY);
+        showAuthOverlay();
+        return { ok:false, status:401, error:'invalid-session' };
+      }
+      if (!res.ok) {
+        console.warn('[vault-sync] El servidor respondió', res.status, '— la colección solo quedó guardada localmente por ahora.');
+        return { ok:false, status:res.status, error:'server-rejected' };
+      }
+      return { ok:true, status:res.status };
+    } catch (error) {
+      return { ok:false, status:0, error:error?.message || 'network-error' };
     }
-  } catch (e) { /* backend dormido o sin conexión — localStorage ya lo tiene igual, se reintentará */ }
-  finally {
-    vaultSyncInFlight = false;
-    if (vaultSyncQueuedAfterFlight) {
-      vaultSyncQueuedAfterFlight = false;
-      queueVaultCollectionSync();
-    }
-  }
+  };
+  const queued = vaultSyncChain.then(request, request);
+  vaultSyncChain = queued.then(() => undefined, () => undefined);
+  return queued;
 }
 
 async function fetchRemoteVaultCollection() {
@@ -3119,17 +3156,31 @@ async function fetchRemoteVaultCollection() {
   }
 }
 
-// El servidor manda siempre al iniciar sesión (mismo criterio que en Rater), así la
-// colección es consistente entre dispositivos y no se queda pegada a una copia vieja
-// de localStorage de una sesión anterior en este mismo navegador.
+// Al iniciar, gana la copia más reciente del usuario actual. Las colecciones legacy
+// sin versión mantienen el comportamiento anterior (la nube gana), mientras que un
+// guardado local fallido y versionado nunca es reemplazado por una copia remota vieja.
 async function syncVaultCollectionFromServer() {
   const remote = await fetchRemoteVaultCollection();
   if (!remote) return;
+  const username = (localStorage.getItem('discord_user_id') || '').trim().toLowerCase();
+  const local = currentVaultCollectionSnapshot();
+  const localBelongsToCurrentUser = Boolean(username && vaultCollectionOwner && vaultCollectionOwner.toLowerCase() === username);
+  if (hasLocalVaultCollection && localBelongsToCurrentUser && isVaultCollectionNewer(local, remote)) {
+    const result = await flushVaultCollectionSync(local);
+    if (!result.ok) showVaultSyncNotice('⚠ Tu copia más reciente sigue segura en este dispositivo, pero aún no pudo guardarse en la nube.', true);
+    return;
+  }
   albums       = remote.albums       || [];
   nowPlayingId = remote.nowPlayingId || null;
+  vaultCollectionRevision = Math.max(0, Number(remote.revision) || 0);
+  vaultCollectionUpdatedAt = typeof remote.updatedAt === 'string' ? remote.updatedAt : null;
+  vaultCollectionOwner = username || (typeof remote.owner === 'string' ? remote.owner : null);
   const genresNormalized = normalizeCollectionGenres(albums);
-  try { localStorage.setItem('album_vault_v3', JSON.stringify(remote)); } catch(e) {}
-  if (genresNormalized) queueVaultCollectionSync();
+  if (genresNormalized) {
+    saveAlbums();
+  } else {
+    try { localStorage.setItem('album_vault_v3', JSON.stringify(currentVaultCollectionSnapshot())); } catch(e) {}
+  }
   buildTiers();
   updateNowPlayingBar();
   refreshGenreFilter();
@@ -4510,6 +4561,10 @@ let editingAlbumId  = null;
 let currentDetailAlbum = null;
 let currentDetailReadOnly = false;
 let nowPlayingId    = null;
+let vaultCollectionRevision = 0;
+let vaultCollectionUpdatedAt = null;
+let vaultCollectionOwner = null;
+let hasLocalVaultCollection = false;
 let viewMode        = localStorage.getItem('album_vault_view_mode') || 'list'; // 'grid' | 'list'
 let compareMode     = false;
 let compareSelected = []; // up to 2 album ids
@@ -4524,8 +4579,12 @@ function loadAlbums() {
     const saved = localStorage.getItem('album_vault_v3');
     if (saved) {
       const data = JSON.parse(saved);
+      hasLocalVaultCollection = true;
       albums       = data.albums       || [];
       nowPlayingId = data.nowPlayingId || null;
+      vaultCollectionRevision = Math.max(0, Number(data.revision) || 0);
+      vaultCollectionUpdatedAt = typeof data.updatedAt === 'string' ? data.updatedAt : null;
+      vaultCollectionOwner = typeof data.owner === 'string' ? data.owner : null;
       // Las portadas antiguas de iTunes se guardaban a 600 px. La misma imagen
       // admite una variante de 1200 px, así que se mejora localmente sin volver a buscar.
       let upgraded = false;
@@ -4536,7 +4595,12 @@ function loadAlbums() {
         if (nextCover !== album.coverUrl) { album.coverUrl = nextCover; upgraded = true; }
         if (normalizeAlbumGenres(album)) upgraded = true;
       });
-      if (upgraded) localStorage.setItem('album_vault_v3', JSON.stringify({ albums, nowPlayingId }));
+      if (upgraded) {
+        // Una migración cosmética local no demuestra que esta copia legacy sea
+        // más reciente que la nube; conserva su versión para evitar elevar una
+        // colección vieja por accidente.
+        localStorage.setItem('album_vault_v3', JSON.stringify(currentVaultCollectionSnapshot()));
+      }
     }
   } catch(e) { albums = []; }
   buildTiers();
@@ -4547,7 +4611,11 @@ function loadAlbums() {
 function saveAlbums() {
   if (isGuestMode) return;
   normalizeCollectionGenres(albums);
-  try { localStorage.setItem('album_vault_v3', JSON.stringify({ albums, nowPlayingId })); }
+  vaultCollectionRevision += 1;
+  vaultCollectionUpdatedAt = new Date().toISOString();
+  vaultCollectionOwner = (localStorage.getItem('discord_user_id') || vaultCollectionOwner || '').trim() || null;
+  hasLocalVaultCollection = true;
+  try { localStorage.setItem('album_vault_v3', JSON.stringify(currentVaultCollectionSnapshot())); }
   catch(e) { console.error('Storage error:', e); }
   queueVaultCollectionSync();
 }
@@ -4557,6 +4625,7 @@ function saveAlbums() {
 const ACHIEVEMENT_OUTBOX_KEY = 'album_vault_achievement_outbox_v1';
 const ACHIEVEMENT_TRACKING_EPOCH_KEY = 'album_vault_achievement_tracking_epoch_v2';
 let achievementState = null;
+let achievementOutboxFlushPromise = null;
 const ACHIEVEMENT_BETA_USERNAME = 'kyujin';
 function isAchievementBetaUser() { return (localStorage.getItem('discord_user_id') || '').trim().toLowerCase() === ACHIEVEMENT_BETA_USERNAME; }
 function achievementEventId() { return crypto.randomUUID ? crypto.randomUUID() : `av-${Date.now()}-${Math.random().toString(36).slice(2)}`; }
@@ -4573,12 +4642,28 @@ function initializeAchievementTrackingEpoch() {
   localStorage.setItem(ACHIEVEMENT_TRACKING_EPOCH_KEY, '1');
 }
 async function flushAchievementOutbox() {
-  if (!isAchievementBetaUser()) return;
-  const token=localStorage.getItem('auth_token'), queue=getAchievementOutbox(); if(!token||!queue.length||isGuestMode) return;
-  try {
-    const res=await fetch(`${BOT_SERVER}/vault-collection/events`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,collection:{albums,nowPlayingId},events:queue})});
-    if(!res.ok) throw new Error('outbox'); setAchievementOutbox([]); await refreshAchievements();
-  } catch(e) { /* durable local retry on the next save/open */ }
+  if (!isAchievementBetaUser() || achievementOutboxFlushPromise) return achievementOutboxFlushPromise;
+  const token=localStorage.getItem('auth_token'); if(!token||isGuestMode) return;
+  let outboxDrainedCleanly = false;
+  achievementOutboxFlushPromise = (async () => {
+    let sentAny = false;
+    while (true) {
+      const queue = getAchievementOutbox();
+      if (!queue.length) break;
+      const batch = queue.slice(0, 30);
+      const res=await fetch(`${BOT_SERVER}/vault-collection/events`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,collection:currentVaultCollectionSnapshot(),events:batch})});
+      if(!res.ok) throw new Error(`outbox-${res.status}`);
+      const sentIds = new Set(batch.map(event => event.event_id || event.idempotency_key));
+      setAchievementOutbox(getAchievementOutbox().filter(event => !sentIds.has(event.event_id || event.idempotency_key)));
+      sentAny = true;
+    }
+    outboxDrainedCleanly = true;
+    if (sentAny) await refreshAchievements();
+  })().catch(() => { /* durable local retry on the next save/open */ }).finally(() => {
+    achievementOutboxFlushPromise = null;
+    if (outboxDrainedCleanly && getAchievementOutbox().length) setTimeout(() => { flushAchievementOutbox(); }, 0);
+  });
+  return achievementOutboxFlushPromise;
 }
 function saveAlbumsWithAchievementEvents(events) { if (!isAchievementBetaUser()) { saveAlbums(); return; } saveAlbums(); const queue=getAchievementOutbox(); setAchievementOutbox(queue.concat(events)); flushAchievementOutbox(); }
 async function refreshAchievements(activate=false) {
@@ -6990,6 +7075,7 @@ document.getElementById('load-db-btn').addEventListener('click', () => {
   document.getElementById('dbsync-actions').style.display = 'none';
   dbSyncItems = [];
   dbSyncSelected.clear();
+  document.getElementById('dbsync-import-btn').textContent = '⬇ Importar seleccionados';
   document.getElementById('dbsync-backdrop').classList.add('open');
   document.body.style.overflow = 'hidden';
 
@@ -7344,8 +7430,12 @@ document.getElementById('dbsync-select-all').addEventListener('click', () => {
 });
 
 // Import selected
-document.getElementById('dbsync-import-btn').addEventListener('click', () => {
+document.getElementById('dbsync-import-btn').addEventListener('click', async () => {
   if (!dbSyncSelected.size) return;
+
+  const importButton = document.getElementById('dbsync-import-btn');
+  importButton.disabled = true;
+  importButton.textContent = '☁ Guardando…';
 
   let added = 0, updated = 0;
   const importedAlbums = [];
@@ -7424,7 +7514,21 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
   if (importAchievementEvents.length) saveAlbumsWithAchievementEvents(importAchievementEvents); else saveAlbums();
   buildTiersWithReveal();
   refreshGenreFilter();
+
+  // La importación no se considera terminada hasta que la colección completa
+  // queda confirmada por el backend. Si falla, la versión local se conserva y
+  // gana frente a una copia remota anterior durante el próximo arranque.
+  const saveResult = await flushVaultCollectionSync();
+  if (!saveResult.ok) {
+    document.getElementById('dbsync-status').textContent = '⚠ Los cambios están seguros en este dispositivo, pero no pudieron guardarse en la nube. Presiona de nuevo para reintentar.';
+    showVaultSyncNotice('⚠ Importación guardada localmente, pero aún no confirmada en la nube.', true);
+    importButton.disabled = false;
+    importButton.textContent = '↻ Reintentar guardado';
+    return;
+  }
+
   closeDbSync();
+  importButton.textContent = '⬇ Importar seleccionados';
 
   // Si importaste varios a la vez, celebramos la última incorporación sin
   // encadenar muchas ceremonias seguidas.
@@ -7435,12 +7539,7 @@ document.getElementById('dbsync-import-btn').addEventListener('click', () => {
   const parts = [];
   if (added)   parts.push(`${added} importado${added !== 1 ? 's' : ''}`);
   if (updated) parts.push(`${updated} actualizado${updated !== 1 ? 's' : ''}`);
-  const toast = document.createElement('div');
-  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#3ab870;color:#000;font-family:"DM Mono",monospace;font-size:12px;font-weight:600;padding:10px 24px;letter-spacing:1px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s';
-  toast.textContent = `☁ ${parts.join(' · ')} desde la base de datos`;
-  document.body.appendChild(toast);
-  requestAnimationFrame(() => { toast.style.opacity = '1'; });
-  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3500);
+  showVaultSyncNotice(`☁ ${parts.length ? parts.join(' · ') : 'Colección'} guardada en la nube`);
 });
 (function() {
   let lastY = 0;
