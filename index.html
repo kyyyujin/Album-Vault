@@ -1516,6 +1516,7 @@
     border-radius:50%; opacity:.36; pointer-events:none;
   }
   #modal-score { isolation:isolate; }
+  #btn-score-history[hidden] { display:none !important; }
   #modal-score::before { z-index:1; }
   @media (max-width:600px) { #modal-score { width:98px; height:98px; margin:12px 0 16px; font-size:34px; } }
 
@@ -3733,7 +3734,8 @@ function stopNowListeningPolling() {
 function renderProfileStats(albumList, profile) {
   const total = albumList.length;
   document.getElementById('profile-stat-total').textContent = total;
-  const avg = total ? albumList.reduce((sum, album) => sum + (Number(album.score) || 0), 0) / total : null;
+  const scored = albumList.filter(hasNumericScore);
+  const avg = scored.length ? scored.reduce((sum, album) => sum + Number(album.score), 0) / scored.length : null;
   document.getElementById('profile-stat-avg').textContent = avg === null ? '–' : avg.toFixed(2);
 
   const genreCounts = countBy(albumList, album => cleanGenres(album.genres));
@@ -3808,7 +3810,7 @@ function renderTierDistribution(albumList) {
   const wrap = document.getElementById('profile-tier-dist'); wrap.innerHTML = '';
   const total = albumList.length || 1;
   TIERS.forEach(tier => {
-    const count = albumList.filter(album => getTier(album.score)?.id === tier.id).length; if (!count) return;
+    const count = albumList.filter(album => getAlbumTier(album)?.id === tier.id).length; if (!count) return;
     const row = document.createElement('div'); row.className = 'tier-dist-row';
     row.innerHTML = `<span class="tier-dist-label" style="color:${tier.color}">${tier.label}</span><div class="tier-dist-track"><div class="tier-dist-fill" style="width:${Math.max(5,Math.round(count / total * 100))}%;background:${tier.color}"></div></div><span class="tier-dist-count">${count}</span>`;
     wrap.appendChild(row);
@@ -3823,12 +3825,13 @@ function pickRandomAlbum(list) {
 
 // El álbum cuyo score está numéricamente más cerca del promedio calculado.
 function pickClosestToAverage(list, avg) {
-  if (!list.length) return null;
-  return list.reduce((best, a) => {
-    const d = Math.abs((Number(a.score) || 0) - avg);
-    const bd = Math.abs((Number(best.score) || 0) - avg);
+  const scored = list.filter(hasNumericScore);
+  if (!scored.length || avg === null) return null;
+  return scored.reduce((best, a) => {
+    const d = Math.abs(Number(a.score) - avg);
+    const bd = Math.abs(Number(best.score) - avg);
     return d < bd ? a : best;
-  }, list[0]);
+  }, scored[0]);
 }
 
 // El álbum con el listenDate más reciente (el que más probablemente sostiene la racha actual).
@@ -3874,7 +3877,7 @@ function renderTierDistribution(albumList) {
   wrap.innerHTML = '';
   const total = albumList.length || 1;
   TIERS.forEach(tier => {
-    const count = albumList.filter(a => getTier(a.score)?.id === tier.id).length;
+    const count = albumList.filter(a => getAlbumTier(a)?.id === tier.id).length;
     if (!count) return;
     const pct = Math.round((count / total) * 100);
     const row = document.createElement('div');
@@ -3953,7 +3956,7 @@ function setHoloDominantGlow(scene, coverUrl, fallbackColor) {
 }
 
 function albumHoloCard(album, readOnly) {
-  const tier = getTier(album.score);
+  const tier = getAlbumTier(album);
   const scene = document.createElement('div');
   scene.className = 'holo-scene holo-idle';
   // Delay negativo y aleatorio: arranca cada carta en un punto distinto de su propio
@@ -3967,7 +3970,7 @@ function albumHoloCard(album, readOnly) {
       <div class="holo-shine"></div>
       <div class="holo-card-overlay">
         <div class="holo-title">${escHtml(album.title)}</div>
-        <div class="holo-score" style="color:${tier ? tier.color : '#fff'};">${album.score}</div>
+        <div class="holo-score" style="color:${tier ? tier.color : '#fff'};">${escHtml(albumScoreLabel(album))}</div>
       </div>
     </div>
   `;
@@ -4104,7 +4107,7 @@ function albumHoloCard(album, readOnly) {
 }
 
 function albumMiniCard(album, readOnly) {
-  const tier = getTier(album.score);
+  const tier = getAlbumTier(album);
   const div = document.createElement('div');
   div.className = 'profile-album-card';
   div.innerHTML = `
@@ -4112,7 +4115,7 @@ function albumMiniCard(album, readOnly) {
     <img src="${escHtml(album.coverUrl||'')}" alt="${escHtml(album.title)}" />
     <div class="profile-album-card-overlay">
       <div class="profile-album-title">${escHtml(album.title)}</div>
-      <div class="profile-album-score" style="color:${tier ? tier.color : '#fff'};">${album.score}</div>
+      <div class="profile-album-score" style="color:${tier ? tier.color : '#fff'};">${escHtml(albumScoreLabel(album))}</div>
     </div>
   `;
   // Portada rota → intentar iTunes/Last.fm como respaldo antes de rendirse.
@@ -4191,7 +4194,7 @@ function enhanceProfileCarousels() {
 
 function profileTopAlbumCard(album, readOnly, rank) {
   const card = albumMiniCard(album, readOnly);
-  const tier = getTier(album.score);
+  const tier = getAlbumTier(album);
   const rankEl = document.createElement('span'); rankEl.className = 'profile-rank'; rankEl.textContent = rank;
   const artist = document.createElement('div'); artist.className = 'profile-album-artist'; artist.textContent = album.artist || '—';
   card.prepend(rankEl); card.querySelector('.profile-album-card-overlay').appendChild(artist);
@@ -4208,14 +4211,15 @@ function relativeProfileDate(album) {
   if (days === 0) return 'hoy'; if (days === 1) return 'ayer'; if (days < 7) return `hace ${days} días`; if (days < 30) return `hace ${Math.floor(days / 7)} sem.`; return raw.slice(0,10);
 }
 function profileActivityItem(album, readOnly) {
-  const tier = getTier(album.score); const item = document.createElement('button'); item.type = 'button'; item.className='profile-activity-item'; item.style.cssText='background:transparent;border:0;padding:0;width:100%;text-align:left;cursor:pointer;font:inherit;';
-  item.innerHTML = `<img class="profile-activity-cover" alt="" /><div style="min-width:0"><div class="profile-activity-title"></div><div class="profile-activity-artist"></div></div><span class="profile-activity-score" style="--score-color:${tier?.color || '#d9e2f0'}">${Number(album.score).toFixed(1)}</span><span class="profile-activity-date"></span>`;
+  const tier = getAlbumTier(album); const item = document.createElement('button'); item.type = 'button'; item.className='profile-activity-item'; item.style.cssText='background:transparent;border:0;padding:0;width:100%;text-align:left;cursor:pointer;font:inherit;';
+  item.innerHTML = `<img class="profile-activity-cover" alt="" /><div style="min-width:0"><div class="profile-activity-title"></div><div class="profile-activity-artist"></div></div><span class="profile-activity-score" style="--score-color:${tier?.color || '#d9e2f0'}">${hasNumericScore(album) ? Number(album.score).toFixed(1) : escHtml(albumScoreLabel(album))}</span><span class="profile-activity-date"></span>`;
   const img=item.querySelector('img'); img.src=album.coverUrl||''; img.onerror=()=>{img.style.visibility='hidden';};
   item.querySelector('.profile-activity-title').textContent=album.title||'Álbum'; item.querySelector('.profile-activity-artist').textContent=album.artist||'';
   item.querySelector('.profile-activity-date').textContent=relativeProfileDate(album);
   item.onclick=()=>openDetail(album,item,readOnly); return item;
 }
 function profileRescoreItem(album, readOnly) {
+  if (!hasNumericScore(album)) return null;
   const history = Array.isArray(album.scoreHistory) ? album.scoreHistory.filter(entry => Number.isFinite(Number(entry?.score))) : [];
   if (history.length < 2) return null;
   const previous = history[history.length - 2], current = history[history.length - 1];
@@ -4244,7 +4248,7 @@ function profileElevenTrackItem(album, trackName, readOnly) {
 }
 function renderProfileAlbumRows(albumList, profile, readOnly) {
   const top10Row = document.getElementById('profile-top10-row'); top10Row.innerHTML = '';
-  [...albumList].sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0)).slice(0,5).forEach((album,index)=>top10Row.appendChild(profileTopAlbumCard(album, readOnly, index+1)));
+  [...albumList].filter(hasNumericScore).sort((a,b)=>Number(b.score)-Number(a.score)).slice(0,5).forEach((album,index)=>top10Row.appendChild(profileTopAlbumCard(album, readOnly, index+1)));
   const recentRow = document.getElementById('profile-recent-row'); recentRow.innerHTML='';
   const dated = albumList.filter(album => album.listenDate || album.addedAt).sort((a,b) => new Date(b.listenDate || b.addedAt).getTime() - new Date(a.listenDate || a.addedAt).getTime()).slice(0,5);
   if (dated.length) dated.forEach(album=>recentRow.appendChild(profileActivityItem(album,readOnly)));
@@ -4363,7 +4367,7 @@ function renderShelfPickerAlbumsTab() {
   const query = (document.getElementById('shelf-picker-search').value || '').trim().toLowerCase();
   [...albums]
     .filter(a => !query || `${a.title} ${a.artist}`.toLowerCase().includes(query))
-    .sort((a, b) => b.score - a.score)
+    .sort(compareAlbumScores)
     .forEach(a => {
     const row = document.createElement('label');
     row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #1e1e24;cursor:pointer;';
@@ -4470,7 +4474,7 @@ function renderPinnedPicker() {
   const count = document.getElementById('pinned-picker-count');
   const query = (document.getElementById('pinned-picker-search').value || '').trim().toLowerCase();
   const selected = new Set(pinnedPickerSelection);
-  const byScore = [...albums].sort((a, b) => b.score - a.score);
+  const byScore = [...albums].sort(compareAlbumScores);
   const visible = byScore
     .filter(a => !query || `${a.title} ${a.artist}`.toLowerCase().includes(query))
     .sort((a, b) => {
@@ -4479,7 +4483,7 @@ function renderPinnedPicker() {
       if (ai !== -1 && bi !== -1) return ai - bi;
       if (ai !== -1) return -1;
       if (bi !== -1) return 1;
-      return b.score - a.score;
+      return compareAlbumScores(a, b);
     });
 
   list.innerHTML = '';
@@ -4629,7 +4633,7 @@ let achievementOutboxFlushPromise = null;
 const ACHIEVEMENT_BETA_USERNAME = 'kyujin';
 function isAchievementBetaUser() { return (localStorage.getItem('discord_user_id') || '').trim().toLowerCase() === ACHIEVEMENT_BETA_USERNAME; }
 function achievementEventId() { return crypto.randomUUID ? crypto.randomUUID() : `av-${Date.now()}-${Math.random().toString(36).slice(2)}`; }
-function compactAchievementAlbum(a) { return { id:String(a.id), title:a.title||'', artist:a.artist||'', year:a.year||'', score:Number(Number(a.score).toFixed(2)), coverUrl:a.coverUrl||'', genres:a.genres||[], genre:a.genre||'', trackScores:a.trackScores||{}, status:a.status||'', notes:a.notes||'', musicbrainzReleaseMbid:a.musicbrainzReleaseMbid||null }; }
+function compactAchievementAlbum(a) { return { id:String(a.id), title:a.title||'', artist:a.artist||'', year:a.year||'', score:hasNumericScore(a)?Number(Number(a.score).toFixed(2)):null, coverUrl:a.coverUrl||'', genres:a.genres||[], genre:a.genre||'', trackScores:a.trackScores||{}, status:a.status||'', notes:a.notes||'', musicbrainzReleaseMbid:a.musicbrainzReleaseMbid||null }; }
 function makeAchievementEvent(type, album, extra={}, source='vault') {
   const now = new Date().toISOString(); const id=achievementEventId();
   return { event_id:id, occurred_at:now, type, source, idempotency_key:`${type}:${album?.id||'collection'}:${now}:${id}`, payload:{album_id:album ? String(album.id) : null, album:album?compactAchievementAlbum(album):null, ...extra} };
@@ -4915,6 +4919,21 @@ function getTier(score) {
   if (score === 10) return TIERS[0];
   return TIERS.find(t => score >= t.min && score <= t.max) || TIERS[TIERS.length-1];
 }
+function hasNumericScore(album) {
+  return album && album.score !== null && album.score !== undefined && album.score !== '' && Number.isFinite(Number(album.score));
+}
+function getAlbumTier(album) {
+  if (album?.tierOnly && !hasNumericScore(album)) return TIERS.find(t => t.label.replace('−','-') === String(album.tierOnly).replace('−','-')) || null;
+  return hasNumericScore(album) ? getTier(Number(album.score)) : null;
+}
+function albumScoreLabel(album) { return hasNumericScore(album) ? String(album.score) : (getAlbumTier(album)?.label || '—'); }
+function tierOnlyId(label) { return TIERS.find(t => t.label.replace('−','-') === String(label || '').replace('−','-'))?.id || null; }
+function compareAlbumScores(a, b, ascending = false) {
+  const aScored = hasNumericScore(a), bScored = hasNumericScore(b);
+  if (aScored !== bScored) return aScored ? -1 : 1;
+  if (aScored) return ascending ? Number(a.score) - Number(b.score) : Number(b.score) - Number(a.score);
+  return TIERS.findIndex(t => t.id === getAlbumTier(a)?.id) - TIERS.findIndex(t => t.id === getAlbumTier(b)?.id);
+}
 function escHtml(str) {
   return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -4955,8 +4974,8 @@ function getVisibleAlbums() {
     list = list.filter(a => (a.status||'listened') === filterStatus);
   }
   list.sort((a,b) => {
-    if (sortMode==='score-desc')     return b.score - a.score;
-    if (sortMode==='score-asc')      return a.score - b.score;
+    if (sortMode==='score-desc')     return compareAlbumScores(a, b);
+    if (sortMode==='score-asc')      return compareAlbumScores(a, b, true);
     if (sortMode==='added-desc')     return (b.addedAt||0) - (a.addedAt||0);
     if (sortMode==='added-asc')      return (a.addedAt||0) - (b.addedAt||0);
     if (sortMode==='listened-desc')  return (getLastListened(b)||0) - (getLastListened(a)||0);
@@ -5028,7 +5047,7 @@ function buildTiers() {
   const visible = getVisibleAlbums();
 
   TIERS.forEach(tier => {
-    const tierAlbums = visible.filter(a => getTier(a.score)?.id === tier.id);
+    const tierAlbums = visible.filter(a => getAlbumTier(a)?.id === tier.id);
     // always render tier rows so layout is preserved; skip if empty and searching
     if (tierAlbums.length === 0 && (filterQuery || filterGenre || filterStatus)) return;
 
@@ -5130,7 +5149,7 @@ function buildCard(album, tier, i) {
     <img src="${escHtml(album.coverUrl||'')}" alt="${escHtml(album.title)}"
          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1 1%22><rect fill=%22%231a1a1a%22 width=%221%22 height=%221%22/></svg>'">
     <div class="album-overlay">
-      <div class="album-overlay-title">${escHtml(album.title)}<br><span style="color:${tier.color}">${album.score}</span><br>${statusStr}</div>
+      <div class="album-overlay-title">${escHtml(album.title)}<br><span style="color:${tier.color}">${escHtml(albumScoreLabel(album))}</span><br>${statusStr}</div>
     </div>
     <div class="compare-check">✓</div>`;
   card.addEventListener('click', () => {
@@ -5173,7 +5192,7 @@ function buildListRow(album, tier) {
   const score = document.createElement('div');
   score.className = 'album-list-score';
   score.style.color = tier.color;
-  score.textContent = album.score;
+  score.textContent = albumScoreLabel(album);
 
   row.appendChild(thumb);
   row.appendChild(info);
@@ -5206,14 +5225,14 @@ function openCompareModal() {
   if (!a1 || !a2) return;
   const cols = document.getElementById('compare-cols');
   cols.innerHTML = [a1, a2].map(a => {
-    const tier = getTier(a.score);
+    const tier = getAlbumTier(a);
     const favs = (a.tracks||[]).filter(t => t.startsWith('*')).length;
     return `
       <div class="compare-col">
         <img class="compare-cover" src="${escHtml(a.coverUrl||'')}" alt="">
         <div class="compare-title">${escHtml(a.title)}</div>
         <div class="compare-artist">${escHtml(a.artist)}</div>
-        <div class="compare-score" style="color:${tier.color}">${a.score}</div>
+        <div class="compare-score" style="color:${tier.color}">${escHtml(albumScoreLabel(a))}</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;color:${tier.color};border:1px solid ${tier.color};display:inline-block;padding:2px 8px;margin-bottom:8px">${tier.label}</div>
         <div class="compare-field"><div class="compare-field-label">Year</div>${a.year||'—'}</div>
         <div class="compare-field"><div class="compare-field-label">Genres</div>${(a.genres||[]).join(', ')||'—'}</div>
@@ -5291,7 +5310,7 @@ function openDetail(album, originEl, readOnly = false) {
   currentDetailAlbum = album;
   currentDetailReadOnly = readOnly;
   document.getElementById('modal').classList.toggle('detail-readonly', readOnly);
-  const tier = getTier(album.score);
+  const tier = getAlbumTier(album);
   const coverEl = document.getElementById('modal-cover');
   const modalArtBg = document.getElementById('modal-art-bg');
   coverEl.src = album.coverUrl || '';
@@ -5302,12 +5321,13 @@ function openDetail(album, originEl, readOnly = false) {
     modalArtBg.style.backgroundImage = '';
   };
 
-  document.getElementById('modal-tier-badge').textContent  = tier.label + ' · ' + album.score;
+  document.getElementById('modal-tier-badge').textContent  = hasNumericScore(album) ? tier.label + ' · ' + album.score : tier.label;
   document.getElementById('modal-tier-badge').style.color  = tier.color;
   document.getElementById('modal-tier-badge').style.borderColor = tier.color;
   document.getElementById('modal-title').textContent   = album.title;
   document.getElementById('modal-artist').textContent  = album.artist;
-  document.getElementById('modal-score').textContent   = album.score;
+  document.getElementById('modal-score').textContent   = albumScoreLabel(album);
+  document.getElementById('btn-score-history').hidden = !hasNumericScore(album);
   document.getElementById('modal-score').style.color   = tier.color;
 
   const reviewOverlay = document.getElementById('modal-review-overlay');
@@ -5612,7 +5632,7 @@ document.getElementById('btn-edit-album').addEventListener('click', () => {
   document.getElementById('input-title').value       = album.title;
   document.getElementById('input-artist').value      = album.artist;
   document.getElementById('input-year').value        = album.year || '';
-  document.getElementById('input-score').value       = album.score;
+  document.getElementById('input-score').value       = hasNumericScore(album) ? album.score : '';
   // Ensure we're in score mode when editing
   if (scoreModeIsTier) {
     scoreModeIsTier = false;
@@ -5621,6 +5641,11 @@ document.getElementById('btn-edit-album').addEventListener('click', () => {
     document.getElementById('score-field-label').textContent  = 'Score (0–10)';
     document.getElementById('score-mode-toggle').textContent  = '🔄 Tier directo';
     document.getElementById('score-mode-toggle').classList.remove('tier-mode');
+  }
+  importedTierOnly = !hasNumericScore(album) && !!tierOnlyId(album.tierOnly);
+  if (importedTierOnly) {
+    document.getElementById('score-mode-toggle').click();
+    document.querySelector(`.tier-opt[data-tier-id="${tierOnlyId(album.tierOnly)}"]`)?.click();
   }
   document.getElementById('input-genres').value      = (album.genres||[]).join(', ');
   document.getElementById('input-listen-date').value = album.listenDate || '';
@@ -5699,6 +5724,7 @@ function closeAddModal() {
   document.getElementById('add-backdrop').classList.remove('open');
   document.body.style.overflow = '';
   editingAlbumId = null;
+  importedTierOnly = false;
   document.getElementById('add-modal-title').innerHTML = 'ADD ALBUM';
   document.getElementById('save-btn').textContent = 'SAVE ALBUM';
   // reset status to default so score field reappears
@@ -5827,6 +5853,7 @@ document.addEventListener('click', () => {
 // ── SCORE MODE TOGGLE (score vs tier-directo) ──
 let scoreModeIsTier = false;
 let selectedTierId = null; // tracks selected tier in custom dropdown
+let importedTierOnly = false; // Rater Fast-Rate: tier with no numeric score
 
 // ── CUSTOM TIER DROPDOWN ──
 (function buildTierDropdown() {
@@ -5880,6 +5907,7 @@ let selectedTierId = null; // tracks selected tier in custom dropdown
 
 document.getElementById('score-mode-toggle').addEventListener('click', () => {
   scoreModeIsTier = !scoreModeIsTier;
+  if (!scoreModeIsTier) importedTierOnly = false;
   const btn       = document.getElementById('score-mode-toggle');
   const scoreWrap = document.getElementById('score-input-wrap');
   const tierWrap  = document.getElementById('tier-input-wrap');
@@ -6130,7 +6158,7 @@ document.getElementById('clear-selection').addEventListener('click', () => {
 let ratingCeremonyTimer = null;
 
 function playRatingCeremony(album) {
-  const tier = getTier(album.score);
+  const tier = getAlbumTier(album);
   if (!tier) return;
   const ceremony = document.getElementById('rating-ceremony');
   const cover = document.getElementById('ceremony-cover');
@@ -6139,8 +6167,8 @@ function playRatingCeremony(album) {
   cover.src = album.coverUrl || '';
   cover.alt = album.title || '';
   document.getElementById('ceremony-title').textContent = album.title;
-  document.getElementById('ceremony-score').textContent = Number(album.score).toFixed(2);
-  document.getElementById('ceremony-tier').textContent = `${tier.label} · ${Number(album.score).toFixed(2)}`;
+  document.getElementById('ceremony-score').textContent = hasNumericScore(album) ? Number(album.score).toFixed(2) : tier.label;
+  document.getElementById('ceremony-tier').textContent = hasNumericScore(album) ? `${tier.label} · ${Number(album.score).toFixed(2)}` : 'Fast-Rate';
 
   if (ratingCeremonyTimer) clearTimeout(ratingCeremonyTimer);
   ceremony.className = 'active';
@@ -6164,12 +6192,13 @@ document.getElementById('save-btn').addEventListener('click', () => {
   const isPending  = status === 'pending';
 
   let score;
+  const tierOnlyMode = !isPending && scoreModeIsTier && importedTierOnly;
   if (isPending) {
     score = 0; // pending albums have no score
   } else if (scoreModeIsTier) {
     if (!selectedTierId) { alert('Selecciona un tier.'); return; }
     const tier = TIERS.find(t => t.id === selectedTierId);
-    score = tier ? (tier.min === tier.max ? tier.min : parseFloat(((tier.min + tier.max) / 2).toFixed(2))) : NaN;
+    score = tierOnlyMode ? null : (tier ? (tier.min === tier.max ? tier.min : parseFloat(((tier.min + tier.max) / 2).toFixed(2))) : NaN);
   } else {
     score = parseFloat(document.getElementById('input-score').value);
   }
@@ -6179,7 +6208,7 @@ document.getElementById('save-btn').addEventListener('click', () => {
   const genresRaw  = document.getElementById('input-genres').value.trim();
   const listenDate = isPending ? '' : document.getElementById('input-listen-date').value;
 
-  if (!title || !artist || (!isPending && isNaN(score))) { alert('Completa el título, artista y puntaje.'); return; }
+  if (!title || !artist || (!isPending && score !== null && isNaN(score))) { alert('Completa el título, artista y puntaje.'); return; }
 
   const tracks = tracksRaw.split('\n').map(t => t.trim()).filter(Boolean);
   const genres = genresRaw ? cleanGenres(genresRaw.split(',')) : [];
@@ -6190,32 +6219,37 @@ document.getElementById('save-btn').addEventListener('click', () => {
     const idx = albums.findIndex(a => a.id === editingAlbumId);
     if (idx !== -1) {
       const before = albums[idx];
-      albums[idx] = { ...before, title, artist, year, score, tracks, notes, genres, listenDate, status,
+      albums[idx] = { ...before, title, artist, year, score, tierOnly: tierOnlyMode ? TIERS.find(t => t.id === selectedTierId)?.label.replace('−','-') : null, tracks, notes, genres, listenDate, status,
         coverUrl: selectedRelease?.coverUrl || albums[idx].coverUrl,
         musicbrainzReleaseMbid: selectedRelease?.mbid || before.musicbrainzReleaseMbid || null };
       const oldScore = Number(before.score), nextScore = Number(score);
-      if (status === 'listened' && before.status === 'listened' && Number.isFinite(oldScore) && Number.isFinite(nextScore) && Math.abs(nextScore-oldScore) >= .01) {
+      if (status === 'listened' && before.status === 'listened' && hasNumericScore(before) && !tierOnlyMode && Number.isFinite(nextScore) && Math.abs(nextScore-oldScore) >= .01) {
         const occurredAt = new Date().toISOString();
         const history = Array.isArray(before.scoreHistory) ? [...before.scoreHistory] : [{ score:oldScore, date:before.listenDate || occurredAt.slice(0,10), label:'Initial score' }];
         const previous = history[history.length-1]; history.push({score:Number(nextScore.toFixed(2)),date:occurredAt.slice(0,10),timestamp:occurredAt,label:'Re-score'}); albums[idx].scoreHistory=history;
         achievementEvents.push(makeAchievementEvent('album_rescored',albums[idx],{previous_score:Number(oldScore.toFixed(2)),new_score:Number(nextScore.toFixed(2)),delta:Number((nextScore-oldScore).toFixed(2)),previous_at:previous?.timestamp || (previous?.date ? new Date(previous.date+'T00:00:00Z').toISOString() : null)}));
       }
+      if (!hasNumericScore(before) && !tierOnlyMode && !isPending) {
+        albums[idx].scoreHistory = [{score:Number(score),date:new Date().toISOString().slice(0,10),label:'Initial score'}];
+        achievementEvents.push(makeAchievementEvent('album_rated',albums[idx],{score:Number(score)}));
+      }
       if (notes !== (before.notes || '')) achievementEvents.push(makeAchievementEvent('review_updated', albums[idx], { review_text: notes }));
-      if (Object.keys(albums[idx].trackScores||{}).length) achievementEvents.push(makeAchievementEvent('track_scores_saved', albums[idx]));
+      if (!tierOnlyMode && Object.keys(albums[idx].trackScores||{}).length) achievementEvents.push(makeAchievementEvent('track_scores_saved', albums[idx]));
     }
   } else {
     newlySavedAlbum = { id:'alb_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
-      title, artist, year, score, tracks, notes, genres, listenDate, status,
+      title, artist, year, score, tierOnly:tierOnlyMode ? TIERS.find(t => t.id === selectedTierId)?.label.replace('−','-') : null, tracks, notes, genres, listenDate, status,
       coverUrl: selectedRelease?.coverUrl || '',
       musicbrainzReleaseMbid: selectedRelease?.mbid || null,
-      addedAt: Date.now(), replays:[], scoreHistory: isPending ? [] : [{score:Number(Number(score).toFixed(2)),date:new Date().toISOString().slice(0,10),label:'Initial score'}] };
+      addedAt: Date.now(), replays:[], scoreHistory: isPending || tierOnlyMode ? [] : [{score:Number(Number(score).toFixed(2)),date:new Date().toISOString().slice(0,10),label:'Initial score'}] };
     albums.push(newlySavedAlbum);
-    if (!isPending) { achievementEvents.push(makeAchievementEvent('album_added',newlySavedAlbum)); achievementEvents.push(makeAchievementEvent('album_rated',newlySavedAlbum,{score:Number(Number(score).toFixed(2))})); }
+    if (!isPending) { achievementEvents.push(makeAchievementEvent('album_added',newlySavedAlbum)); if (!tierOnlyMode) achievementEvents.push(makeAchievementEvent('album_rated',newlySavedAlbum,{score:Number(Number(score).toFixed(2))})); }
     if (notes) achievementEvents.push(makeAchievementEvent('review_written',newlySavedAlbum,{review_text:notes}));
   }
 
   if (achievementEvents.length) saveAlbumsWithAchievementEvents(achievementEvents); else saveAlbums();
 
+  const savedTierId = selectedTierId;
   ['input-title','input-artist','input-year','input-score','input-tracks','input-notes','input-genres','input-listen-date']
     .forEach(id => { document.getElementById(id).value = ''; });
   document.getElementById('input-status').value = 'listened';
@@ -6242,7 +6276,7 @@ document.getElementById('save-btn').addEventListener('click', () => {
     setTimeout(() => playRatingCeremony(newlySavedAlbum), 120);
   } else if (!savedIsPending) {
     setTimeout(() => {
-      document.getElementById('tier-'+getTier(savedScore).id)?.scrollIntoView({ behavior:'smooth' });
+      document.getElementById('tier-'+(savedScore === null ? savedTierId : getTier(savedScore).id))?.scrollIntoView({ behavior:'smooth' });
     }, 200);
   }
 });
@@ -6268,7 +6302,7 @@ document.getElementById('rater-import-file').addEventListener('change', e => {
       document.getElementById('input-title').value  = data.title  || '';
       document.getElementById('input-artist').value = data.artist || '';
       document.getElementById('input-year').value   = data.year   || '';
-      document.getElementById('input-score').value  = data.score  || '';
+      document.getElementById('input-score').value  = data.score ?? '';
       document.getElementById('input-genres').value = (data.genres || []).join(', ');
       document.getElementById('input-listen-date').value = data.listenDate || '';
       document.getElementById('input-tracks').value = (data.tracks || []).join('\n');
@@ -6291,15 +6325,11 @@ document.getElementById('rater-import-file').addEventListener('change', e => {
         document.getElementById('selected-preview').classList.add('visible');
       }
 
-      // Ensure score mode is numeric (not tier)
-      if (typeof scoreModeIsTier !== 'undefined' && scoreModeIsTier) {
-        scoreModeIsTier = false;
-        document.getElementById('score-input-wrap').style.display = 'block';
-        document.getElementById('tier-input-wrap').style.display  = 'none';
-        document.getElementById('score-field-label').textContent  = 'Score (0–10)';
-        document.getElementById('score-mode-toggle').textContent  = '🔄 Tier directo';
-        document.getElementById('score-mode-toggle').classList.remove('tier-mode');
-      }
+      // Fast-Rate imports carry an explicit tier and no numeric score.
+      importedTierOnly = !!tierOnlyId(data.tierOnly) && data.score == null;
+      if (data.tierOnly && !importedTierOnly) throw new Error('Tier Fast-Rate inválido.');
+      if (scoreModeIsTier !== importedTierOnly) document.getElementById('score-mode-toggle').click();
+      if (importedTierOnly) document.querySelector(`.tier-opt[data-tier-id="${tierOnlyId(data.tierOnly)}"]`)?.click();
 
       document.getElementById('add-backdrop').classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -6491,7 +6521,7 @@ async function exportVaultImage() {
   const visible = getVisibleAlbums();
   const tierRows = TIERS.map(t => ({
     tier: t,
-    albums: visible.filter(a => getTier(a.score)?.id === t.id)
+    albums: visible.filter(a => getAlbumTier(a)?.id === t.id)
   })).filter(r => r.albums.length > 0);
 
   // Preload all cover images
@@ -6642,7 +6672,7 @@ async function exportVaultImage() {
       }
 
       // Score badge bottom-right
-      const scoreStr = String(album.score);
+      const scoreStr = albumScoreLabel(album);
       ctx.font = `bold 9px ${FONT_MONO}`;
       const badgeH = 14, badgePad = 5;
       const scoreW = ctx.measureText(scoreStr).width + badgePad * 2;
@@ -6696,7 +6726,7 @@ function renderTop10() {
   if (top10Mode === 'top10') {
     document.getElementById('top10-heading').textContent = 'TOP 10';
     document.getElementById('top10-subtitle').textContent = 'Your highest rated albums';
-    const top = [...albums].filter(a => !isNaN(a.score) && (a.status||'listened') !== 'pending')
+    const top = [...albums].filter(a => hasNumericScore(a) && (a.status||'listened') !== 'pending')
       .sort((a,b) => b.score - a.score).slice(0,10);
     top.forEach((album, idx) => {
       list.appendChild(buildTop10Item(album, idx + 1));
@@ -6704,11 +6734,11 @@ function renderTop10() {
   } else {
     document.getElementById('top10-heading').textContent = 'TOP 5';
     document.getElementById('top10-subtitle').textContent = 'Top 5 albums per tier';
-    const eligible = [...albums].filter(a => !isNaN(a.score) && (a.status||'listened') !== 'pending');
+    const eligible = [...albums].filter(a => getAlbumTier(a) && (a.status||'listened') !== 'pending');
     TIERS.forEach(tier => {
       const tierAlbums = eligible
-        .filter(a => getTier(a.score)?.id === tier.id)
-        .sort((a,b) => b.score - a.score)
+        .filter(a => getAlbumTier(a)?.id === tier.id)
+        .sort(compareAlbumScores)
         .slice(0, 5);
       if (!tierAlbums.length) return;
 
@@ -6729,7 +6759,7 @@ function renderTop10() {
 }
 
 function buildTop10Item(album, rank) {
-  const tier = getTier(album.score);
+  const tier = getAlbumTier(album);
   const legendary = hasLegendaryTrack(album);
   const item = document.createElement('div');
   item.className = 'top10-item';
@@ -6749,7 +6779,7 @@ function buildTop10Item(album, rank) {
     </div>
     ${legendary?'<div class="top10-legendary-badge">⚡ 11</div>':''}
     <div class="top10-tier-badge" style="color:${tier?.color||'#fff'};border-color:${tier?.color||'#333'}">${tier?.label||'?'}</div>
-    <div class="top10-score" style="color:${tier?.color||'#fff'}">${album.score}</div>`;
+    <div class="top10-score" style="color:${tier?.color||'#fff'}">${escHtml(albumScoreLabel(album))}</div>`;
   item.addEventListener('click', () => {
     document.getElementById('top10-backdrop').classList.remove('open');
     document.body.style.overflow = '';
@@ -6799,8 +6829,9 @@ function renderStats() {
     return;
   }
   const total   = albums.length;
-  const avgScore = (albums.reduce((s,a) => s+a.score, 0) / total).toFixed(2);
-  const topTier  = TIERS.find(t => albums.some(a => getTier(a.score)?.id === t.id));
+  const numericAlbums = albums.filter(hasNumericScore);
+  const avgScore = numericAlbums.length ? (numericAlbums.reduce((s,a) => s+Number(a.score), 0) / numericAlbums.length).toFixed(2) : null;
+  const topTier  = TIERS.find(t => albums.some(a => getAlbumTier(a)?.id === t.id));
   const allListens = albums.reduce((s,a) => s + (a.replays||[]).length + (a.listenDate?1:0), 0);
 
   // artist counts
@@ -6814,16 +6845,16 @@ function renderStats() {
 
   document.getElementById('stats-numbers').innerHTML = `
     <div class="stat-card"><div class="stat-label">Total albums</div><div class="stat-value">${total}</div></div>
-    <div class="stat-card"><div class="stat-label">Avg score</div><div class="stat-value" style="color:${getTier(parseFloat(avgScore)).color}">${avgScore}</div></div>
+    <div class="stat-card"><div class="stat-label">Avg score</div><div class="stat-value" style="color:${avgScore === null ? 'var(--muted)' : getTier(parseFloat(avgScore)).color}">${avgScore ?? '—'}</div></div>
     <div class="stat-card"><div class="stat-label">Total listens</div><div class="stat-value">${allListens}</div></div>
     <div class="stat-card"><div class="stat-label">Top artist</div><div class="stat-value" style="font-size:20px;line-height:1.2">${topArtist?topArtist[0]:'—'}</div><div class="stat-sub">${topArtist?topArtist[1]+' album'+(topArtist[1]>1?'s':''):''}</div></div>
     <div class="stat-card"><div class="stat-label">Most played</div><div class="stat-value" style="font-size:16px;line-height:1.3">${mostListened?.title||'—'}</div><div class="stat-sub">${mostListened?(mostListened.replays||[]).length+(mostListened.listenDate?1:0)+' listen(s)':''}</div></div>
     <div class="stat-card"><div class="stat-label">Highest tier</div><div class="stat-value" style="color:${topTier?.color||'var(--muted)'}">${topTier?.label||'—'}</div></div>`;
 
   // tier bars
-  const maxTierCount = Math.max(...TIERS.map(t => albums.filter(a => getTier(a.score)?.id===t.id).length), 1);
+  const maxTierCount = Math.max(...TIERS.map(t => albums.filter(a => getAlbumTier(a)?.id===t.id).length), 1);
   document.getElementById('stats-tier-bars').innerHTML = TIERS.map(t => {
-    const count = albums.filter(a => getTier(a.score)?.id===t.id).length;
+    const count = albums.filter(a => getAlbumTier(a)?.id===t.id).length;
     const pct   = (count/maxTierCount*100).toFixed(1);
     return `<div class="tier-bar-row">
       <div class="tier-bar-label" style="color:${t.color}">${t.label}</div>
@@ -6835,11 +6866,11 @@ function renderStats() {
   // artist leaderboard with avg score
   const sortedArtists = Object.entries(artistMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
   document.getElementById('stats-artists').innerHTML = sortedArtists.map(([artist,count]) => {
-    const artistAlbums = albums.filter(a => a.artist === artist);
-    const avg = (artistAlbums.reduce((s,a) => s+a.score, 0) / artistAlbums.length).toFixed(2);
-    const avgTier = getTier(parseFloat(avg));
+    const artistAlbums = albums.filter(a => a.artist === artist && hasNumericScore(a));
+    const avg = artistAlbums.length ? (artistAlbums.reduce((s,a) => s+Number(a.score), 0) / artistAlbums.length).toFixed(2) : null;
+    const avgTier = avg === null ? null : getTier(parseFloat(avg));
     return `<div class="artist-row">
-      <span>${escHtml(artist)}<span class="artist-avg" style="color:${avgTier.color}">${avg}</span></span>
+      <span>${escHtml(artist)}<span class="artist-avg" style="color:${avgTier?.color || 'var(--muted)'}">${avg ?? '—'}</span></span>
       <span class="artist-count">${count} album${count>1?'s':''}</span>
     </div>`;
   }).join('');
@@ -6958,6 +6989,7 @@ document.getElementById('pending-backdrop').addEventListener('click', e => {
 let scoreHistoryAlbum = null;
 
 function openScoreHistory(album) {
+  if (!hasNumericScore(album)) return;
   scoreHistoryAlbum = album;
   document.getElementById('scorehistory-album-name').textContent = `${album.title} — ${album.artist}`;
   renderScoreHistory();
@@ -7011,7 +7043,7 @@ function renderScoreHistory() {
 
 document.getElementById('sh-save-btn').addEventListener('click', () => {
   const album = scoreHistoryAlbum;
-  if (!album) return;
+  if (!hasNumericScore(album)) return;
   const newScore = parseFloat(document.getElementById('sh-new-score').value);
   if (isNaN(newScore) || newScore < 0 || newScore > 10) {
     alert('Enter a valid score between 0 and 10');
@@ -7213,13 +7245,14 @@ async function fetchFromRaterDb() {
 
     // Convert DB rows to vault-compatible objects
     dbSyncItems = rows.map(row => {
-      const score = parseFloat(row.final_score) || 0;
+      const score = row.final_score == null ? null : Number.parseFloat(row.final_score);
+      const tierOnly = score === null && tierOnlyId(row.final_rank) ? row.final_rank.replace('−','-') : null;
       let title = row.album_title || '';
       if (!title && row.title) {
         // strip Discord format "- TITLE [ARTIST]"
         title = row.title.replace(/^-\s*/, '').replace(/\s*\[.*\]$/, '').trim();
       }
-      const tier = getTier(score);
+      const tier = tierOnly ? TIERS.find(t => t.id === tierOnlyId(tierOnly)) : score === null ? null : getTier(score);
       return {
         _dbId: row.id,
         title,
@@ -7229,17 +7262,18 @@ async function fetchFromRaterDb() {
         coverUrl:  row.cover_url || '',
         coverScore: row.cover_score === null || row.cover_score === undefined || row.cover_score === '' ? null : parseFloat(row.cover_score),
         score,
+        tierOnly,
         tier,
         finalRank: row.final_rank || tier?.label || '',
         tracks:    Array.isArray(row.tracks) ? row.tracks.map(t => t.name || '').filter(Boolean) : [],
-        trackScores: Array.isArray(row.tracks) ? Object.fromEntries(row.tracks.filter(t => t.name && t.score !== '').map(t => [t.name.trim(), parseFloat(t.score)])) : {},
+        trackScores: Array.isArray(row.tracks) && score !== null ? Object.fromEntries(row.tracks.filter(t => t.name && t.score !== '' && t.score != null).map(t => [t.name.trim(), parseFloat(t.score)])) : {},
         notes:     row.notes || '',
         listenDate: row.created_at ? new Date(row.created_at).toISOString().slice(0,10) : '',
         addedAt:   row.created_at ? new Date(row.created_at).getTime() : Date.now(),
         status:    'listened',
         genres:    row.genre ? cleanGenres(row.genre.split(/[,/]/)) : [],
       };
-    });
+    }).filter(item => hasNumericScore(item) || item.tierOnly);
 
     document.getElementById('dbsync-status').textContent = `${dbSyncItems.length} álbum${dbSyncItems.length !== 1 ? 'es' : ''} encontrado${dbSyncItems.length !== 1 ? 's' : ''}.`;
     renderDbSyncList();
@@ -7264,17 +7298,17 @@ function isAlreadyInVault(item) {
   const dup = getVaultDuplicate(item);
   if (!dup) return false;
   // Un score igual solo está al día si tampoco llegó una reseña nueva desde Rater.
-  return Math.abs(dup.score - item.score) < 0.001 && !hasReviewUpdate(item, dup);
+  return !hasScoreUpdate(item, dup) && !hasReviewUpdate(item, dup);
 }
 function isUpdateAvailable(item) {
   const dup = getVaultDuplicate(item);
-  return !!dup && (
-    Math.abs(parseFloat(item.score) - parseFloat(dup.score)) >= 0.001 ||
-    hasReviewUpdate(item, dup)
-  );
+  return !!dup && (hasScoreUpdate(item, dup) || hasReviewUpdate(item, dup));
 }
 function hasScoreUpdate(item, existing = getVaultDuplicate(item)) {
-  return !!existing && Math.abs(parseFloat(item.score) - parseFloat(existing.score)) >= 0.001;
+  if (!existing) return false;
+  if (hasNumericScore(item) !== hasNumericScore(existing)) return true;
+  if (!hasNumericScore(item)) return tierOnlyId(item.tierOnly) !== tierOnlyId(existing.tierOnly);
+  return Math.abs(Number(item.score) - Number(existing.score)) >= 0.001;
 }
 function shouldShowInDbSync(item) {
   const existing = getVaultDuplicate(item);
@@ -7362,7 +7396,7 @@ function renderDbSyncList() {
     const scoreEl = document.createElement('div');
     scoreEl.className = 'dbsync-score';
     scoreEl.style.color = tier?.color || '#888';
-    scoreEl.textContent = item.score.toFixed(2);
+    scoreEl.textContent = item.score === null ? 'Solo tier' : item.score.toFixed(2);
 
     if (alreadyIn) {
       const tag = document.createElement('div');
@@ -7378,9 +7412,9 @@ function renderDbSyncList() {
       const existing = getVaultDuplicate(item);
       const tag = document.createElement('div');
       tag.className = 'dbsync-update-tag';
-      const scoreChanged = Math.abs(parseFloat(existing.score) - parseFloat(item.score)) >= 0.001;
+      const scoreChanged = hasScoreUpdate(item, existing);
       tag.textContent = scoreChanged
-        ? `↑ ${existing.score.toFixed(2)} → ${item.score.toFixed(2)}`
+        ? `↑ ${albumScoreLabel(existing)} → ${albumScoreLabel(item)}`
         : '✎ reseña actualizada';
       div.appendChild(checkEl);
       div.appendChild(thumb);
@@ -7446,12 +7480,12 @@ document.getElementById('dbsync-import-btn').addEventListener('click', async () 
 
     const existing = getVaultDuplicate(item);
 
-    const scoreChanged = existing && Math.abs(parseFloat(existing.score) - parseFloat(item.score)) >= 0.001;
+    const scoreChanged = existing && hasScoreUpdate(item, existing);
     const reviewChanged = existing && hasReviewUpdate(item, existing);
     if (existing && !scoreChanged && !reviewChanged) return;
 
     if (existing) {
-      if (scoreChanged) {
+      if (scoreChanged && hasNumericScore(existing) && hasNumericScore(item)) {
         const scoreBeforeImport = parseFloat(existing.score);
         // Save score history only when the score really changed.
         if (!existing.scoreHistory) existing.scoreHistory = [];
@@ -7469,6 +7503,7 @@ document.getElementById('dbsync-import-btn').addEventListener('click', async () 
           label: 'Re-score desde Rater DB'
         });
         existing.score       = parseFloat(item.score);
+        existing.tierOnly    = null;
         existing.year        = item.year;
         existing.coverUrl    = item.coverUrl;
         existing.coverScore  = item.coverScore;
@@ -7478,6 +7513,22 @@ document.getElementById('dbsync-import-btn').addEventListener('click', async () 
         existing.trackScores = item.trackScores || {};
         importAchievementEvents.push(makeAchievementEvent('album_rescored', existing, { previous_score:scoreBeforeImport, new_score:parseFloat(item.score), delta:Number((parseFloat(item.score)-scoreBeforeImport).toFixed(2)), previous_at:lastEntry?.timestamp || null }, 'rater'));
         importAchievementEvents.push(makeAchievementEvent('track_scores_saved', existing, {}, 'rater'));
+      } else if (scoreChanged) {
+        const wasNumeric = hasNumericScore(existing);
+        existing.score = item.score;
+        existing.tierOnly = item.tierOnly || null;
+        existing.year = item.year;
+        existing.coverUrl = item.coverUrl;
+        existing.coverScore = item.coverScore;
+        existing.genres = item.genres;
+        existing.listenDate = item.listenDate;
+        existing.tracks = item.tracks;
+        existing.trackScores = item.trackScores || {};
+        if (!hasNumericScore(item)) existing.coverScore = null;
+        if (!wasNumeric && hasNumericScore(item)) {
+          existing.scoreHistory = [{score:Number(item.score), date:item.listenDate, label:'Initial score desde Rater DB'}];
+          importAchievementEvents.push(makeAchievementEvent('album_rated', existing, {score:Number(item.score)}, 'rater'));
+        }
       }
       if (reviewChanged) { existing.notes = item.notes.trim(); importAchievementEvents.push(makeAchievementEvent('review_updated',existing,{review_text:existing.notes},'rater')); }
       updated++;
@@ -7487,7 +7538,8 @@ document.getElementById('dbsync-import-btn').addEventListener('click', async () 
         title:       item.title,
         artist:      item.artist,
         year:        item.year,
-        score:       parseFloat(item.score),
+        score:       item.score,
+        tierOnly:    item.tierOnly || null,
         coverUrl:    item.coverUrl,
         coverScore:  item.coverScore,
         genres:      item.genres,
@@ -7498,13 +7550,13 @@ document.getElementById('dbsync-import-btn').addEventListener('click', async () 
         trackScores: item.trackScores || {},
         notes:       item.notes,
         replays:     [],
-        scoreHistory:[{ score: parseFloat(item.score), date: item.listenDate, label: 'Importado desde Rater DB' }],
+        scoreHistory:hasNumericScore(item) ? [{ score: Number(item.score), date: item.listenDate, label: 'Importado desde Rater DB' }] : [],
         _dbId:       item._dbId,
       };
       albums.push(importedAlbum);
       importedAlbums.push(importedAlbum);
       importAchievementEvents.push(makeAchievementEvent('album_added',importedAlbum,{},'rater'));
-      importAchievementEvents.push(makeAchievementEvent('album_rated',importedAlbum,{score:parseFloat(importedAlbum.score)},'rater'));
+      if (hasNumericScore(importedAlbum)) importAchievementEvents.push(makeAchievementEvent('album_rated',importedAlbum,{score:Number(importedAlbum.score)},'rater'));
       if (Object.keys(importedAlbum.trackScores||{}).length) importAchievementEvents.push(makeAchievementEvent('track_scores_saved',importedAlbum,{},'rater'));
       if (importedAlbum.notes) importAchievementEvents.push(makeAchievementEvent('review_written',importedAlbum,{review_text:importedAlbum.notes},'rater'));
       added++;
